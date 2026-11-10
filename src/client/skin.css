@@ -40,13 +40,6 @@
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: CcBrush;
-  src: url("../../assets/fonts/CcBrush-SC.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
 
 html[data-dsh-calling-card-skin] {
   --dsh-cc-red: #e60012;
@@ -460,16 +453,6 @@ html[data-dsh-calling-card-skin] .dsh-cc-tagline {
   color: #fff;
   padding: 2px 6px;
 }
-html[data-dsh-calling-card-skin] .dsh-cc-state {
-  margin-top: 2px;
-  padding: 1px 6px 2px;
-  background: var(--dsh-cc-red);
-  color: #fff;
-  font-family: var(--dsh-cc-display);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-}
 
 html[data-dsh-calling-card-skin] .dsh-cc-replay {
   position: absolute;
@@ -613,6 +596,198 @@ html[data-dsh-calling-card-skin] .dsh-cc-transition.is-on .dsh-cc-motion {
   to { background-position: 0 160px; }
 }
 
+/* Caption box: number, real page name, heist kicker. Sits in the gap above the main sheet, never on it. */
+html[data-dsh-calling-card-skin] .dsh-cc-caption {
+  position: absolute;
+  z-index: 2;
+  top: clamp(64px, 8.4vh, 92px);
+  left: calc(var(--dsh-cc-deck) + clamp(28px, 4vw, 64px));
+  display: flex;
+  align-items: flex-start;
+  max-width: min(40vw, 520px);
+  pointer-events: none;
+  transform: rotate(-4deg);
+  transform-origin: left top;
+  filter: drop-shadow(7px 8px 0 var(--dsh-cc-red));
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption-no {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  margin: -10px -6px 0 0;
+  padding: 6px 18px 2px 10px;
+  background: #fff;
+  color: var(--dsh-cc-red);
+  font-family: var(--dsh-cc-display);
+  font-size: clamp(40px, 4vw, 58px);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  clip-path: polygon(0 4%, 100% 0, 92% 100%, 6% 94%);
+  transform: rotate(6deg);
+  filter: drop-shadow(0 0 0 #111);
+  box-shadow: inset 0 -6px 0 #111;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 7px 22px 9px 20px;
+  background: #0c0c0c;
+  color: #fff;
+  clip-path: polygon(0 6%, 100% 0, 96% 100%, 3% 90%);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption-kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--dsh-cc-display);
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  color: #fff;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption-kicker span {
+  padding: 1px 6px 0;
+  background: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption-kicker em {
+  font-family: var(--dsh-cc-blackface);
+  font-style: normal;
+  letter-spacing: 0.08em;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption-title {
+  display: block;
+  max-width: 100%;
+  margin-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--dsh-cc-blackface);
+  font-size: clamp(20px, 2vw, 30px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption[data-cc-kicker="CALLING CARD"] .dsh-cc-caption-body {
+  background: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption[data-cc-kicker="CALLING CARD"] .dsh-cc-caption-kicker span {
+  background: #0c0c0c;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption[data-cc-kicker="CALLING CARD"] {
+  filter: drop-shadow(7px 8px 0 #0c0c0c);
+}
+html[data-dsh-calling-card-skin] div[data-sidebar-collapsed] .dsh-cc-caption,
+html[data-dsh-calling-card-skin] div[data-sidebar-drawer] .dsh-cc-caption {
+  left: clamp(360px, 40vw, 520px);
+}
+
+/* Comic burst: red star + one word, upper right, under the main sheet so it never covers reading text. */
+html[data-dsh-calling-card-skin] .dsh-cc-sfx {
+  position: absolute;
+  z-index: 2;
+  top: clamp(46px, 6vh, 64px);
+  right: clamp(150px, 14vw, 240px);
+  width: clamp(96px, 9vw, 124px);
+  height: clamp(96px, 9vw, 124px);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  visibility: hidden;
+  filter: drop-shadow(7px 8px 0 #0c0c0c);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx::before,
+html[data-dsh-calling-card-skin] .dsh-cc-sfx::after {
+  content: "";
+  position: absolute;
+  clip-path: polygon(50% 0, 60% 30%, 92% 12%, 72% 42%, 100% 56%, 68% 62%, 80% 96%, 52% 72%, 30% 100%, 32% 66%, 0 70%, 26% 46%, 4% 18%, 38% 30%);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx::before {
+  inset: -10px;
+  background: #fff;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx::after {
+  inset: 0;
+  background: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx b {
+  position: relative;
+  z-index: 1;
+  padding: 2px 8px 4px;
+  background: #0c0c0c;
+  color: #fff;
+  font-family: var(--dsh-cc-blackface);
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  transform: rotate(-12deg);
+  box-shadow: 3px 3px 0 #fff;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx[data-cc-kind="tool"]::after {
+  background: #0c0c0c;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx[data-cc-kind="tool"] b {
+  background: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx[data-cc-kind="assistant"] b {
+  background: #fff;
+  color: #0c0c0c;
+  box-shadow: 3px 3px 0 #0c0c0c;
+  transform: rotate(8deg);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-sfx.is-on {
+  visibility: visible;
+  animation: dsh-cc-pop 1100ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+@keyframes dsh-cc-pop {
+  0% { opacity: 0; transform: scale(0.25) rotate(-28deg); }
+  16% { opacity: 1; transform: scale(1.12) rotate(6deg); }
+  28% { opacity: 1; transform: scale(1) rotate(0deg); }
+  78% { opacity: 1; transform: scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: scale(1.06) translate(10px, -8px) rotate(4deg); }
+}
+
+/* Transition title cut per letter: same paper tiles as the brand, larger, in a row. */
+html[data-dsh-calling-card-skin] .dsh-cc-motion-title[data-cc-letters] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.06em;
+  font-size: clamp(56px, 8vw, 120px);
+  line-height: 0.84;
+  letter-spacing: 0;
+  text-shadow: none;
+  filter: drop-shadow(8px 9px 0 var(--dsh-cc-red));
+}
+html[data-dsh-calling-card-skin] .dsh-cc-motion-title[data-cc-letters] .dsh-cc-line {
+  display: flex;
+  align-items: flex-end;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-motion-title[data-cc-letters] .dsh-cc-letter {
+  margin-right: 0.07em;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-motion-title[data-cc-letters] + i {
+  width: max-content;
+  margin: 0.9em 0 0 auto;
+  padding: 3px 10px 4px;
+  background: #0c0c0c;
+  color: #fff;
+  font-size: 15px;
+  transform: rotate(-2deg);
+  box-shadow: 4px 4px 0 var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-motion-title[data-cc-letters] .dsh-cc-line + .dsh-cc-line {
+  margin-left: 0.5em;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-motion-kicker {
+  transform: rotate(2deg);
+  box-shadow: 4px 4px 0 #fff;
+  margin-bottom: 10px;
+}
+
 /* User prompt slips. Host text is untouched. */
 html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"],
 html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] {
@@ -698,36 +873,6 @@ html[data-dsh-calling-card-skin] [data-chat-flow-kind="tool-call"] :is(p, li, td
   transform: none;
   max-width: 68ch;
 }
-html[data-dsh-calling-card-skin] .dsh-cc-run,
-html[data-dsh-calling-card-skin] .dsh-cc-url {
-  font-size: 1em;
-  line-height: inherit;
-  vertical-align: baseline;
-  letter-spacing: 0;
-}
-html[data-dsh-calling-card-skin] .dsh-cc-run[data-cc-gap],
-html[data-dsh-calling-card-skin] .dsh-cc-url[data-cc-gap] {
-  margin-left: 0.45em;
-}
-html[data-dsh-calling-card-skin] .dsh-cc-url {
-  font-family: inherit;
-}
-html[data-dsh-calling-card-skin] .dsh-cc-run[data-cc-chip="paper"] {
-  background: #fff;
-  color: #111;
-  box-shadow: 2px 2px 0 #111;
-  padding: 0 0.08em;
-}
-html[data-dsh-calling-card-skin] .dsh-cc-run[data-cc-chip="ink"] {
-  background: #111;
-  color: #fff;
-  padding: 0 0.08em;
-}
-html[data-dsh-calling-card-skin] .dsh-cc-run[data-cc-chip="red"] {
-  background: var(--dsh-cc-red);
-  color: #fff;
-  padding: 0 0.08em;
-}
 html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] :is(h1, h2, h3),
 html[data-dsh-calling-card-skin] [data-chat-flow-kind="tool-call"] :is(h1, h2, h3) {
   display: inline-block;
@@ -791,7 +936,6 @@ html[data-dsh-calling-card-skin] .dsh-cc-run {
 }
 html[data-dsh-calling-card-skin] :is(.dsh-cc-han, .dsh-cc-run)[data-cc-face="CcSerif"] { font-family: CcSerif, serif; }
 html[data-dsh-calling-card-skin] :is(.dsh-cc-han, .dsh-cc-run)[data-cc-face="CcDisplay"] { font-family: CcDisplay, sans-serif; }
-html[data-dsh-calling-card-skin] :is(.dsh-cc-han, .dsh-cc-run)[data-cc-face="CcBrush"] { font-family: CcBrush, cursive; }
 html[data-dsh-calling-card-skin] :is(.dsh-cc-han, .dsh-cc-run)[data-cc-face="Anton"] { font-family: Anton, sans-serif; }
 html[data-dsh-calling-card-skin] :is(.dsh-cc-han, .dsh-cc-run)[data-cc-face="ArchivoBlack"] { font-family: ArchivoBlack, sans-serif; }
 html[data-dsh-calling-card-skin] :is(.dsh-cc-han, .dsh-cc-run)[data-cc-face="AbrilFatface"] { font-family: AbrilFatface, serif; }
@@ -984,6 +1128,22 @@ html[data-dsh-calling-card-skin] [data-status] {
     right: 8px;
     left: auto;
   }
+  html[data-dsh-calling-card-skin] .dsh-cc-caption {
+    top: 54px;
+    transform: rotate(-3deg) scale(0.82);
+  }
+  html[data-dsh-calling-card-skin] .dsh-cc-sfx {
+    top: 40px;
+    width: 84px;
+    height: 84px;
+  }
+}
+
+@media (max-width: 760px) {
+  html[data-dsh-calling-card-skin] .dsh-cc-caption,
+  html[data-dsh-calling-card-skin] .dsh-cc-sfx {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -994,6 +1154,9 @@ html[data-dsh-calling-card-skin] [data-status] {
     transition: none !important;
   }
   html[data-dsh-calling-card-skin] .dsh-cc-transition {
+    display: none !important;
+  }
+  html[data-dsh-calling-card-skin] .dsh-cc-sfx {
     display: none !important;
   }
 }

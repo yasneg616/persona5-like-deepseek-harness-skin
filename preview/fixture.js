@@ -83,6 +83,7 @@ function boot() {
     if (props.stroke) el.setAttribute('stroke', props.stroke)
     if (props.strokeWidth) el.setAttribute('stroke-width', props.strokeWidth)
     if (props.points) el.setAttribute('points', props.points)
+    if (props.style) for (const [key, value] of Object.entries(props.style)) el.style.setProperty(key, String(value))
     if (props.ref) props.ref.current = el
     const children = Array.isArray(props.children) ? props.children : props.children == null ? [] : [props.children]
     children.forEach((child) => render(child, el))
@@ -91,9 +92,52 @@ function boot() {
   render(overlay.component({}), host)
   effects.forEach((fn) => fn())
   document.querySelector('[data-fixture-status]').textContent = '夹具已挂上构建后的 client.js。没有会话服务，也没有模型请求。'
+  scheduleAct(new URLSearchParams(location.search).get('act'))
+}
+
+/*
+ * Optional scripted step for screenshots: ?act=burst appends a tool card,
+ * ?act=nav switches the current panel. The frame is then frozen
+ * mid-animation so a headless shot shows the burst or the cut.
+ */
+function scheduleAct(act) {
+  if (!act) return
+  const at = { burst: 3550, nav: 3700 }[act]
+  if (!at) return
+  const fire = () => {
+    if (act === 'burst') {
+      const card = document.createElement('article')
+      card.setAttribute('data-chat-flow-kind', 'tool-call')
+      card.innerHTML = '<h3>run_tests</h3><p>夹具工具卡，没有执行命令。</p>'
+      document.querySelector('[data-conversation-scroll]').appendChild(card)
+    }
+    if (act === 'nav') {
+      for (const node of document.querySelectorAll('[aria-current="page"]')) node.removeAttribute('aria-current')
+      const panel = document.querySelector('[data-fixture-panel]')
+      panel.setAttribute('aria-current', 'page')
+      document.querySelector('[data-conversation-header-leading]')?.remove()
+    }
+  }
+  // Freeze the frame mid-animation so a headless shot catches it: pause every
+  // animation and drop the pending timers that would end it. Fixture only.
+  const hold = { burst: 380, nav: 330 }[act]
+  const freeze = () => {
+    // Headless virtual time does not advance the animation timeline, so seek explicitly.
+    document.getAnimations().forEach((animation) => {
+      animation.pause()
+      animation.currentTime = hold
+    })
+    const last = setTimeout(() => {}, 0)
+    for (let id = 0; id <= last; id += 1) clearTimeout(id)
+    document.documentElement.setAttribute('data-fixture-frozen', act)
+  }
+  setTimeout(() => {
+    fire()
+    setTimeout(freeze, hold)
+  }, Math.max(300, at - performance.now()))
 }
 
 const script = document.createElement('script')
-script.src = '/client.js'
+script.src = '../lib/client.js'
 script.onload = boot
 document.body.appendChild(script)

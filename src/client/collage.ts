@@ -1,36 +1,33 @@
+/**
+ * Ransom-note letters for the blank-session headline only.
+ *
+ * Readable mode: paragraphs, lists, tables, code and streamed headings are
+ * never cut. The only cut-out type on screen is the DEEPSEEK / HARNESS word
+ * (overlay) and the welcome headline (this module), so the page keeps at
+ * most two ransom elements.
+ */
 const SOURCE = 'data-cc-source'
 const PENDING = 'data-cc-pending'
 const STABLE = 'data-cc-stable'
 const MARK = 'data-cc-cut'
-const RUN = 'dsh-cc-run'
 const HAN = 'dsh-cc-han'
-const URL_RUN = 'dsh-cc-url'
 
-/** Welcome titles such as "Into the Unknown" fit. A longer streaming heading stays plain. */
-export const TITLE_CUT_MAX = 48
+/** Welcome titles such as "Into the Unknown" fit. Anything longer stays plain. */
+export const TITLE_CUT_MAX = 24
 export const SETTLE_MS = 500
 
 const LATIN_FACES = ['Anton', 'ArchivoBlack', 'AbrilFatface'] as const
-const CJK_FACES = ['CcSans', 'CcSerif', 'CcDisplay', 'CcBrush'] as const
-const CHIPS = ['paper', 'ink', 'red'] as const
+const CJK_FACES = ['CcSans', 'CcSerif', 'CcDisplay'] as const
 
 const BLOCK = 'pre, code, kbd, samp, math, svg, table, textarea, input, button, [contenteditable="true"], [data-composer-card], [data-composer-input], .katex, mjx-container'
 
-const TARGETS = [
-  '[data-cc-hero-title]',
-  '[data-cc-hero-tag]',
-  '[data-conversation-scroll] :is(h1, h2, h3)',
-  '[data-chat-flow-kind="assistant-step"] :is(h1, h2, h3, p, li, blockquote)',
-].join(', ')
+const TARGETS = '[data-cc-hero-title]'
 
-interface Piece {
+export interface Piece {
   text: string
-  kind: 'plain' | 'url' | 'run' | 'letter'
+  kind: 'plain' | 'letter'
   face?: string
-  chip?: string
   tone?: string
-  /** This piece starts a new word, so it needs a visible gap before it. */
-  gap?: boolean
 }
 
 let painting = false
@@ -44,77 +41,32 @@ function faceFor(character: string, index: number): string {
   return list[index % list.length]
 }
 
-export function piecesFor(text: string, mode: 'letters' | 'runs'): Piece[] {
-  if (mode === 'letters') {
-    const pieces: Piece[] = []
-    let index = 0
-    for (const character of text) {
-      if (character.trim().length === 0) {
-        pieces.push({ text: character, kind: 'plain' })
-        continue
-      }
-      pieces.push({
-        text: character,
-        kind: 'letter',
-        face: faceFor(character, index),
-        tone: String(index % 4),
-      })
-      index += 1
-    }
-    return pieces
-  }
+export function piecesFor(text: string): Piece[] {
   const pieces: Piece[] = []
-  const pattern = /(https?:\/\/[^\s]+)|(\s+)|([\u3400-\u9fff]+)|([A-Za-z0-9]+(?:['’][A-Za-z]+)?)|([^\s])/gu
-  let runIndex = 0
-  let afterSpace = false
-  for (const match of text.matchAll(pattern)) {
-    const [token, url, space, cjk, word] = match
-    if (url) {
-      pieces.push({ text: url, kind: 'url', gap: afterSpace })
-      afterSpace = false
+  let index = 0
+  for (const character of text) {
+    if (character.trim().length === 0) {
+      pieces.push({ text: character, kind: 'plain' })
       continue
     }
-    if (space || (!cjk && !word)) {
-      pieces.push({ text: token, kind: 'plain' })
-      afterSpace = Boolean(space)
-      continue
-    }
-    const chunks = cjk ? chunk(cjk, 2) : [word ?? token]
-    chunks.forEach((chunkText, chunkIndex) => {
-      const chip = CHIPS[runIndex % CHIPS.length]
-      pieces.push({
-        text: chunkText,
-        kind: 'run',
-        face: faceFor(chunkText, runIndex),
-        chip,
-        gap: afterSpace && chunkIndex === 0,
-      })
-      runIndex += 1
+    pieces.push({
+      text: character,
+      kind: 'letter',
+      face: faceFor(character, index),
+      tone: String((index * 7) % 4),
     })
-    afterSpace = false
+    index += 1
   }
   return pieces
-}
-
-function chunk(text: string, size: number): string[] {
-  const chars = [...text]
-  const parts: string[] = []
-  for (let i = 0; i < chars.length; i += size) parts.push(chars.slice(i, i + size).join(''))
-  return parts
-}
-
-function modeOf(block: Element): 'letters' | 'runs' {
-  return block.matches('h1, h2, h3, [data-cc-hero-title], [data-cc-hero-tag]') ? 'letters' : 'runs'
 }
 
 function blocked(block: Element): boolean {
   return block.closest(BLOCK) !== null
 }
 
-function tooLong(block: Element, text: string): boolean {
-  if (modeOf(block) !== 'letters') return false
+function cuttable(text: string): boolean {
   const chars = [...text].filter((character) => character.trim().length > 0)
-  return chars.length < 2 || chars.length > TITLE_CUT_MAX
+  return chars.length >= 2 && chars.length <= TITLE_CUT_MAX
 }
 
 function selectionInside(block: Element): boolean {
@@ -127,182 +79,90 @@ function selectionInside(block: Element): boolean {
 function fragmentFor(documentRef: Document, pieces: Piece[]): DocumentFragment {
   const fragment = documentRef.createDocumentFragment()
   let word: HTMLElement | null = null
-  const flush = () => {
-    if (!word) return
-    fragment.append(word)
-    word = null
-  }
   for (const piece of pieces) {
-    if (piece.kind !== 'letter') flush()
     if (piece.kind === 'plain') {
+      word = null
       fragment.append(documentRef.createTextNode(piece.text))
       continue
     }
-    const span = documentRef.createElement('span')
-    if (piece.kind === 'url') span.className = URL_RUN
-    else if (piece.kind === 'letter') {
-      span.className = HAN
-      span.setAttribute('data-cc-face', piece.face ?? '')
-      span.setAttribute('data-cc-han', piece.tone ?? '0')
-      if (!word) {
-        word = documentRef.createElement('span')
-        word.className = 'dsh-cc-word'
-      }
-      word.append(span)
-    } else {
-      span.className = RUN
-      span.setAttribute('data-cc-face', piece.face ?? '')
-      if (piece.chip) span.setAttribute('data-cc-chip', piece.chip)
-      if (piece.gap) span.setAttribute('data-cc-gap', '')
+    if (!word) {
+      word = documentRef.createElement('span')
+      word.className = 'dsh-cc-word'
+      fragment.append(word)
     }
+    const span = documentRef.createElement('span')
+    span.className = HAN
+    span.setAttribute('data-cc-face', piece.face ?? '')
+    span.setAttribute('data-cc-han', piece.tone ?? '0')
     span.textContent = piece.text
-    if (piece.kind !== 'letter') fragment.append(span)
+    word.append(span)
   }
-  flush()
   return fragment
 }
 
-function paintTextNode(node: Text, mode: 'letters' | 'runs'): void {
-  const text = node.textContent ?? ''
-  if (text.length === 0) return
-  const parent = node.parentNode
-  if (!parent) return
-  parent.replaceChild(fragmentFor(node.ownerDocument, piecesFor(text, mode)), node)
+function painted(block: Element): boolean {
+  return block.querySelector(`.${HAN}`) !== null
 }
 
 function paintElement(block: Element): void {
-  const mode = modeOf(block)
-  const nodes = [...block.childNodes]
-  for (const node of nodes) {
+  const text = block.textContent ?? ''
+  for (const node of Array.from(block.childNodes)) {
     if (node.nodeType === 3) {
-      paintTextNode(node as Text, mode)
+      block.replaceChild(fragmentFor(block.ownerDocument, piecesFor(node.textContent ?? '')), node)
       continue
     }
     if (node.nodeType !== 1) continue
     const element = node as Element
-    if (element.classList.contains(RUN) || element.classList.contains(HAN) || element.classList.contains(URL_RUN)) continue
     if (element.matches(BLOCK) || element.matches('a[href]')) continue
-    const inner = [...element.childNodes]
-    for (const child of inner) {
-      if (child.nodeType === 3) paintTextNode(child as Text, mode)
+    for (const child of Array.from(element.childNodes)) {
+      if (child.nodeType === 3) element.replaceChild(fragmentFor(block.ownerDocument, piecesFor(child.textContent ?? '')), child)
     }
   }
-  block.setAttribute(SOURCE, block.textContent ?? '')
+  block.setAttribute(SOURCE, text)
+  block.setAttribute('aria-label', text.replace(/\s+/g, ' ').trim())
   block.removeAttribute(PENDING)
   block.removeAttribute(STABLE)
-  if (mode === 'letters') block.setAttribute(MARK, '')
+  block.setAttribute(MARK, '')
 }
 
 export function restoreBlock(block: Element): void {
-  if (block.querySelector(`.${RUN}, .${HAN}, .${URL_RUN}`)) {
-    const text = block.textContent ?? ''
-    block.textContent = text
-  }
+  if (painted(block)) block.textContent = block.textContent ?? ''
+  if (block.hasAttribute(SOURCE)) block.removeAttribute('aria-label')
   block.removeAttribute(SOURCE)
   block.removeAttribute(PENDING)
   block.removeAttribute(STABLE)
   block.removeAttribute(MARK)
 }
 
-function boundary(block: Element, count: number): Text | null {
-  const documentRef = block.ownerDocument
-  const walker = documentRef.createTreeWalker(block, 4)
-  let seen = 0
-  let node = walker.nextNode() as Text | null
-  while (node) {
-    const length = node.textContent?.length ?? 0
-    if (seen + length > count) {
-      const parent = node.parentElement
-      if (parent && parent !== block && parent.closest(`.${RUN}, .${HAN}, .${URL_RUN}`)) return null
-      if (seen === count) return node
-      return null
-    }
-    seen += length
-    if (seen === count) {
-      const next = walker.nextNode() as Text | null
-      if (!next) return null
-      const parent = next.parentElement
-      if (parent && parent.closest(`.${RUN}, .${HAN}, .${URL_RUN}`)) return null
-      return next
-    }
-    node = walker.nextNode() as Text | null
-  }
-  return null
-}
-
-function wait(block: Element, text: string, now: number): void {
+function syncBlock(block: Element, now: number): void {
+  if (blocked(block) || selectionInside(block)) return
+  const text = block.textContent ?? ''
+  const saved = block.getAttribute(SOURCE)
+  if (saved === text && painted(block)) return
+  if (saved != null) restoreBlock(block)
+  if (!cuttable(text)) return
+  // Wait until the host stops rewriting the headline before cutting it.
   if (block.getAttribute(PENDING) !== text) {
     block.setAttribute(PENDING, text)
     block.setAttribute(STABLE, String(now))
     return
   }
   if (now - Number(block.getAttribute(STABLE) || 0) < SETTLE_MS) return
-  if (tooLong(block, text)) {
-    block.removeAttribute(PENDING)
-    block.removeAttribute(STABLE)
-    return
-  }
   paintElement(block)
-}
-
-function painted(block: Element): boolean {
-  return block.querySelector(`.${RUN}, .${HAN}, .${URL_RUN}`) !== null
-}
-
-function syncBlock(block: Element, now: number): void {
-  if (blocked(block) || selectionInside(block)) return
-  const text = block.textContent ?? ''
-  const saved = block.getAttribute(SOURCE)
-  const hero = block.matches('[data-cc-hero-title], [data-cc-hero-tag]')
-  if (saved === text && painted(block)) return
-  if (hero && !tooLong(block, text)) {
-    paintElement(block)
-    return
-  }
-  if (saved === text) return
-  if (saved != null && text.startsWith(saved) && block.querySelector(`.${RUN}, .${HAN}, .${URL_RUN}`)) {
-    if (block.getAttribute(PENDING) !== text) {
-      block.setAttribute(PENDING, text)
-      block.setAttribute(STABLE, String(now))
-      return
-    }
-    if (now - Number(block.getAttribute(STABLE) || 0) < SETTLE_MS) return
-    const tail = boundary(block, saved.length)
-    if (!tail) {
-      restoreBlock(block)
-      wait(block, text, now)
-      return
-    }
-    paintTextNode(tail, modeOf(block))
-    block.setAttribute(SOURCE, block.textContent ?? text)
-    block.removeAttribute(PENDING)
-    block.removeAttribute(STABLE)
-    return
-  }
-  if (saved != null) restoreBlock(block)
-  if (text.trim().length === 0) return
-  wait(block, text, now)
 }
 
 export function syncCollage(documentRef: Document, now = Date.now()): void {
   if (painting) return
   painting = true
   try {
-    const seen = new Set<Element>()
-    for (const block of Array.from(documentRef.querySelectorAll(TARGETS))) {
-      if (seen.has(block)) continue
-      seen.add(block)
-      syncBlock(block, now)
-    }
+    for (const block of Array.from(documentRef.querySelectorAll(TARGETS))) syncBlock(block, now)
   } finally {
     painting = false
   }
 }
 
 export function restoreCollage(documentRef: Document): void {
-  const blocks = new Set<Element>()
   for (const node of Array.from(documentRef.querySelectorAll(`[${SOURCE}], [${PENDING}], [${MARK}]`))) {
-    blocks.add(node)
+    restoreBlock(node)
   }
-  for (const block of blocks) restoreBlock(block)
 }

@@ -55,7 +55,7 @@ test('sidebar leaves mark real labels and restore cleanly', () => {
   assert.equal(dom.window.document.querySelector('[aria-current="page"]')?.getAttribute('data-cc-gloss'), '插件')
   assert.equal(dom.window.document.querySelector('[aria-current="page"]')?.getAttribute('data-cc-num'), '02')
   assert.equal(dom.window.document.querySelector('[aria-current="page"]')?.getAttribute('data-cc-lines'), '1')
-  const sessionLeaf = [...dom.window.document.querySelectorAll('button')].find((button) => button.textContent?.includes('New Session'))
+  const sessionLeaf = Array.from(dom.window.document.querySelectorAll('button')).find((button) => button.textContent?.includes('New Session'))
   assert.equal(sessionLeaf?.getAttribute('data-cc-lines'), '1')
   assert.equal(dom.window.document.querySelector('[aria-current="page"]')?.getAttribute('data-cc-leaf'), '')
   clearNavLeaves(dom.window.document)

@@ -73,6 +73,7 @@ test('built client registers tokens and removes them on dispose', async () => {
   assert.equal(source.includes('localStorage'), false)
   assert.equal(source.includes('setTheme'), false)
   assert.equal(source.includes('dsh-industrial'), false)
+  assert.equal(source.includes('CcBrush'), false)
   assert.equal(source.includes("name: 'root'") || source.includes('name: "root"'), false)
 
   const dom = new JSDOM('<!doctype html><html><head><title>DeepSeek Harness</title></head><body></body></html>', {
@@ -216,6 +217,16 @@ test('built client registers tokens and removes them on dispose', async () => {
   await new Promise((resolve) => setTimeout(resolve, 30))
   assert.equal(mount.querySelector('.dsh-cc-transition')?.classList.contains('is-on'), true)
   assert.match(mount.querySelector('.dsh-cc-motion-title')?.textContent ?? '', /PLUGINS/)
+  assert.equal(mount.querySelector('.dsh-cc-motion-title')?.hasAttribute('data-cc-letters'), true)
+  assert.equal(mount.querySelector('.dsh-cc-motion-kicker')?.textContent, 'HIDEOUT')
+  assert.equal(mount.querySelector('.dsh-cc-caption-title')?.textContent, 'Plugins')
+  assert.equal(mount.querySelector('.dsh-cc-sfx')?.classList.contains('is-on'), false)
+  const flow = window.document.createElement('article')
+  flow.setAttribute('data-chat-flow-kind', 'tool-call')
+  window.document.body.appendChild(flow)
+  await new Promise((resolve) => setTimeout(resolve, 30))
+  assert.equal(mount.querySelector('.dsh-cc-sfx')?.getAttribute('data-cc-kind'), 'tool')
+  assert.equal(mount.querySelector('.dsh-cc-sfx')?.classList.contains('is-on'), true)
   assert.equal(window.document.title.includes('Plugins'), false)
 
   for (const stop of stops) stop()

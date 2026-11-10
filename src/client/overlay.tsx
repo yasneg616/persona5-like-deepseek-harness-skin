@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { restoreCollage, syncCollage } from './collage.ts'
 import { cutoutFor } from './cutouts.ts'
 import { clearHeroType, clearNavLeaves, syncHeroType, syncNavLeaves, syncSideWidth } from './leaves.ts'
-import { readViewSignals, resolveArchitectureLabel } from './title.ts'
+import { countFlows, burstFor, createBurst } from './sfx.ts'
+import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, REPLAY_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
 
 function LetterLine({ word }: { word: string }) {
@@ -31,13 +32,13 @@ function LetterLine({ word }: { word: string }) {
   )
 }
 
-function LetterTiles({ state }: { state: string | null }) {
+/** Fixed two-line brand. The page name lives on the caption box, not here. */
+function LetterTiles() {
   return (
     <div className="dsh-cc-architecture" role="img" aria-label="DEEPSEEK HARNESS">
       <LetterLine word="DEEPSEEK" />
       <LetterLine word="HARNESS" />
       <i className="dsh-cc-tagline">CUT THE NOISE.</i>
-      {state ? <span className="dsh-cc-state">{state}</span> : null}
     </div>
   )
 }
@@ -46,11 +47,17 @@ function readLabel() {
   return resolveArchitectureLabel(readViewSignals(document))
 }
 
+/** Which transcript the flow counts belong to. A change resets the burst baseline. */
+function transcriptKey(documentRef: Document): string {
+  const row = documentRef.querySelector('[data-row-key^="session:"][aria-selected="true"]')?.getAttribute('data-row-key') ?? ''
+  const phase = documentRef.querySelector('[data-phase]')?.getAttribute('data-phase') ?? ''
+  return `${row}|${phase}`
+}
+
 /** Frame overlay: architectural type, non-blocking paper cut, replay control. */
 export function CallingCardOverlay() {
   const host = useRef<HTMLDivElement>(null)
   const live = useRef<HTMLDivElement>(null)
-  const [view, setView] = useState(readLabel)
 
   useEffect(() => {
     const node = host.current
@@ -72,25 +79,45 @@ export function CallingCardOverlay() {
       if (field) ground.append(field)
       frame.append(ground)
     }
+    const caption = createCaption(document)
+    node.appendChild(caption.root)
+    const burst = createBurst(document, window)
+    node.appendChild(burst.root)
     let current = readLabel().state ?? ''
+    let kicker = 'NAV'
     let primed = false
+    let flows = countFlows(document)
+    let flowKey = transcriptKey(document)
     const paint = (announce: boolean) => {
-      const next = readLabel()
       syncNavLeaves(document)
       syncHeroType(document)
       syncSideWidth(document)
       syncCollage(document)
-      setView((previous) => previous.state === next.state ? previous : next)
+      const signals = readViewSignals(document)
+      const next = resolveArchitectureLabel(signals)
+      const section = resolveSection(signals)
+      caption.update(section)
+      kicker = section.kicker
+      const nextFlows = countFlows(document)
+      const nextKey = transcriptKey(document)
+      const stateChanged = (next.state ?? '') !== current
+      // Bursts only for growth inside the same transcript: never the first paint or a switch.
+      if (primed && !stateChanged && nextKey === flowKey) {
+        const kind = burstFor(flows, nextFlows)
+        if (kind) burst.pop(kind)
+      }
+      flows = nextFlows
+      flowKey = nextKey
       if (!primed) {
         primed = true
         current = next.state ?? ''
         return
       }
-      if ((next.state ?? '') === current) return
+      if (!stateChanged) return
       current = next.state ?? ''
       if (!current) return
-      layer.play(current, NAV_DURATION_MS)
-      if (announce && !prefersReducedMotion(window)) status.textContent = `转场 ${next.text}`
+      layer.play(current, NAV_DURATION_MS, kicker)
+      if (announce && !prefersReducedMotion(window)) status.textContent = `转场 ${section.local} ${current}`
     }
     paint(false)
     let settleHeadings = window.setTimeout(() => syncCollage(document), 560)
@@ -120,7 +147,7 @@ export function CallingCardOverlay() {
     if (handle) handleObserver.observe(handle, { attributes: true, attributeFilter: ['style'] })
     const replay = node.querySelector('button')
     const onReplay = () => {
-      layer.play(current, REPLAY_DURATION_MS)
+      layer.play(current, REPLAY_DURATION_MS, kicker)
       status.textContent = prefersReducedMotion(window) ? '已跳过转场' : '重播转场'
     }
     replay?.addEventListener('click', onReplay)
@@ -135,6 +162,8 @@ export function CallingCardOverlay() {
       clearNavLeaves(document)
       clearHeroType(document)
       restoreCollage(document)
+      burst.dispose()
+      caption.dispose()
       layer.dispose()
     }
   }, [])
@@ -142,7 +171,7 @@ export function CallingCardOverlay() {
   return (
     <div className="dsh-cc-overlay" ref={host}>
       <div className="dsh-cc-field">
-        <LetterTiles state={view.state} />
+        <LetterTiles />
       </div>
       <button type="button" className="dsh-cc-replay">
         重播转场 <span aria-hidden="true">↗</span>

@@ -18,3 +18,5 @@ instance.json
 
 # screenshots of a real machine
 screenshots/
+# local fixture screenshots (scripts/shoot.ps1)
+shots/
