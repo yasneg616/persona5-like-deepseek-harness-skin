@@ -102,6 +102,8 @@ function boot() {
  *   ?act=enter  append a prompt, a reply and a tool card (papers fly in)
  *   ?act=load   nothing; freeze the page-load entries (leaves, rows, caption)
  *   ?act=stamp  freeze the moment the hero headline is cut (letters stamp in)
+ *   ?act=morph  focus the composer (and hover its button) so the selected leaf,
+ *               the selected row and the composer card show their living outline
  * The frame is then frozen: every animation is paused and seeked to `hold`
  * ms (headless virtual time does not advance the timeline on its own), and
  * the pending timers that would end it are dropped. `&hold=` and `&at=`
@@ -110,7 +112,7 @@ function boot() {
 function scheduleAct(act) {
   if (!act) return
   const params = new URLSearchParams(location.search)
-  const defaults = { burst: [3550, 380], nav: [3700, 330], enter: [2600, 200], load: [0, 160], stamp: [0, 200] }[act]
+  const defaults = { burst: [3550, 380], nav: [3700, 330], enter: [2600, 200], load: [0, 160], stamp: [0, 200], morph: [1600, 1500] }[act]
   if (!defaults) return
   const at = params.has('at') ? Number(params.get('at')) : defaults[0]
   const hold = params.has('hold') ? Number(params.get('hold')) : defaults[1]
@@ -128,6 +130,11 @@ function scheduleAct(act) {
       for (const node of document.querySelectorAll('[aria-current="page"]')) node.removeAttribute('aria-current')
       document.querySelector('[data-fixture-panel]').setAttribute('aria-current', 'page')
       document.querySelector('[data-conversation-header-leading]')?.remove()
+    }
+    if (act === 'morph') {
+      document.querySelector('[data-composer-input]')?.focus()
+      const button = document.querySelector('[data-composer-card] button')
+      if (button && params.get('hover') === '1') button.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
     }
     if (act === 'enter') {
       card('user', '<p>夹具提问：再跑一遍测试。不会发送。</p>')
@@ -147,7 +154,7 @@ function scheduleAct(act) {
     fire()
     // enter: the tool card lands as a second wave so both diagonals show.
     if (act === 'enter') setTimeout(() => card('tool-call', '<h3>read_file</h3><p>夹具工具卡，没有读盘。</p>'), 0)
-    setTimeout(freeze, act === 'enter' ? 30 : act === 'load' ? 0 : hold)
+    setTimeout(freeze, act === 'enter' ? 30 : act === 'load' || act === 'morph' ? 0 : hold)
   }
   if (act === 'load' && !params.has('at')) { run(); return }
   if (act === 'stamp') {

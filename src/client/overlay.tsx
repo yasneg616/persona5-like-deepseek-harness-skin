@@ -4,6 +4,7 @@ import { cutoutFor } from './cutouts.ts'
 import { clearHeroType, clearNavLeaves, syncHeroType, syncNavLeaves, syncSideWidth } from './leaves.ts'
 import { countFlows, burstFor, createBurst } from './sfx.ts'
 import { createEntryTracker } from './motion.ts'
+import { createMorphTracker } from './morph.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, REPLAY_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
 
@@ -85,6 +86,7 @@ export function CallingCardOverlay() {
     const burst = createBurst(document, window)
     node.appendChild(burst.root)
     const entries = createEntryTracker(document, window)
+    const morph = createMorphTracker(document, window)
     let current = readLabel().state ?? ''
     let kicker = 'NAV'
     let primed = false
@@ -99,6 +101,8 @@ export function CallingCardOverlay() {
       const next = resolveArchitectureLabel(signals)
       const section = resolveSection(signals)
       caption.update(section)
+      // Selected boxes keep reshaping their outline; re-armed if the host re-rendered them.
+      morph.sync()
       kicker = section.kicker
       const nextFlows = countFlows(document)
       const nextKey = transcriptKey(document)
@@ -170,6 +174,7 @@ export function CallingCardOverlay() {
       restoreCollage(document)
       burst.dispose()
       entries.dispose()
+      morph.dispose()
       caption.dispose()
       layer.dispose()
     }

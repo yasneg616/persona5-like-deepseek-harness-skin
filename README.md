@@ -48,7 +48,7 @@ dsh --profile calling-card --from-default-profile web
 Stop that process, then:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.4.5.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.4.6.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -66,7 +66,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.4.5.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.4.6.tgz
 ```
 
 ## Develop
