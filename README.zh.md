@@ -58,7 +58,7 @@ dsh --profile calling-card --from-default-profile web
 停掉这个进程，再安装本包（路径换成 tarball 的实际位置）：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.4.7.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.4.8.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -78,7 +78,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.4.7.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.4.8.tgz
 ```
 
 ## 本地构建与夹具

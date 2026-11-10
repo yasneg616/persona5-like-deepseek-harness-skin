@@ -125,13 +125,21 @@ html[data-dsh-calling-card-skin] .dsh-cc-stars {
   clip-path: polygon(58% 0, 100% 0, 72% 100%, 22% 100%);
   overflow: hidden;
 }
+/* Oversized star sheet at its natural size (same lattice and star scale as before). It sits
+ * one flow period above and right of the box so the slide below always covers it. */
 html[data-dsh-calling-card-skin] .dsh-cc-stars::before {
+  --cc-star-px: -535.3px;
+  --cc-star-py: 880.4px;
   content: "";
   position: absolute;
-  inset: -6%;
+  top: calc(-1 * var(--cc-star-py));
+  left: 0;
+  right: var(--cc-star-px);
+  bottom: 0;
   background-image: url("../../assets/star-field.svg");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+  background-repeat: repeat;
+  background-position: 0 0;
+  background-size: auto;
 }
 html[data-dsh-calling-card-skin] .dsh-cc-tear {
   display: none;
@@ -1365,13 +1373,17 @@ html[data-dsh-calling-card-skin] [data-composer-card]:focus-within {
 }
 
 /* Ground: star field drifts on the diagonal, the fault breathes, a red slash cuts through now and then. */
+/* The star field flows down the band like a menu backdrop: one lattice period (10 rows,
+ * so the rotation checker and the large stars line up again) every 14s, linear, so the
+ * loop point is pixel-identical to the start. Transform only, on its own layer. */
 html[data-dsh-calling-card-skin] .dsh-cc-stars::before {
-  animation: dsh-cc-drift-stars 38s linear infinite alternate;
+  animation: dsh-cc-flow-stars 14s linear infinite;
   will-change: transform;
+  backface-visibility: hidden;
 }
-@keyframes dsh-cc-drift-stars {
-  from { transform: translate(-2.5%, -2.5%) rotate(-0.6deg); }
-  to { transform: translate(2.5%, 2.5%) rotate(0.6deg); }
+@keyframes dsh-cc-flow-stars {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(var(--cc-star-px), var(--cc-star-py), 0); }
 }
 html[data-dsh-calling-card-skin] .dsh-cc-fault {
   animation: dsh-cc-pulse 2.6s steps(2, jump-none) infinite;
@@ -1544,13 +1556,10 @@ html[data-dsh-calling-card-skin] [data-cc-morph-fit="in"] > .dsh-cc-morph {
   html[data-dsh-calling-card-skin] .dsh-cc-spine {
     display: none !important;
   }
-  /* Static 0.4.4 look: no hover lift, no squash, star field at its old size. */
+  /* Static look: no hover lift, no squash; the star field holds its first frame. */
   html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, .dsh-cc-replay, [data-sidebar-toggle]) {
     translate: none !important;
     scale: none !important;
     rotate: none !important;
-  }
-  html[data-dsh-calling-card-skin] .dsh-cc-stars::before {
-    inset: 0;
   }
 }
