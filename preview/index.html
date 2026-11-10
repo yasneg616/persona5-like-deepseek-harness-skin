@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hans" data-dsh-calling-card-skin>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeek Harness</title>
+<link rel="stylesheet" href="/skin.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; }
+  body { min-height: 100vh; }
+  #frame { height: calc(100vh - 32px); display: grid; grid-template-columns: 280px minmax(0, 1fr); position: relative; }
+  @media (max-width: 900px) {
+    #frame { height: auto; min-height: calc(100vh - 32px); grid-template-columns: 1fr; }
+    #sidebar { min-height: 0; }
+    #center { min-height: 70vh; }
+  }
+  #sidebar, #center { min-width: 0; min-height: 0; }
+  #center { display: flex; flex-direction: column; }
+  [data-conversation-header-leading] { padding: 16px 20px 8px; color: #f7f4ee; }
+  [data-conversation-scroll] { flex: 1; overflow: auto; padding: 12px 28px 24px; }
+  [data-composer-seat] { padding: 8px 20px 16px; }
+  [data-composer-card] { position: relative; padding: 12px 14px; }
+  [data-composer-input] { width: 100%; min-height: 52px; border: 0; background: transparent; resize: none; }
+  .fixture-banner { margin: 0; background: #fff; color: #111; font: 700 12px/1.4 sans-serif; padding: 6px 10px; }
+  button.send { background: #e60012; color: #fff; border: 0; font-weight: 800; padding: 8px 12px; }
+</style>
+</head>
+<body>
+<p class="fixture-banner" data-fixture-status>测试夹具 · 不是已连接的 DeepSeek Harness · 示例正文</p>
+<div id="frame">
+  <div id="sidebar">
+    <div style="padding:8px 12px"><span class="dsh-cc-name">DSH <span>斩噪</span></span></div>
+    <div role="treeitem" data-row-key="session:demo-1" aria-selected="true">检查令牌刷新</div>
+    <div role="treeitem" data-row-key="session:demo-2" aria-selected="false">整理交付说明</div>
+    <div role="treeitem" data-row-key="session:demo-3" aria-selected="false">阅读边界用例</div>
+  </div>
+  <div id="center">
+    <div data-conversation-header-leading>当前会话 · 夹具标题</div>
+    <div data-conversation-region="chat" data-conversation-scroll>
+      <article data-chat-flow-kind="user"><p>检查令牌刷新失败的原因，先给我修复方案。</p></article>
+      <article data-chat-flow-kind="assistant-step">
+        <h1>让问题无处藏身</h1>
+        <p>先看<strong>到期时刻的边界判断</strong>。这段是水平正文，不逐字旋转。</p>
+        <h2>修复建议</h2>
+        <p>注入可控时钟，统一 UTC。达到到期时间时进入刷新分支。</p>
+        <pre><code># 方案示例 · 尚未执行
+if now &gt;= token.expires_at:
+    return refresh_token(token)</code></pre>
+      </article>
+      <article data-chat-flow-kind="tool-call">
+        <h3>read_file</h3>
+        <p>工具状态示例。没有读取磁盘，也没有执行命令。</p>
+      </article>
+    </div>
+    <form data-composer-seat data-conversation-region="composer">
+      <div data-composer-card>
+        <textarea data-composer-input placeholder="下一步，要让 DSH 做什么？"></textarea>
+        <button class="send" type="button">SEND</button>
+      </div>
+    </form>
+  </div>
+  <div data-shell-overlay></div>
+</div>
+<script src="/fixture.js"></script>
+</body>
+</html>

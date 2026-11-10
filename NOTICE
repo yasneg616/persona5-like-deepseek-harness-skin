@@ -1,0 +1,20 @@
+dsh-calling-card-skin bundles SIL Open Font License 1.1 families
+inside lib/skin.css and lib/client.js as data URLs, and also ships the
+font files under assets/fonts:
+
+- Anton (Copyright 2020 The Anton Project Authors) — LICENSES/OFL-Anton.txt
+- Archivo Black (Copyright 2020 The Archivo Black Project Authors) — LICENSES/OFL-ArchivoBlack.txt
+- Abril Fatface (Copyright 2011 The Abril Fatface Project Authors) — LICENSES/OFL-AbrilFatface.txt
+- Noto Sans SC and Noto Serif SC (Copyright 2014-2024 Adobe, Reserved Font Name Source) — LICENSES/OFL-CJK.txt
+- ZCOOL KuaiLe (Copyright 2018 The ZCOOL KuaiLe Project Authors) — LICENSES/OFL-CJK.txt
+- Ma Shan Zheng (Copyright 2018 The MaShanZheng Project Authors) — LICENSES/OFL-CJK.txt
+
+The four CJK files are woff2 subsets of those families, cut to GB2312 level 1
+plus the skin's own labels (about 536 KB, 704 KB, 449 KB, and 1.7 MB).
+They cover 3,751 ideographs. A rarer character can still fall through to a generic family.
+
+assets/star-band.svg and the calling-card geometry are original to this skin.
+No game artwork, character art, or game fonts are included.
+
+This package does not modify DeepSeek Harness, dsh-industrial-acid-skin, or
+dsh-audio-reactive.

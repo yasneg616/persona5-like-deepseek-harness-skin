@@ -1,0 +1,78 @@
+{
+  "name": "dsh-calling-card-skin",
+  "version": "0.4.3",
+  "private": true,
+  "description": "Calling-card skin for the DeepSeek Harness web client. Red, black, and white paper geometry over live sessions, messages, and the composer.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/client.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "assets",
+    "LICENSES",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "docs",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": false,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-theme",
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1",
+    "@deepseek-ai/cordis": ">=4.0.4 <5"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh": { "optional": true },
+    "@deepseek-ai/cordis": { "optional": true }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --experimental-strip-types --test tests/*.test.ts",
+    "preview": "node scripts/preview-server.mjs"
+  },
+  "devDependencies": {
+    "@deepseek-ai/dsh-client-ui-theme": "0.2.0-rc.2",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.2",
+    "dsh-theme-022": "npm:@deepseek-ai/dsh-client-ui-theme@0.2.2-rc.1",
+    "esbuild": "^0.25.11",
+    "jsdom": "^27.0.1",
+    "react": "^19.2.0",
+    "semver": "^7.7.3",
+    "typescript": "^5.9.3"
+  }
+}

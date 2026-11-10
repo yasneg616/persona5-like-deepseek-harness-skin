@@ -1,0 +1,20 @@
+node_modules/
+lib/
+dist/
+uploads/
+agent-tools/
+*.tgz
+.DS_Store
+
+# secrets, tokens, and local instance files
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+*.token
+instance.json
+*.instance
+
+# screenshots of a real machine
+screenshots/

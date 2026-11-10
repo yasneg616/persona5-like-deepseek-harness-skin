@@ -1,0 +1,5 @@
+# Calling-card skin bundle layer.
+# Inserts one row. It does not replace, disable, or edit any other bundle.
+- insert:
+    - id: calling-card-skin
+      name: dsh-calling-card-skin

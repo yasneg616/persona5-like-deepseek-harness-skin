@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hans" data-dsh-calling-card-skin style="--dsh-cc-side: 32%">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calling-card conversation fixture</title>
+<link rel="stylesheet" href="/skin.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  .banner {
+    position: absolute;
+    z-index: 30;
+    left: 12px;
+    bottom: 10px;
+    margin: 0;
+    max-width: 28%;
+    background: #fff;
+    color: #111;
+    font: 700 12px/1.3 sans-serif;
+    padding: 4px 8px;
+  }
+  #frame {
+    display: grid;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #frame > .dsh-cc-ground { grid-column: 1 / -1; grid-row: 1; }
+  #frame > .side { grid-column: 1; grid-row: 1; z-index: 2; }
+  #frame > .main {
+    grid-column: 2;
+    grid-row: 1;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+  }
+  #frame > .main > [data-phase] {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+  }
+  #frame > [data-shell-overlay] { grid-column: 1 / -1; grid-row: 1; }
+  #frame > .side, #frame > .main { min-width: 0; min-height: 0; }
+  [data-phase="active"] { display: flex; flex-direction: column; min-height: 0; }
+  [data-conversation-scroll] { flex: 1 1 auto; min-height: 0; overflow: auto; padding: 8px 8px 12px; }
+  [data-composer-seat] { flex: 0 0 auto; position: relative; z-index: 2; padding: 0 4px 8px; background: #0c0c0c; }
+  [data-composer-card] { position: relative; padding: 8px 12px; }
+  [data-composer-input] {
+    width: 100%;
+    min-height: 40px;
+    border: 0;
+    background: transparent;
+    resize: none;
+    color: #141414;
+    font: 16px/1.5 sans-serif;
+  }
+  .side { display: flex; flex-direction: column; padding: 12px 0 16px; }
+  .fixture-note { color: #fff; font: 700 12px/1.3 sans-serif; margin: 8px 16px; }
+</style>
+</head>
+<body>
+<p class="banner">合成夹具 · 不是 DeepSeek Harness · 没有模型调用 · 标题和正文走同一套拼贴 · 流式段已稳定</p>
+<div id="frame">
+  <div class="dsh-cc-ground" aria-hidden="true">
+    <div class="dsh-cc-sky"></div>
+    <div class="dsh-cc-fault"></div>
+    <div class="dsh-cc-stars"></div>
+  <div class="dsh-cc-field"></div>
+  </div>
+  <div class="side">
+    <button type="button" data-sidebar-toggle aria-label="夹具侧栏" hidden></button>
+    <p class="fixture-note">夹具导航 · 不是宿主页面</p>
+    <button type="button" data-cc-leaf data-cc-i="0" data-cc-num="01" data-cc-lines="2" data-cc-gloss="新会话">New Session</button>
+    <button type="button" data-cc-leaf data-cc-i="1" data-cc-num="02" data-cc-lines="1" data-cc-gloss="插件" aria-current="page">Plugins</button>
+    <button type="button" data-cc-leaf data-cc-i="2" data-cc-num="03" data-cc-lines="2" data-cc-gloss="自动化">Automation tasks</button>
+    <div role="treeitem" data-row-key="session:fixture" aria-selected="true">示例会话</div>
+  </div>
+  <div class="main">
+    <div data-phase="active">
+      <div data-conversation-scroll>
+        <h1 data-cc-hero-title>探索未至之境</h1>
+        <span data-cc-hero-tag>预览版</span>
+        <h1 data-cc-hero-title>Into the Unknown</h1>
+        <span data-cc-hero-tag>Preview</span>
+        <article data-chat-flow-kind="user"><p>这是一条手写的提问示例，用来看黑色纸条。不会发送。</p></article>
+        <article data-chat-flow-kind="assistant-step">
+          <h2>修复建议</h2>
+          <p>正文改成拼贴。打开 https://example.com/docs 看说明，代码 <code>npm test</code> 保持原样。这里不是模型回复。</p>
+          <p data-cc-stream>拼贴已经稳定</p>
+          <pre><code># 示例代码 · 没有执行
+if ready:
+    return "ok"</code></pre>
+        </article>
+      </div>
+      <form data-composer-seat>
+        <div data-composer-card>
+          <textarea data-composer-input placeholder="示例输入，不会发送"></textarea>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div data-shell-overlay></div>
+</div>
+<script src="/fixture-boot.js"></script>
+</body>
+</html>
