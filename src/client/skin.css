@@ -122,14 +122,25 @@ html[data-dsh-calling-card-skin] .dsh-cc-fault {
 }
 html[data-dsh-calling-card-skin] .dsh-cc-stars {
   background-color: #fff;
+  clip-path: polygon(58% 0, 100% 0, 72% 100%, 22% 100%);
+  overflow: hidden;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-stars::before {
+  content: "";
+  position: absolute;
+  inset: -6%;
   background-image: url("../../assets/star-field.svg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  clip-path: polygon(58% 0, 100% 0, 72% 100%, 22% 100%);
 }
-html[data-dsh-calling-card-skin] .dsh-cc-spine,
 html[data-dsh-calling-card-skin] .dsh-cc-tear {
   display: none;
+}
+/* Red slash. Parked off-canvas; the motion layer sweeps it across now and then. */
+html[data-dsh-calling-card-skin] .dsh-cc-spine {
+  background: var(--dsh-cc-red);
+  clip-path: polygon(46% 0, 49% 0, 31% 100%, 28% 100%);
+  translate: -130% 0;
 }
 
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) > div:has([data-sidebar-toggle]) {
@@ -606,7 +617,8 @@ html[data-dsh-calling-card-skin] .dsh-cc-caption {
   align-items: flex-start;
   max-width: min(40vw, 520px);
   pointer-events: none;
-  transform: rotate(-4deg);
+  --cc-cap-base: rotate(-4deg);
+  transform: var(--cc-cap-base);
   transform-origin: left top;
   filter: drop-shadow(7px 8px 0 var(--dsh-cc-red));
 }
@@ -1130,7 +1142,7 @@ html[data-dsh-calling-card-skin] [data-status] {
   }
   html[data-dsh-calling-card-skin] .dsh-cc-caption {
     top: 54px;
-    transform: rotate(-3deg) scale(0.82);
+    --cc-cap-base: rotate(-3deg) scale(0.82);
   }
   html[data-dsh-calling-card-skin] .dsh-cc-sfx {
     top: 40px;
@@ -1146,6 +1158,238 @@ html[data-dsh-calling-card-skin] [data-status] {
   }
 }
 
+/* ================================================================
+ * Motion layer (0.4.5). Snappy P5 grammar: 120-350ms, hard ease-out with
+ * overshoot, steps() jitter, diagonal entries, no slow fades.
+ * Transform / opacity only. Entries run once on nodes tagged
+ * [data-cc-enter] by motion.ts; the tag comes off when they end, so
+ * settled reading text never moves. Reduced motion turns all of it off.
+ * ================================================================ */
+html[data-dsh-calling-card-skin] {
+  --cc-snap: cubic-bezier(0.2, 1.5, 0.35, 1);
+  --cc-punch: cubic-bezier(0.3, 1.9, 0.5, 1);
+  --cc-cut: cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+/* Sidebar leaves: staggered slam from the left. */
+html[data-dsh-calling-card-skin] [data-cc-leaf] {
+  transition:
+    translate 160ms var(--cc-punch),
+    scale 160ms var(--cc-punch),
+    filter 120ms steps(2, end);
+}
+html[data-dsh-calling-card-skin] [data-cc-leaf][data-cc-enter] {
+  animation: dsh-cc-in-slam 300ms var(--cc-snap) calc(var(--cc-stagger, 0) * 55ms) both;
+}
+@keyframes dsh-cc-in-slam {
+  0% { translate: -115% 18px; rotate: -9deg; scale: 1.08 0.9; opacity: 0; }
+  55% { translate: 5% -3px; rotate: 2deg; scale: 0.97 1.04; opacity: 1; }
+  78% { translate: -1.5% 1px; rotate: -0.6deg; scale: 1; }
+  100% { translate: 0 0; rotate: 0deg; scale: 1; opacity: 1; }
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf]:hover {
+    translate: 12px -3px;
+    scale: 1.05;
+    filter:
+      drop-shadow(1px 0 0 #111)
+      drop-shadow(-1px 0 0 #111)
+      drop-shadow(0 1px 0 #111)
+      drop-shadow(0 -1px 0 #111)
+      drop-shadow(12px 9px 0 #fff)
+      drop-shadow(5px 5px 0 #111);
+  }
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf]:active {
+  scale: 0.93 1.07;
+  transition-duration: 60ms;
+  filter: brightness(1.35) drop-shadow(6px 6px 0 #fff);
+}
+/* The current page punches once, then breathes with a small stepped tilt. */
+html[data-dsh-calling-card-skin] [data-cc-leaf][aria-current="page"]:not([data-cc-enter]) {
+  animation:
+    dsh-cc-pick 260ms var(--cc-punch) both,
+    dsh-cc-idle-tilt 1.6s steps(4, jump-none) 260ms infinite alternate;
+}
+@keyframes dsh-cc-pick {
+  0% { scale: 1.16 0.86; rotate: 3deg; }
+  60% { scale: 0.96 1.05; rotate: -1deg; }
+  100% { scale: 1; rotate: 0deg; }
+}
+@keyframes dsh-cc-idle-tilt {
+  from { rotate: 0deg; translate: 0 0; }
+  to { rotate: 1.4deg; translate: 3px -2px; }
+}
+
+/* Session rows and the project tree: stagger in, slide and cut red on hover, pulse when picked. */
+html[data-dsh-calling-card-skin] :is([data-row-key^="session:"], [data-row-key^="workspace:"]) {
+  transition: translate 150ms var(--cc-punch), scale 150ms var(--cc-punch), filter 110ms steps(2, end);
+}
+html[data-dsh-calling-card-skin] :is([data-row-key^="session:"], [data-row-key^="workspace:"])[data-cc-enter] {
+  animation: dsh-cc-in-row 260ms var(--cc-snap) calc(140ms + var(--cc-stagger, 0) * 40ms) both;
+}
+@keyframes dsh-cc-in-row {
+  0% { translate: -70px 10px; rotate: 6deg; opacity: 0; }
+  60% { translate: 6px -2px; rotate: -1.5deg; opacity: 1; }
+  100% { translate: 0 0; rotate: 0deg; opacity: 1; }
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-row-key^="session:"]:hover {
+    translate: 10px 0;
+    filter: drop-shadow(7px 6px 0 #111) drop-shadow(-4px 0 0 var(--dsh-cc-red));
+  }
+  html[data-dsh-calling-card-skin] [data-row-key^="workspace:"]:hover {
+    translate: 6px 0;
+  }
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"][aria-selected="true"]:not([data-cc-enter]) {
+  animation: dsh-cc-pick 280ms var(--cc-punch) both;
+}
+
+/* Brand: stepped per-letter bob and a rare hard glitch. Small, never on reading text. */
+html[data-dsh-calling-card-skin] .dsh-cc-architecture .dsh-cc-letter {
+  animation: dsh-cc-bob 1.8s steps(2, jump-none) infinite;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-architecture .dsh-cc-letter:nth-child(2n) { animation-delay: -0.45s; }
+html[data-dsh-calling-card-skin] .dsh-cc-architecture .dsh-cc-letter:nth-child(3n) { animation-delay: -0.9s; animation-duration: 2.2s; }
+html[data-dsh-calling-card-skin] .dsh-cc-architecture .dsh-cc-letter:nth-child(5n) { animation-delay: -1.3s; animation-duration: 1.5s; }
+@keyframes dsh-cc-bob {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  50% { translate: 0 -0.035em; rotate: -1.5deg; }
+}
+html[data-dsh-calling-card-skin] .dsh-cc-architecture .dsh-cc-line {
+  animation: dsh-cc-glitch 7.4s steps(1, end) infinite;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-architecture .dsh-cc-line + .dsh-cc-line {
+  animation-delay: -3.1s;
+}
+@keyframes dsh-cc-glitch {
+  0%, 94%, 100% { translate: 0 0; }
+  94.6% { translate: -0.09em 0.02em; }
+  95.2% { translate: 0.12em -0.02em; }
+  95.8% { translate: -0.04em 0; }
+}
+
+/* Hero headline: letters stamp in one by one, then a small stepped wiggle. */
+html[data-dsh-calling-card-skin] [data-cc-hero-title][data-cc-cut] .dsh-cc-han {
+  animation:
+    dsh-cc-in-stamp 240ms var(--cc-snap) calc(var(--cc-n, 0) * 55ms) backwards,
+    dsh-cc-wiggle 1.4s steps(2, jump-none) calc(400ms + var(--cc-n, 0) * 55ms) infinite;
+}
+html[data-dsh-calling-card-skin] [data-cc-hero-title][data-cc-cut] .dsh-cc-han:nth-child(2n) {
+  animation-duration: 240ms, 1.7s;
+}
+@keyframes dsh-cc-in-stamp {
+  0% { translate: 0.45em -1.7em; rotate: -55deg; scale: 2.1; opacity: 0; }
+  50% { translate: 0 0.1em; rotate: 9deg; scale: 0.86; opacity: 1; }
+  75% { translate: 0 -0.03em; rotate: -3deg; scale: 1.05; }
+  100% { translate: 0 0; rotate: 0deg; scale: 1; opacity: 1; }
+}
+@keyframes dsh-cc-wiggle {
+  0%, 100% { rotate: 0deg; }
+  50% { rotate: 2.5deg; }
+}
+html[data-dsh-calling-card-skin] [data-cc-hero-tag] {
+  animation: dsh-cc-in-tag 260ms var(--cc-punch) 520ms backwards;
+}
+@keyframes dsh-cc-in-tag {
+  0% { translate: 40px -10px; rotate: 18deg; scale: 1.4; opacity: 0; }
+  100% { translate: 0 0; rotate: 0deg; scale: 1; opacity: 1; }
+}
+
+/* Caption: skew-slam on mount and on every page change; the number flips. */
+html[data-dsh-calling-card-skin] .dsh-cc-caption {
+  animation: dsh-cc-in-cap 340ms var(--cc-snap) both;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption.is-slam {
+  animation: dsh-cc-slam-cap 340ms var(--cc-snap) both;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-caption.is-slam .dsh-cc-caption-no {
+  animation: dsh-cc-flip 300ms steps(5, end) both;
+}
+@keyframes dsh-cc-in-cap {
+  0% { transform: var(--cc-cap-base) translateX(-60px) skewX(-28deg) scale(1.25, 0.8); opacity: 0; }
+  55% { transform: var(--cc-cap-base) translateX(8px) skewX(6deg) scale(0.96, 1.05); opacity: 1; }
+  100% { transform: var(--cc-cap-base); opacity: 1; }
+}
+@keyframes dsh-cc-slam-cap {
+  0% { transform: var(--cc-cap-base) translateX(-60px) skewX(-28deg) scale(1.25, 0.8); opacity: 0; }
+  55% { transform: var(--cc-cap-base) translateX(8px) skewX(6deg) scale(0.96, 1.05); opacity: 1; }
+  100% { transform: var(--cc-cap-base); opacity: 1; }
+}
+@keyframes dsh-cc-flip {
+  0% { scale: 1 0.1; translate: 0 -10px; }
+  60% { scale: 1 1.2; translate: 0 2px; }
+  100% { scale: 1 1; translate: 0 0; }
+}
+
+/* Transcript papers: new ones fly in from alternating diagonals and settle with overshoot. */
+html[data-dsh-calling-card-skin] [data-chat-flow-kind][data-cc-enter="l"] {
+  animation: dsh-cc-in-fly-l 330ms var(--cc-snap) both;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind][data-cc-enter="r"] {
+  animation: dsh-cc-in-fly-r 330ms var(--cc-snap) both;
+}
+@keyframes dsh-cc-in-fly-l {
+  0% { transform: translate(-22vw, 60px) rotate(-9deg) skewX(-14deg); opacity: 0; }
+  58% { transform: translate(10px, -4px) rotate(1.2deg) skewX(2deg); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes dsh-cc-in-fly-r {
+  0% { transform: translate(22vw, -50px) rotate(8deg) skewX(14deg); opacity: 0; }
+  58% { transform: translate(-10px, 4px) rotate(-1.2deg) skewX(-2deg); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+/* Buttons and the composer: pop and tilt on hover, squash on press, red frame snaps on focus. */
+html[data-dsh-calling-card-skin] :is([data-composer-card] button, .dsh-cc-replay, [data-sidebar-toggle]) {
+  transition: translate 140ms var(--cc-punch), scale 140ms var(--cc-punch), rotate 140ms var(--cc-punch);
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] :is([data-composer-card] button, .dsh-cc-replay, [data-sidebar-toggle]):hover {
+    translate: 0 -3px;
+    scale: 1.1;
+    rotate: -4deg;
+  }
+}
+html[data-dsh-calling-card-skin] :is([data-composer-card] button, .dsh-cc-replay, [data-sidebar-toggle]):active {
+  scale: 0.86 1.1;
+  rotate: 2deg;
+  transition-duration: 50ms;
+}
+html[data-dsh-calling-card-skin] [data-composer-card] {
+  transition: box-shadow 120ms steps(2, end);
+}
+html[data-dsh-calling-card-skin] [data-composer-card]:focus-within {
+  box-shadow: 0 0 0 3px var(--dsh-cc-red), 11px 12px 0 #000;
+}
+
+/* Ground: star field drifts on the diagonal, the fault breathes, a red slash cuts through now and then. */
+html[data-dsh-calling-card-skin] .dsh-cc-stars::before {
+  animation: dsh-cc-drift-stars 38s linear infinite alternate;
+  will-change: transform;
+}
+@keyframes dsh-cc-drift-stars {
+  from { transform: translate(-2.5%, -2.5%) rotate(-0.6deg); }
+  to { transform: translate(2.5%, 2.5%) rotate(0.6deg); }
+}
+html[data-dsh-calling-card-skin] .dsh-cc-fault {
+  animation: dsh-cc-pulse 2.6s steps(2, jump-none) infinite;
+  transform-origin: 40% 60%;
+}
+@keyframes dsh-cc-pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.012; }
+}
+html[data-dsh-calling-card-skin] .dsh-cc-spine {
+  display: block;
+  animation: dsh-cc-slash 9s var(--cc-cut) 2s infinite;
+}
+@keyframes dsh-cc-slash {
+  0%, 92% { translate: -130% 0; }
+  97%, 100% { translate: 130% 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html[data-dsh-calling-card-skin] *,
   html[data-dsh-calling-card-skin] *::before,
@@ -1158,5 +1402,17 @@ html[data-dsh-calling-card-skin] [data-status] {
   }
   html[data-dsh-calling-card-skin] .dsh-cc-sfx {
     display: none !important;
+  }
+  html[data-dsh-calling-card-skin] .dsh-cc-spine {
+    display: none !important;
+  }
+  /* Static 0.4.4 look: no hover lift, no squash, star field at its old size. */
+  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, .dsh-cc-replay, [data-sidebar-toggle]) {
+    translate: none !important;
+    scale: none !important;
+    rotate: none !important;
+  }
+  html[data-dsh-calling-card-skin] .dsh-cc-stars::before {
+    inset: 0;
   }
 }

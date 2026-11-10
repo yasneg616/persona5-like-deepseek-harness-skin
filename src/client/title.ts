@@ -145,6 +145,14 @@ export function createCaption(documentRef: Document): CaptionHandle {
   return {
     root,
     update(section) {
+      const changed = title.textContent !== section.title || kickerLatin.textContent !== section.kicker
+      const first = !root.hasAttribute('data-cc-kicker')
+      if (changed && !first) {
+        // Restart the slam: drop the class, force a style flush, add it back.
+        root.classList.remove('is-slam')
+        void root.offsetWidth
+        root.classList.add('is-slam')
+      }
       set(no, section.no)
       set(kickerLatin, section.kicker)
       set(kickerLocal, section.local)

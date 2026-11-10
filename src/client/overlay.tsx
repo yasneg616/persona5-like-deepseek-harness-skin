@@ -3,6 +3,7 @@ import { restoreCollage, syncCollage } from './collage.ts'
 import { cutoutFor } from './cutouts.ts'
 import { clearHeroType, clearNavLeaves, syncHeroType, syncNavLeaves, syncSideWidth } from './leaves.ts'
 import { countFlows, burstFor, createBurst } from './sfx.ts'
+import { createEntryTracker } from './motion.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, REPLAY_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
 
@@ -83,6 +84,7 @@ export function CallingCardOverlay() {
     node.appendChild(caption.root)
     const burst = createBurst(document, window)
     node.appendChild(burst.root)
+    const entries = createEntryTracker(document, window)
     let current = readLabel().state ?? ''
     let kicker = 'NAV'
     let primed = false
@@ -101,8 +103,12 @@ export function CallingCardOverlay() {
       const nextFlows = countFlows(document)
       const nextKey = transcriptKey(document)
       const stateChanged = (next.state ?? '') !== current
+      const grewInPlace = primed && !stateChanged && nextKey === flowKey
+      const phaseChanged = primed && nextKey.split('|')[1] !== flowKey.split('|')[1]
+      // Entry motion only for nodes that just arrived; papers only when the transcript grew in place.
+      entries.sync({ flows: grewInPlace, replayLeaves: phaseChanged })
       // Bursts only for growth inside the same transcript: never the first paint or a switch.
-      if (primed && !stateChanged && nextKey === flowKey) {
+      if (grewInPlace) {
         const kind = burstFor(flows, nextFlows)
         if (kind) burst.pop(kind)
       }
@@ -163,6 +169,7 @@ export function CallingCardOverlay() {
       clearHeroType(document)
       restoreCollage(document)
       burst.dispose()
+      entries.dispose()
       caption.dispose()
       layer.dispose()
     }

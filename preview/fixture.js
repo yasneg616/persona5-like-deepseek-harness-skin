@@ -96,33 +96,45 @@ function boot() {
 }
 
 /*
- * Optional scripted step for screenshots: ?act=burst appends a tool card,
- * ?act=nav switches the current panel. The frame is then frozen
- * mid-animation so a headless shot shows the burst or the cut.
+ * Optional scripted step for screenshots and motion frames:
+ *   ?act=burst  append a tool card (comic burst)
+ *   ?act=nav    switch the current panel (caption slam + letter cut)
+ *   ?act=enter  append a prompt, a reply and a tool card (papers fly in)
+ *   ?act=load   nothing; freeze the page-load entries (leaves, rows, caption)
+ *   ?act=stamp  freeze the moment the hero headline is cut (letters stamp in)
+ * The frame is then frozen: every animation is paused and seeked to `hold`
+ * ms (headless virtual time does not advance the timeline on its own), and
+ * the pending timers that would end it are dropped. `&hold=` and `&at=`
+ * override the defaults. Fixture only.
  */
 function scheduleAct(act) {
   if (!act) return
-  const at = { burst: 3550, nav: 3700 }[act]
-  if (!at) return
+  const params = new URLSearchParams(location.search)
+  const defaults = { burst: [3550, 380], nav: [3700, 330], enter: [2600, 200], load: [0, 160], stamp: [0, 200] }[act]
+  if (!defaults) return
+  const at = params.has('at') ? Number(params.get('at')) : defaults[0]
+  const hold = params.has('hold') ? Number(params.get('hold')) : defaults[1]
+  const scroll = () => document.querySelector('[data-conversation-scroll]')
+  const card = (kind, html) => {
+    const node = document.createElement('article')
+    node.setAttribute('data-chat-flow-kind', kind)
+    node.innerHTML = html
+    scroll().appendChild(node)
+    scroll().scrollTop = scroll().scrollHeight
+  }
   const fire = () => {
-    if (act === 'burst') {
-      const card = document.createElement('article')
-      card.setAttribute('data-chat-flow-kind', 'tool-call')
-      card.innerHTML = '<h3>run_tests</h3><p>夹具工具卡，没有执行命令。</p>'
-      document.querySelector('[data-conversation-scroll]').appendChild(card)
-    }
+    if (act === 'burst') card('tool-call', '<h3>run_tests</h3><p>夹具工具卡，没有执行命令。</p>')
     if (act === 'nav') {
       for (const node of document.querySelectorAll('[aria-current="page"]')) node.removeAttribute('aria-current')
-      const panel = document.querySelector('[data-fixture-panel]')
-      panel.setAttribute('aria-current', 'page')
+      document.querySelector('[data-fixture-panel]').setAttribute('aria-current', 'page')
       document.querySelector('[data-conversation-header-leading]')?.remove()
     }
+    if (act === 'enter') {
+      card('user', '<p>夹具提问：再跑一遍测试。不会发送。</p>')
+      card('assistant-step', '<p>夹具回复：好的，先跑单测。这里不是模型回复。</p>')
+    }
   }
-  // Freeze the frame mid-animation so a headless shot catches it: pause every
-  // animation and drop the pending timers that would end it. Fixture only.
-  const hold = { burst: 380, nav: 330 }[act]
   const freeze = () => {
-    // Headless virtual time does not advance the animation timeline, so seek explicitly.
     document.getAnimations().forEach((animation) => {
       animation.pause()
       animation.currentTime = hold
@@ -131,10 +143,19 @@ function scheduleAct(act) {
     for (let id = 0; id <= last; id += 1) clearTimeout(id)
     document.documentElement.setAttribute('data-fixture-frozen', act)
   }
-  setTimeout(() => {
+  const run = () => {
     fire()
-    setTimeout(freeze, hold)
-  }, Math.max(300, at - performance.now()))
+    // enter: the tool card lands as a second wave so both diagonals show.
+    if (act === 'enter') setTimeout(() => card('tool-call', '<h3>read_file</h3><p>夹具工具卡，没有读盘。</p>'), 0)
+    setTimeout(freeze, act === 'enter' ? 30 : act === 'load' ? 0 : hold)
+  }
+  if (act === 'load' && !params.has('at')) { run(); return }
+  if (act === 'stamp') {
+    const wait = () => document.querySelector('[data-cc-hero-title] .dsh-cc-han') ? setTimeout(freeze, 0) : setTimeout(wait, 8)
+    wait()
+    return
+  }
+  setTimeout(run, Math.max(300, at - performance.now()))
 }
 
 const script = document.createElement('script')

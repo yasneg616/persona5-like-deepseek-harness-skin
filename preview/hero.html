@@ -25,6 +25,8 @@
   [data-composer-card] { position: relative; padding: 12px 14px; }
   [data-composer-input] { width: 100%; min-height: 52px; border: 0; background: transparent; resize: none; }
   .fixture-banner { margin: 0; background: #fff; color: #111; font: 700 12px/1.4 sans-serif; padding: 6px 10px; }
+  .fixture-nav { border: 0; text-align: left; }
+  #sidebar { display: flex; flex-direction: column; overflow: hidden; }
   button.send { background: #e60012; color: #fff; border: 0; font-weight: 800; padding: 8px 12px; }
 </style>
 </head>
@@ -32,11 +34,15 @@
 <p class="fixture-banner" data-fixture-status>测试夹具 · 空白落地页 · 不是已连接的 DeepSeek Harness</p>
 <div id="frame">
   <div id="sidebar">
-    <div style="padding:8px 12px"><span class="dsh-cc-name">DSH <span>斩噪</span></span></div>
+    <button type="button" class="fixture-brand" style="background:none;border:0;padding:8px 12px"><span class="dsh-cc-name">DSH <span>斩噪</span></span></button>
+    <button type="button" data-sidebar-toggle aria-label="夹具侧栏折叠" hidden></button>
+    <button type="button" class="fixture-nav" aria-current="page">New Session</button>
+    <button type="button" class="fixture-nav" data-fixture-panel>Plugins</button>
+    <button type="button" class="fixture-nav">Automation tasks</button>
+    <div role="treeitem" data-row-key="workspace:demo">夹具项目</div>
     <div role="treeitem" data-row-key="session:demo-1" aria-selected="false">检查令牌刷新</div>
     <div role="treeitem" data-row-key="session:demo-2" aria-selected="false">整理交付说明</div>
     <div role="treeitem" data-row-key="session:demo-3" aria-selected="false">阅读边界用例</div>
-    <button type="button" data-fixture-panel style="margin:12px;background:#fff;border:0;padding:6px 10px">Plugins</button>
   </div>
   <div id="center">
     <div data-phase="hero" style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 32px;min-height:0">

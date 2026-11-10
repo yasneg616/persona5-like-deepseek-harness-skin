@@ -79,6 +79,7 @@ function selectionInside(block: Element): boolean {
 function fragmentFor(documentRef: Document, pieces: Piece[]): DocumentFragment {
   const fragment = documentRef.createDocumentFragment()
   let word: HTMLElement | null = null
+  let letterIndex = 0
   for (const piece of pieces) {
     if (piece.kind === 'plain') {
       word = null
@@ -95,6 +96,7 @@ function fragmentFor(documentRef: Document, pieces: Piece[]): DocumentFragment {
     span.setAttribute('data-cc-face', piece.face ?? '')
     span.setAttribute('data-cc-han', piece.tone ?? '0')
     span.textContent = piece.text
+    span.style.setProperty('--cc-n', String(letterIndex++))
     word.append(span)
   }
   return fragment

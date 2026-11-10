@@ -1,7 +1,7 @@
 param(
   [string]$Out = "shots",
   [string]$Sizes = "1440x900,1024x640",
-  [string]$Pages = "conversation.html,index.html,hero.html,hero-en.html,index.html?act=burst,index.html?act=nav"
+  [string]$Pages = "conversation.html,index.html,hero.html,hero-en.html,index.html?act=load,index.html?act=enter,index.html?act=enter&hold=120,index.html?act=nav,index.html?act=burst,hero.html?act=stamp&hold=150"
 )
 # Local visual check of the labeled fixtures (file://, no server). Run `npm run build` first.
 $ErrorActionPreference = "Continue"
