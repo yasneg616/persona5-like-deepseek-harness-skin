@@ -1,16 +1,15 @@
 /**
- * Living outlines for whatever is selected.
+ * Selected plate.
  *
- * In P5 a picked box never sits still: its plate keeps snapping between
- * jagged shapes while a dark underlay and a thin rim jump out of phase.
- * The skin gets that by appending one decorative layer (three plates) to
- * the selected element. The layer is absolutely placed behind the
- * element's own content, ignores the pointer, and only ever grows outward
- * from the element box, so text is never clipped or covered and the hit
- * area stays where it was. Only selected, hovered or focused boxes get a
- * layer, capped at a handful; the rest stay static. Under reduced motion
- * the CSS freezes the layer on its first shape. Everything is stripped on
- * dispose.
+ * Like the P5 menu highlight: a picked box gets one red quad behind its
+ * content, in place, whose corners keep drifting smoothly, and its text
+ * flips to the inverse color. The plate is a single decorative element
+ * appended to the box: absolutely placed behind the content, hidden from
+ * assistive tech, ignoring the pointer, and only ever reaching outward
+ * from the box, so text is never clipped and the hit area stays put. Only
+ * selected, hovered or focused boxes get one, capped at a handful; the
+ * rest stay static. Under reduced motion the plate is a still rectangle.
+ * Everything is stripped on deselect and on dispose.
  */
 export const MORPH = 'data-cc-morph'
 /** Set when the host was `position: static`, so the layer can anchor to it. */
@@ -34,7 +33,6 @@ const STATE: Array<[string, MorphKind]> = [
 ]
 const HOVER = '[data-cc-leaf], [data-row-key^="session:"], [data-composer-card] button, .dsh-cc-replay'
 const COMPOSER = '[data-composer-card]'
-const PLATES = ['under', 'plate', 'line'] as const
 
 export interface MorphTracker {
   /** Re-read selection, hover and focus; returns how many boxes morph. */
@@ -87,11 +85,6 @@ export function createMorphTracker(documentRef: Document, windowRef: Window): Mo
     const layer = documentRef.createElement('span')
     layer.className = MORPH_LAYER
     layer.setAttribute('aria-hidden', 'true')
-    for (const name of PLATES) {
-      const plate = documentRef.createElement('i')
-      plate.className = `${MORPH_LAYER}-${name}`
-      layer.append(plate)
-    }
     return layer
   }
 

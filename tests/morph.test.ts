@@ -32,13 +32,11 @@ test('selected leaf, selected row and the caption morph; the rest stay static', 
   assert.equal(doc.querySelector('.dsh-cc-caption-body')!.getAttribute(MORPH), 'cap-body')
   for (const id of ['new', 's2', 'card', 'send']) assert.equal(doc.getElementById(id)!.hasAttribute(MORPH), false, id)
   assert.equal(doc.querySelectorAll(`.${MORPH_LAYER}`).length, 4)
-  // One decorative layer, last child, hidden from assistive tech, three plates, no text.
+  // One plain plate, last child, hidden from assistive tech, no children, no text.
   const [layer] = layerOf(plugins)
   assert.equal(plugins.lastElementChild, layer)
   assert.equal(layer.getAttribute('aria-hidden'), 'true')
-  assert.deepEqual(Array.from(layer.children).map((plate) => plate.className), [
-    `${MORPH_LAYER}-under`, `${MORPH_LAYER}-plate`, `${MORPH_LAYER}-line`,
-  ])
+  assert.equal(layer.children.length, 0)
   assert.equal(plugins.textContent, 'Plugins')
   // Idempotent: a second pass changes nothing.
   tracker.sync()
@@ -139,43 +137,38 @@ test('only a handful morph at once, and dispose strips everything', () => {
   assert.equal(doc.querySelectorAll(`[${MORPH}]`).length, 0)
 })
 
-test('morph CSS: clip-path-only stepped keyframes, 4-7 point shapes, layer never takes the pointer', () => {
+test('plate CSS: one red quad, four corners drifting smoothly out of step, inverse text, no flashing', () => {
   const css = readFileSync(new URL('../src/client/skin.css', import.meta.url), 'utf8')
-  const vertices = (frame: string) => {
-    const body = frame.replace(/^polygon\((evenodd,\s*)?/, '').replace(/\)$/, '')
-    let depth = 0
-    let count = 1
-    for (const ch of body) {
-      if (ch === '(') depth += 1
-      else if (ch === ')') depth -= 1
-      else if (ch === ',' && depth === 0) count += 1
-    }
-    return count
+  const start = css.indexOf('/* Selected plate (0.4.7).')
+  const end = css.lastIndexOf('@media (prefers-reduced-motion: reduce)')
+  assert.ok(start > 0 && end > start)
+  const block = css.slice(start, end)
+  // The 0.4.6 stepped multi-layer outline is gone.
+  assert.doesNotMatch(css, /dsh-cc-morph-(plate|under|line|chip)/)
+  assert.doesNotMatch(block, /steps\(|opacity/)
+  // Each corner is its own registered length, animated on its own period with easing.
+  for (const q of [1, 2, 3, 4]) {
+    assert.match(block, new RegExp(`@property --cc-q${q}x \\{ syntax: "<length>"`))
+    assert.match(block, new RegExp(`@keyframes dsh-cc-q${q} \\{`))
   }
-  for (const name of ['plate', 'under', 'line']) {
-    const block = css.match(new RegExp(`@keyframes dsh-cc-morph-${name} \\{([\\s\\S]*?)\\n\\}`))
-    assert.ok(block, name)
-    const frames = Array.from(block![1].matchAll(/\{ clip-path: (polygon\(.*\)); \}/g)).map((match) => match[1])
-    assert.ok(frames.length >= 8, `${name} frames`)
-    assert.doesNotMatch(block![1], /transform|opacity|width|height|inset/)
-    const counts = new Set(frames.map(vertices))
-    assert.equal(counts.size, 1, `${name} keeps one vertex count`)
-    const [count] = counts
-    if (name === 'line') {
-      assert.match(frames[0], /^polygon\(evenodd,/)
-      assert.equal(count, 10)
-    } else {
-      assert.ok(count >= 4 && count <= 7, `${name} has ${count} points`)
-    }
-    assert.ok(new Set(frames).size >= frames.length - 1, `${name} shapes differ`)
+  const periods = Array.from(block.matchAll(/dsh-cc-q\d ([\d.]+)s ease-in-out infinite alternate/g)).map((m) => Number(m[1]))
+  assert.equal(periods.length, 4)
+  assert.equal(new Set(periods).size, 4, 'corners are desynced')
+  for (const period of periods) assert.ok(period >= 1.2 && period <= 2, `period ${period}`)
+  // Keyframes only move corners: no transforms, no color or opacity changes.
+  for (const frame of block.matchAll(/@keyframes dsh-cc-q\d \{([\s\S]*?)\n\}/g)) {
+    assert.doesNotMatch(frame[1], /transform|opacity|color|background|clip-path/)
   }
-  const layer = css.match(/\.dsh-cc-morph \{([\s\S]*?)\}/)![1]
-  assert.match(layer, /pointer-events: none/)
-  assert.match(layer, /z-index: -1/)
-  assert.match(css, /\.dsh-cc-morph > i \{[\s\S]*?animation-timing-function: steps\(1, end\)/)
-  // Host keeps its text: no clip on the host while it morphs.
-  assert.match(css, /\[data-cc-morph\] \{[\s\S]*?clip-path: none !important/)
-  // Reduced motion: the global switch stops these too and the plates keep a static polygon.
+  const plate = block.match(/\.dsh-cc-morph \{([\s\S]*?)\n\}/)![1]
+  assert.match(plate, /background: var\(--dsh-cc-red\)/)
+  assert.match(plate, /pointer-events: none/)
+  assert.match(plate, /z-index: -1/)
+  // Host keeps its text unclipped and inverts it.
+  assert.match(block, /\[data-cc-morph\] \{[\s\S]*?clip-path: none !important/)
+  assert.match(block, /color: #fff !important/)
+  // Composer keeps its paper; the plate is a frame around it.
+  assert.match(block, /\[data-cc-morph="composer"\] > \.dsh-cc-morph \{\s*clip-path: polygon\(evenodd,/)
+  // Reduced motion: the global switch stops the drift; the plate keeps a static quad.
   assert.match(css, /prefers-reduced-motion: reduce\) \{\s*html\[data-dsh-calling-card-skin\] \*,/)
-  assert.match(css, /\.dsh-cc-morph-plate \{[\s\S]*?clip-path: polygon\(/)
+  assert.match(plate, /clip-path: polygon\(/)
 })

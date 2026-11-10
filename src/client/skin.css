@@ -1390,20 +1390,26 @@ html[data-dsh-calling-card-skin] .dsh-cc-spine {
   97%, 100% { translate: 130% 0; }
 }
 
-/* Living outlines (0.4.6). morph.ts appends one decorative layer to each selected,
- * hovered or focused box: a dark underlay, the plate, and a thin rim, each snapping
- * between jagged shapes out of phase. The layer only grows outward from the box,
- * sits behind the content and ignores the pointer, so text is never clipped and the
- * hit area does not move. Only boxes with [data-cc-morph] pay for it. */
+/* Selected plate (0.4.7). morph.ts puts one red quad behind the content of the selected,
+ * hovered or focused box, in place. Each corner drifts on its own smooth loop, so the
+ * edges keep shifting and skewing without any flashing, and the text flips to the
+ * inverse color. Corners only move in a band outside the box (plus a fixed margin for
+ * overhanging glyphs), so text always sits on red, is never clipped, and the hit area
+ * does not move. Reduced motion: a still red rectangle. */
+@property --cc-q1x { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q1y { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q2x { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q2y { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q3x { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q3y { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q4x { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --cc-q4y { syntax: "<length>"; inherits: false; initial-value: 0px; }
 html[data-dsh-calling-card-skin] [data-cc-morph] {
-  --cc-mp: var(--dsh-cc-red);
-  --cc-mu: #0c0c0c;
-  --cc-ml: #fff;
-  --cc-bx: 16px;
-  --cc-by: 9px;
-  /* Margin the plate always covers beyond the box, for glyphs that overhang it. */
+  --cc-bx: 12px;
+  --cc-by: 6px;
+  /* Margin the plate always covers beyond the box. */
   --cc-px: 3px;
-  --cc-py: 4px;
+  --cc-py: 3px;
   isolation: isolate;
   background: transparent !important;
   clip-path: none !important;
@@ -1413,49 +1419,50 @@ html[data-dsh-calling-card-skin] [data-cc-morph] {
 html[data-dsh-calling-card-skin] [data-cc-morph][data-cc-morph-pos="rel"] {
   position: relative;
 }
-html[data-dsh-calling-card-skin] :is([data-cc-morph="leaf"], [data-cc-morph="row"], [data-cc-morph="button"]) {
+/* Inverse text: dark-on-paper boxes turn white on the red plate. */
+html[data-dsh-calling-card-skin] :is([data-cc-morph="leaf"], [data-cc-morph="row"], [data-cc-morph="button"], [data-cc-morph="tag"], [data-cc-morph="cap-no"]) {
+  --dsw-alias-label-primary: #fff !important;
+  --dsw-alias-label-secondary: #fff !important;
+  --dsw-alias-label-tertiary: #fff !important;
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-morph] {
   --dsw-alias-label-primary: #fff;
-  --dsw-alias-label-secondary: #fff;
-  --dsw-alias-label-tertiary: #ffe4e6;
   color: #fff;
+}
+html[data-dsh-calling-card-skin] [data-cc-leaf][data-cc-morph]::before {
+  color: #0c0c0c;
 }
 html[data-dsh-calling-card-skin] [data-cc-morph="leaf"] {
-  --cc-bx: 26px;
-  --cc-by: 12px;
+  --cc-bx: 16px;
+  --cc-by: 7px;
 }
-/* The page number would vanish into the red plate. */
-html[data-dsh-calling-card-skin] [data-cc-leaf][data-cc-morph]::before {
+/* White-on-black caption body turns black on red; the kicker chip goes black. */
+html[data-dsh-calling-card-skin] [data-cc-morph="cap-body"],
+html[data-dsh-calling-card-skin] [data-cc-morph="cap-body"] .dsh-cc-caption-kicker {
+  color: #0c0c0c;
+}
+html[data-dsh-calling-card-skin] [data-cc-morph="cap-body"] .dsh-cc-caption-kicker span {
+  background: #0c0c0c;
   color: #fff;
 }
-html[data-dsh-calling-card-skin] [data-cc-morph="composer"] {
-  --cc-mp: #f7f4ee;
-  --cc-ml: var(--dsh-cc-red);
-  --cc-bx: 22px;
-  /* Shallow on top so it never laps over the last transcript line above it. */
-  --cc-by: 6px;
-  --cc-py: 0px;
-}
 html[data-dsh-calling-card-skin] [data-cc-morph="cap-no"] {
-  --cc-mp: #fff;
-  --cc-ml: var(--dsh-cc-red);
-  --cc-bx: 14px;
-  --cc-by: 9px;
-  --cc-px: 6px;
-  --cc-py: 16px;
-}
-html[data-dsh-calling-card-skin] [data-cc-morph="cap-body"] {
-  --cc-mp: #0c0c0c;
-  --cc-mu: var(--dsh-cc-red);
-  --cc-bx: 18px;
-  --cc-by: 9px;
-}
-html[data-dsh-calling-card-skin] .dsh-cc-caption[data-cc-kicker="CALLING CARD"] [data-cc-morph="cap-body"] {
-  --cc-mp: var(--dsh-cc-red);
-  --cc-mu: #0c0c0c;
+  --cc-bx: 8px;
+  --cc-by: 6px;
+  --cc-px: 4px;
+  --cc-py: 14px;
 }
 html[data-dsh-calling-card-skin] :is([data-cc-morph="button"], [data-cc-morph="tag"]) {
+  --cc-bx: 6px;
+  --cc-by: 4px;
+}
+/* Composer: the paper stays, the red plate is a drifting frame around it. */
+html[data-dsh-calling-card-skin] [data-cc-morph="composer"] {
   --cc-bx: 10px;
-  --cc-by: 7px;
+  --cc-by: 5px;
+  --cc-px: 0px;
+  --cc-py: 0px;
+  background: #f7f4ee !important;
 }
 html[data-dsh-calling-card-skin] .dsh-cc-morph {
   position: absolute;
@@ -1463,93 +1470,62 @@ html[data-dsh-calling-card-skin] .dsh-cc-morph {
   z-index: -1;
   display: block;
   pointer-events: none;
-  white-space: normal;
+  background: var(--dsh-cc-red);
+  --cc-q1x: calc(0.5 * var(--cc-bx));
+  --cc-q1y: calc(0.5 * var(--cc-by));
+  --cc-q2x: calc(0.5 * var(--cc-bx));
+  --cc-q2y: calc(0.5 * var(--cc-by));
+  --cc-q3x: calc(0.5 * var(--cc-bx));
+  --cc-q3y: calc(0.5 * var(--cc-by));
+  --cc-q4x: calc(0.5 * var(--cc-bx));
+  --cc-q4y: calc(0.5 * var(--cc-by));
+  clip-path: polygon(
+    var(--cc-q1x) var(--cc-q1y),
+    calc(100% - var(--cc-q2x)) var(--cc-q2y),
+    calc(100% - var(--cc-q3x)) calc(100% - var(--cc-q3y)),
+    var(--cc-q4x) calc(100% - var(--cc-q4y))
+  );
+  animation:
+    dsh-cc-q1 1.4s ease-in-out infinite alternate,
+    dsh-cc-q2 1.75s ease-in-out infinite alternate,
+    dsh-cc-q3 1.55s ease-in-out infinite alternate,
+    dsh-cc-q4 1.9s ease-in-out infinite alternate;
+  animation-delay: calc(var(--cc-morph-seed, 0) * -0.37s);
+}
+html[data-dsh-calling-card-skin] [data-cc-morph="composer"] > .dsh-cc-morph {
+  clip-path: polygon(evenodd,
+    var(--cc-q1x) var(--cc-q1y),
+    calc(100% - var(--cc-q2x)) var(--cc-q2y),
+    calc(100% - var(--cc-q3x)) calc(100% - var(--cc-q3y)),
+    var(--cc-q4x) calc(100% - var(--cc-q4y)),
+    var(--cc-q1x) var(--cc-q1y),
+    var(--cc-bx) var(--cc-by),
+    calc(100% - var(--cc-bx)) var(--cc-by),
+    calc(100% - var(--cc-bx)) calc(100% - var(--cc-by)),
+    var(--cc-bx) calc(100% - var(--cc-by)),
+    var(--cc-bx) var(--cc-by)
+  );
 }
 html[data-dsh-calling-card-skin] [data-cc-morph-fit="in"] > .dsh-cc-morph {
   inset: 0;
-  --cc-bx: 5px;
-  --cc-by: 4px;
-  --cc-px: 0px;
-  --cc-py: 0px;
+  --cc-bx: 4px;
+  --cc-by: 3px;
 }
-html[data-dsh-calling-card-skin] .dsh-cc-morph > i {
-  position: absolute;
-  inset: 0;
-  display: block;
-  font-style: normal;
-  pointer-events: none;
-  animation-timing-function: steps(1, end);
-  animation-iteration-count: infinite;
-  animation-delay: calc(var(--cc-morph-seed, 0) * -131ms);
-  will-change: clip-path;
+@keyframes dsh-cc-q1 {
+  from { --cc-q1x: calc(0.1 * var(--cc-bx)); --cc-q1y: calc(0.85 * var(--cc-by)); }
+  to { --cc-q1x: calc(0.9 * var(--cc-bx)); --cc-q1y: calc(0.05 * var(--cc-by)); }
 }
-html[data-dsh-calling-card-skin] .dsh-cc-morph-under {
-  background: var(--cc-mu);
-  translate: 8px 7px;
-  clip-path: polygon(calc(0.54 * var(--cc-bx)) calc(0.14 * var(--cc-by)), calc(100% - 0.23 * var(--cc-bx)) calc(0.43 * var(--cc-by)), calc(100% - 0.86 * var(--cc-bx)) 36%, calc(100% - 0.49 * var(--cc-bx)) calc(100% - 0.03 * var(--cc-by)), calc(0.58 * var(--cc-bx)) calc(100% - 0.27 * var(--cc-by)));
-  animation-name: dsh-cc-morph-under;
-  animation-duration: 760ms;
+@keyframes dsh-cc-q2 {
+  from { --cc-q2x: calc(0.85 * var(--cc-bx)); --cc-q2y: calc(0.1 * var(--cc-by)); }
+  to { --cc-q2x: calc(0.05 * var(--cc-bx)); --cc-q2y: calc(0.9 * var(--cc-by)); }
 }
-html[data-dsh-calling-card-skin] .dsh-cc-morph-plate {
-  background: var(--cc-mp);
-  clip-path: polygon(calc(0.67 * var(--cc-bx)) calc(0.30 * var(--cc-by)), 54% calc(0.80 * var(--cc-by)), calc(100% - 0.17 * var(--cc-bx)) calc(0.39 * var(--cc-by)), calc(100% - 0.44 * var(--cc-bx)) calc(100% - 0.71 * var(--cc-by)), 31% calc(100% - 0.25 * var(--cc-by)), calc(0.24 * var(--cc-bx)) calc(100% - 0.62 * var(--cc-by)));
-  animation-name: dsh-cc-morph-plate;
-  animation-duration: 860ms;
+@keyframes dsh-cc-q3 {
+  from { --cc-q3x: calc(0.1 * var(--cc-bx)); --cc-q3y: calc(0.9 * var(--cc-by)); }
+  to { --cc-q3x: calc(0.95 * var(--cc-bx)); --cc-q3y: calc(0.15 * var(--cc-by)); }
 }
-html[data-dsh-calling-card-skin] .dsh-cc-morph-line {
-  background: var(--cc-ml);
-  translate: -6px -4px;
-  clip-path: polygon(evenodd, calc(0.25 * var(--cc-bx)) calc(0.67 * var(--cc-by)), calc(100% - 0.69 * var(--cc-bx)) calc(0.50 * var(--cc-by)), calc(100% - 0.20 * var(--cc-bx)) calc(100% - 0.04 * var(--cc-by)), calc(0.75 * var(--cc-bx)) calc(100% - 0.69 * var(--cc-by)), calc(0.25 * var(--cc-bx)) calc(0.67 * var(--cc-by)), calc(0.25 * var(--cc-bx) + 3px) calc(0.67 * var(--cc-by) + 3px), calc(100% - 0.69 * var(--cc-bx) - 3px) calc(0.50 * var(--cc-by) + 3px), calc(100% - 0.20 * var(--cc-bx) - 3px) calc(100% - 0.04 * var(--cc-by) - 3px), calc(0.75 * var(--cc-bx) + 3px) calc(100% - 0.69 * var(--cc-by) - 3px), calc(0.25 * var(--cc-bx) + 3px) calc(0.67 * var(--cc-by) + 3px));
-  animation-name: dsh-cc-morph-line;
-  animation-duration: 700ms;
-}
-@keyframes dsh-cc-morph-plate {
-  0.0% { clip-path: polygon(calc(0.80 * var(--cc-bx)) calc(0.31 * var(--cc-by)), 54% calc(0.90 * var(--cc-by)), calc(100% - 0.04 * var(--cc-bx)) calc(0.52 * var(--cc-by)), calc(100% - 0.46 * var(--cc-bx)) calc(100% - 1.00 * var(--cc-by)), 31% 100%, calc(0.29 * var(--cc-bx)) calc(100% - 0.93 * var(--cc-by))); }
-  3.6% { clip-path: polygon(calc(0.67 * var(--cc-bx)) calc(0.30 * var(--cc-by)), 54% calc(0.80 * var(--cc-by)), calc(100% - 0.17 * var(--cc-bx)) calc(0.39 * var(--cc-by)), calc(100% - 0.44 * var(--cc-bx)) calc(100% - 0.71 * var(--cc-by)), 31% calc(100% - 0.25 * var(--cc-by)), calc(0.24 * var(--cc-bx)) calc(100% - 0.62 * var(--cc-by))); }
-  20.0% { clip-path: polygon(calc(0.61 * var(--cc-bx)) 0, 67% calc(0.45 * var(--cc-by)), calc(100% - 1.00 * var(--cc-bx)) calc(0.85 * var(--cc-by)), 100% calc(100% - 0.74 * var(--cc-by)), 49% calc(100% - 0.34 * var(--cc-by)), calc(0.40 * var(--cc-bx)) 100%); }
-  23.6% { clip-path: polygon(calc(0.63 * var(--cc-bx)) calc(0.10 * var(--cc-by)), 67% calc(0.57 * var(--cc-by)), calc(100% - 0.73 * var(--cc-bx)) calc(0.70 * var(--cc-by)), calc(100% - 0.07 * var(--cc-bx)) calc(100% - 0.73 * var(--cc-by)), 49% calc(100% - 0.31 * var(--cc-by)), calc(0.35 * var(--cc-bx)) calc(100% - 0.06 * var(--cc-by))); }
-  40.0% { clip-path: polygon(calc(0.53 * var(--cc-bx)) calc(0.56 * var(--cc-by)), 34% calc(0.26 * var(--cc-by)), calc(100% - 0.21 * var(--cc-bx)) calc(0.52 * var(--cc-by)), calc(100% - 0.28 * var(--cc-bx)) 100%, 44% calc(100% - 0.22 * var(--cc-by)), calc(0.20 * var(--cc-bx)) calc(100% - 0.95 * var(--cc-by))); }
-  43.6% { clip-path: polygon(calc(0.56 * var(--cc-bx)) calc(0.41 * var(--cc-by)), 34% calc(0.36 * var(--cc-by)), calc(100% - 0.38 * var(--cc-bx)) calc(0.58 * var(--cc-by)), calc(100% - 0.21 * var(--cc-bx)) calc(100% - 0.08 * var(--cc-by)), 44% calc(100% - 0.25 * var(--cc-by)), calc(0.25 * var(--cc-bx)) calc(100% - 0.65 * var(--cc-by))); }
-  60.0% { clip-path: polygon(0 calc(0.14 * var(--cc-by)), 61% calc(0.33 * var(--cc-by)), 100% 0, calc(100% - 0.58 * var(--cc-bx)) calc(100% - 0.76 * var(--cc-by)), 57% calc(100% - 0.25 * var(--cc-by)), calc(0.19 * var(--cc-bx)) 100%); }
-  63.6% { clip-path: polygon(calc(0.14 * var(--cc-bx)) calc(0.23 * var(--cc-by)), 61% calc(0.34 * var(--cc-by)), calc(100% - 0.09 * var(--cc-bx)) calc(0.19 * var(--cc-by)), calc(100% - 0.46 * var(--cc-bx)) calc(100% - 0.53 * var(--cc-by)), 57% calc(100% - 0.25 * var(--cc-by)), calc(0.21 * var(--cc-bx)) calc(100% - 0.09 * var(--cc-by))); }
-  80.0% { clip-path: polygon(calc(0.56 * var(--cc-bx)) calc(0.29 * var(--cc-by)), 60% calc(0.73 * var(--cc-by)), calc(100% - 0.61 * var(--cc-bx)) calc(0.10 * var(--cc-by)), calc(100% - 0.38 * var(--cc-bx)) 100%, 34% calc(100% - 1.00 * var(--cc-by)), calc(0.09 * var(--cc-bx)) 100%); }
-  83.6% { clip-path: polygon(calc(0.42 * var(--cc-bx)) calc(0.27 * var(--cc-by)), 60% calc(0.60 * var(--cc-by)), calc(100% - 0.44 * var(--cc-bx)) calc(0.13 * var(--cc-by)), calc(100% - 0.41 * var(--cc-bx)) calc(100% - 0.05 * var(--cc-by)), 34% calc(100% - 0.80 * var(--cc-by)), calc(0.13 * var(--cc-bx)) 100%); }
-}
-@keyframes dsh-cc-morph-under {
-  0.0% { clip-path: polygon(calc(0.54 * var(--cc-bx)) 0, 100% calc(0.62 * var(--cc-by)), calc(100% - 1.00 * var(--cc-bx)) 36%, calc(100% - 0.62 * var(--cc-bx)) 100%, calc(0.78 * var(--cc-bx)) calc(100% - 0.07 * var(--cc-by))); }
-  4.5% { clip-path: polygon(calc(0.54 * var(--cc-bx)) calc(0.14 * var(--cc-by)), calc(100% - 0.23 * var(--cc-bx)) calc(0.43 * var(--cc-by)), calc(100% - 0.86 * var(--cc-bx)) 36%, calc(100% - 0.49 * var(--cc-bx)) calc(100% - 0.03 * var(--cc-by)), calc(0.58 * var(--cc-bx)) calc(100% - 0.27 * var(--cc-by))); }
-  25.0% { clip-path: polygon(0 calc(0.36 * var(--cc-by)), calc(100% - 0.62 * var(--cc-bx)) 0, calc(100% - 0.27 * var(--cc-bx)) 58%, calc(100% - 0.67 * var(--cc-bx)) calc(100% - 0.81 * var(--cc-by)), calc(0.23 * var(--cc-bx)) calc(100% - 0.66 * var(--cc-by))); }
-  29.5% { clip-path: polygon(calc(0.06 * var(--cc-bx)) calc(0.29 * var(--cc-by)), calc(100% - 0.49 * var(--cc-bx)) calc(0.10 * var(--cc-by)), calc(100% - 0.47 * var(--cc-bx)) 58%, calc(100% - 0.61 * var(--cc-bx)) calc(100% - 0.55 * var(--cc-by)), calc(0.35 * var(--cc-bx)) calc(100% - 0.53 * var(--cc-by))); }
-  50.0% { clip-path: polygon(calc(0.14 * var(--cc-bx)) calc(0.29 * var(--cc-by)), calc(100% - 0.10 * var(--cc-bx)) calc(0.10 * var(--cc-by)), calc(100% - 0.11 * var(--cc-bx)) 37%, calc(100% - 0.79 * var(--cc-bx)) calc(100% - 0.15 * var(--cc-by)), calc(0.18 * var(--cc-bx)) calc(100% - 0.47 * var(--cc-by))); }
-  54.5% { clip-path: polygon(calc(0.11 * var(--cc-bx)) calc(0.29 * var(--cc-by)), calc(100% - 0.23 * var(--cc-bx)) calc(0.10 * var(--cc-by)), calc(100% - 0.23 * var(--cc-bx)) 37%, calc(100% - 0.73 * var(--cc-bx)) calc(100% - 0.28 * var(--cc-by)), calc(0.24 * var(--cc-bx)) calc(100% - 0.49 * var(--cc-by))); }
-  75.0% { clip-path: polygon(calc(0.76 * var(--cc-bx)) calc(0.86 * var(--cc-by)), calc(100% - 0.91 * var(--cc-bx)) calc(0.01 * var(--cc-by)), calc(100% - 0.44 * var(--cc-bx)) 47%, 100% calc(100% - 0.49 * var(--cc-by)), calc(0.15 * var(--cc-bx)) calc(100% - 0.76 * var(--cc-by))); }
-  79.5% { clip-path: polygon(calc(0.54 * var(--cc-bx)) calc(0.67 * var(--cc-by)), calc(100% - 0.68 * var(--cc-bx)) calc(0.04 * var(--cc-by)), calc(100% - 0.37 * var(--cc-bx)) 47%, calc(100% - 0.23 * var(--cc-bx)) calc(100% - 0.42 * var(--cc-by)), calc(0.18 * var(--cc-bx)) calc(100% - 0.67 * var(--cc-by))); }
-}
-@keyframes dsh-cc-morph-line {
-  0.0% { clip-path: polygon(evenodd, calc(0.37 * var(--cc-bx)) calc(0.76 * var(--cc-by)), calc(100% - 0.95 * var(--cc-bx)) calc(0.62 * var(--cc-by)), calc(100% - 0.24 * var(--cc-bx)) 100%, calc(1.00 * var(--cc-bx)) calc(100% - 0.80 * var(--cc-by)), calc(0.37 * var(--cc-bx)) calc(0.76 * var(--cc-by)), calc(0.37 * var(--cc-bx) + 3px) calc(0.76 * var(--cc-by) + 3px), calc(100% - 0.95 * var(--cc-bx) - 3px) calc(0.62 * var(--cc-by) + 3px), calc(100% - 0.24 * var(--cc-bx) - 3px) calc(100% - 3px), calc(1.00 * var(--cc-bx) + 3px) calc(100% - 0.80 * var(--cc-by) - 3px), calc(0.37 * var(--cc-bx) + 3px) calc(0.76 * var(--cc-by) + 3px)); }
-  3.6% { clip-path: polygon(evenodd, calc(0.25 * var(--cc-bx)) calc(0.67 * var(--cc-by)), calc(100% - 0.69 * var(--cc-bx)) calc(0.50 * var(--cc-by)), calc(100% - 0.20 * var(--cc-bx)) calc(100% - 0.04 * var(--cc-by)), calc(0.75 * var(--cc-bx)) calc(100% - 0.69 * var(--cc-by)), calc(0.25 * var(--cc-bx)) calc(0.67 * var(--cc-by)), calc(0.25 * var(--cc-bx) + 3px) calc(0.67 * var(--cc-by) + 3px), calc(100% - 0.69 * var(--cc-bx) - 3px) calc(0.50 * var(--cc-by) + 3px), calc(100% - 0.20 * var(--cc-bx) - 3px) calc(100% - 0.04 * var(--cc-by) - 3px), calc(0.75 * var(--cc-bx) + 3px) calc(100% - 0.69 * var(--cc-by) - 3px), calc(0.25 * var(--cc-bx) + 3px) calc(0.67 * var(--cc-by) + 3px)); }
-  20.0% { clip-path: polygon(evenodd, calc(0.43 * var(--cc-bx)) 0, calc(100% - 0.51 * var(--cc-bx)) calc(0.08 * var(--cc-by)), calc(100% - 0.40 * var(--cc-bx)) calc(100% - 1.00 * var(--cc-by)), calc(0.66 * var(--cc-bx)) calc(100% - 0.61 * var(--cc-by)), calc(0.43 * var(--cc-bx)) 0, calc(0.43 * var(--cc-bx) + 3px) calc(0 + 3px), calc(100% - 0.51 * var(--cc-bx) - 3px) calc(0.08 * var(--cc-by) + 3px), calc(100% - 0.40 * var(--cc-bx) - 3px) calc(100% - 1.00 * var(--cc-by) - 3px), calc(0.66 * var(--cc-bx) + 3px) calc(100% - 0.61 * var(--cc-by) - 3px), calc(0.43 * var(--cc-bx) + 3px) calc(0 + 3px)); }
-  23.6% { clip-path: polygon(evenodd, calc(0.37 * var(--cc-bx)) calc(0.05 * var(--cc-by)), calc(100% - 0.57 * var(--cc-bx)) calc(0.22 * var(--cc-by)), calc(100% - 0.33 * var(--cc-bx)) calc(100% - 0.73 * var(--cc-by)), calc(0.69 * var(--cc-bx)) calc(100% - 0.64 * var(--cc-by)), calc(0.37 * var(--cc-bx)) calc(0.05 * var(--cc-by)), calc(0.37 * var(--cc-bx) + 3px) calc(0.05 * var(--cc-by) + 3px), calc(100% - 0.57 * var(--cc-bx) - 3px) calc(0.22 * var(--cc-by) + 3px), calc(100% - 0.33 * var(--cc-bx) - 3px) calc(100% - 0.73 * var(--cc-by) - 3px), calc(0.69 * var(--cc-bx) + 3px) calc(100% - 0.64 * var(--cc-by) - 3px), calc(0.37 * var(--cc-bx) + 3px) calc(0.05 * var(--cc-by) + 3px)); }
-  40.0% { clip-path: polygon(evenodd, 0 calc(0.71 * var(--cc-by)), calc(100% - 0.39 * var(--cc-bx)) calc(0.70 * var(--cc-by)), 100% calc(100% - 0.66 * var(--cc-by)), 0 100%, 0 calc(0.71 * var(--cc-by)), calc(0 + 3px) calc(0.71 * var(--cc-by) + 3px), calc(100% - 0.39 * var(--cc-bx) - 3px) calc(0.70 * var(--cc-by) + 3px), calc(100% - 3px) calc(100% - 0.66 * var(--cc-by) - 3px), calc(0 + 3px) calc(100% - 3px), calc(0 + 3px) calc(0.71 * var(--cc-by) + 3px)); }
-  43.6% { clip-path: polygon(evenodd, calc(0.06 * var(--cc-bx)) calc(0.49 * var(--cc-by)), calc(100% - 0.45 * var(--cc-bx)) calc(0.54 * var(--cc-by)), calc(100% - 0.01 * var(--cc-bx)) calc(100% - 0.68 * var(--cc-by)), calc(0.13 * var(--cc-bx)) 100%, calc(0.06 * var(--cc-bx)) calc(0.49 * var(--cc-by)), calc(0.06 * var(--cc-bx) + 3px) calc(0.49 * var(--cc-by) + 3px), calc(100% - 0.45 * var(--cc-bx) - 3px) calc(0.54 * var(--cc-by) + 3px), calc(100% - 0.01 * var(--cc-bx) - 3px) calc(100% - 0.68 * var(--cc-by) - 3px), calc(0.13 * var(--cc-bx) + 3px) calc(100% - 3px), calc(0.06 * var(--cc-bx) + 3px) calc(0.49 * var(--cc-by) + 3px)); }
-  60.0% { clip-path: polygon(evenodd, calc(0.70 * var(--cc-bx)) calc(0.58 * var(--cc-by)), calc(100% - 0.59 * var(--cc-bx)) 0, calc(100% - 0.25 * var(--cc-bx)) calc(100% - 0.27 * var(--cc-by)), calc(0.61 * var(--cc-bx)) calc(100% - 0.83 * var(--cc-by)), calc(0.70 * var(--cc-bx)) calc(0.58 * var(--cc-by)), calc(0.70 * var(--cc-bx) + 3px) calc(0.58 * var(--cc-by) + 3px), calc(100% - 0.59 * var(--cc-bx) - 3px) calc(0 + 3px), calc(100% - 0.25 * var(--cc-bx) - 3px) calc(100% - 0.27 * var(--cc-by) - 3px), calc(0.61 * var(--cc-bx) + 3px) calc(100% - 0.83 * var(--cc-by) - 3px), calc(0.70 * var(--cc-bx) + 3px) calc(0.58 * var(--cc-by) + 3px)); }
-  63.6% { clip-path: polygon(evenodd, calc(0.49 * var(--cc-bx)) calc(0.55 * var(--cc-by)), calc(100% - 0.54 * var(--cc-bx)) calc(0.07 * var(--cc-by)), calc(100% - 0.17 * var(--cc-bx)) calc(100% - 0.41 * var(--cc-by)), calc(0.45 * var(--cc-bx)) calc(100% - 0.55 * var(--cc-by)), calc(0.49 * var(--cc-bx)) calc(0.55 * var(--cc-by)), calc(0.49 * var(--cc-bx) + 3px) calc(0.55 * var(--cc-by) + 3px), calc(100% - 0.54 * var(--cc-bx) - 3px) calc(0.07 * var(--cc-by) + 3px), calc(100% - 0.17 * var(--cc-bx) - 3px) calc(100% - 0.41 * var(--cc-by) - 3px), calc(0.45 * var(--cc-bx) + 3px) calc(100% - 0.55 * var(--cc-by) - 3px), calc(0.49 * var(--cc-bx) + 3px) calc(0.55 * var(--cc-by) + 3px)); }
-  80.0% { clip-path: polygon(evenodd, 0 calc(0.46 * var(--cc-by)), 100% calc(0.35 * var(--cc-by)), calc(100% - 0.09 * var(--cc-bx)) calc(100% - 0.35 * var(--cc-by)), calc(0.06 * var(--cc-bx)) calc(100% - 0.43 * var(--cc-by)), 0 calc(0.46 * var(--cc-by)), calc(0 + 3px) calc(0.46 * var(--cc-by) + 3px), calc(100% - 3px) calc(0.35 * var(--cc-by) + 3px), calc(100% - 0.09 * var(--cc-bx) - 3px) calc(100% - 0.35 * var(--cc-by) - 3px), calc(0.06 * var(--cc-bx) + 3px) calc(100% - 0.43 * var(--cc-by) - 3px), calc(0 + 3px) calc(0.46 * var(--cc-by) + 3px)); }
-  83.6% { clip-path: polygon(evenodd, calc(0.01 * var(--cc-bx)) calc(0.49 * var(--cc-by)), calc(100% - 0.16 * var(--cc-bx)) calc(0.26 * var(--cc-by)), calc(100% - 0.12 * var(--cc-bx)) calc(100% - 0.37 * var(--cc-by)), calc(0.19 * var(--cc-bx)) calc(100% - 0.47 * var(--cc-by)), calc(0.01 * var(--cc-bx)) calc(0.49 * var(--cc-by)), calc(0.01 * var(--cc-bx) + 3px) calc(0.49 * var(--cc-by) + 3px), calc(100% - 0.16 * var(--cc-bx) - 3px) calc(0.26 * var(--cc-by) + 3px), calc(100% - 0.12 * var(--cc-bx) - 3px) calc(100% - 0.37 * var(--cc-by) - 3px), calc(0.19 * var(--cc-bx) + 3px) calc(100% - 0.47 * var(--cc-by) - 3px), calc(0.01 * var(--cc-bx) + 3px) calc(0.49 * var(--cc-by) + 3px)); }
-}
-/* Transition chips: while the cut plays, each letter's own plate jitters too. */
-html[data-dsh-calling-card-skin] .dsh-cc-transition.is-on .dsh-cc-letter::before {
-  inset: -3px;
-  animation: dsh-cc-morph-chip 520ms steps(1, end) infinite;
-  animation-delay: calc(var(--cc-chip, 0) * -97ms);
-}
-html[data-dsh-calling-card-skin] .dsh-cc-transition.is-on .dsh-cc-letter:nth-child(3n + 1)::before { --cc-chip: 2; }
-html[data-dsh-calling-card-skin] .dsh-cc-transition.is-on .dsh-cc-letter:nth-child(3n + 2)::before { --cc-chip: 4; }
-@keyframes dsh-cc-morph-chip {
-  0% { clip-path: polygon(2% 1%, 98% 2%, 98% 93%, 4% 94%); }
-  25% { clip-path: polygon(4% 7%, 97% 3%, 98% 98%, 6% 97%); }
-  50% { clip-path: polygon(5% 7%, 96% 1%, 95% 94%, 7% 97%); }
-  75% { clip-path: polygon(1% 5%, 94% 0%, 94% 94%, 0% 96%); }
+@keyframes dsh-cc-q4 {
+  from { --cc-q4x: calc(0.9 * var(--cc-bx)); --cc-q4y: calc(0.1 * var(--cc-by)); }
+  to { --cc-q4x: calc(0.05 * var(--cc-bx)); --cc-q4y: calc(0.85 * var(--cc-by)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

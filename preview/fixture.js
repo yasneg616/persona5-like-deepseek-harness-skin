@@ -102,8 +102,8 @@ function boot() {
  *   ?act=enter  append a prompt, a reply and a tool card (papers fly in)
  *   ?act=load   nothing; freeze the page-load entries (leaves, rows, caption)
  *   ?act=stamp  freeze the moment the hero headline is cut (letters stamp in)
- *   ?act=morph  focus the composer (and hover its button) so the selected leaf,
- *               the selected row and the composer card show their living outline
+ *   ?act=morph  focus the composer (&pick=1 picks a leaf, &hover=1|leaf hovers) so the selected leaf,
+ *               the selected row and the composer card show their drifting red plate
  * The frame is then frozen: every animation is paused and seeked to `hold`
  * ms (headless virtual time does not advance the timeline on its own), and
  * the pending timers that would end it are dropped. `&hold=` and `&at=`
@@ -133,8 +133,12 @@ function scheduleAct(act) {
     }
     if (act === 'morph') {
       document.querySelector('[data-composer-input]')?.focus()
-      const button = document.querySelector('[data-composer-card] button')
-      if (button && params.get('hover') === '1') button.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
+      // &pick=1 makes the first leaf the current page; &hover=1 hovers SEND, &hover=leaf the last leaf.
+      if (params.get('pick') === '1') document.querySelector('[data-cc-leaf]')?.setAttribute('aria-current', 'page')
+      const hover = params.get('hover')
+      const target = hover === '1' ? document.querySelector('[data-composer-card] button')
+        : hover === 'leaf' ? Array.from(document.querySelectorAll('[data-cc-leaf]')).pop() : null
+      if (target) target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true }))
     }
     if (act === 'enter') {
       card('user', '<p>夹具提问：再跑一遍测试。不会发送。</p>')
