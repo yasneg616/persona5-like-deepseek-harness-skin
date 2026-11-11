@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-Hans" data-dsh-calling-card-skin data-windows-titlebar style="--dsh-windows-titlebar-height: 40px">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeek Harness · desktop fixture</title>
+<link rel="stylesheet" href="../lib/skin.css">
+<!--
+  Fixture for the Windows desktop shell. Not the Harness client and not the
+  desktop app. It imitates what the desktop preload and host layout put on the
+  page: a 40px web-rendered caption (menubar host + window-control host, both
+  open shadow roots), `window.dshDesktop.windowControls` (a stub that only logs),
+  frame padding with a drag strip, and a sidebar whose collapsed state hides
+  its lists the way the host does. Class names are made-up stand-ins for the
+  host's CSS-module names. ?collapsed=1 starts collapsed; ?api=0 drops the stub.
+-->
+<style>
+  html, body { margin: 0; height: 100%; background: #000; }
+  #frame { height: 100vh; display: grid; position: relative; box-sizing: border-box; grid-template-columns: 280px minmax(400px, 1fr) minmax(0px, 0px); }
+  html[data-windows-titlebar] #frame { padding-top: var(--dsh-windows-titlebar-height); background: #1b1b1c; }
+  html[data-windows-titlebar] #frame::before { content: ""; height: var(--dsh-windows-titlebar-height); background: #1b1b1c; -webkit-app-region: drag; position: absolute; inset: 0 0 auto; }
+  #frame[data-animating] { transition: grid-template-columns 250ms ease; }
+  .xx_sidebarCol, #center { min-width: 0; min-height: 0; }
+  .xx_sidebarCol { position: relative; overflow: hidden; }
+  #center { display: flex; flex-direction: column; }
+  #center > [data-phase] { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+  #frame > [data-shell-overlay] { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+  [data-conversation-header-leading] { padding: 16px 20px 8px; color: #f7f4ee; }
+  [data-conversation-scroll] { flex: 1; overflow: auto; padding: 12px 28px 24px; }
+  [data-composer-seat] { padding: 8px 20px 16px; }
+  [data-composer-card] { position: relative; padding: 12px 14px; }
+  [data-composer-input] { width: 100%; min-height: 52px; border: 0; background: transparent; resize: none; }
+  button.send { background: #e60012; color: #fff; border: 0; font-weight: 800; padding: 8px 12px; }
+  /* host-like sidebar */
+  .wtg9ga_root { display: flex; flex-direction: column; height: 100%; padding: 8px; box-sizing: border-box; color: #ddd; }
+  .wtg9ga_logoRow { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+  .wtg9ga_iconButton { width: 28px; height: 28px; display: grid; place-items: center; background: transparent; border: 0; color: #ddd; padding: 0; }
+  .wtg9ga_iconButton svg, .wtg9ga_panelGlyph svg, .wtg9ga_newSession svg { width: 16px; height: 16px; }
+  .wtg9ga_newSession, .wtg9ga_panelRow { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: #ddd; padding: 6px 8px; text-align: left; }
+  .wtg9ga_panelList { display: flex; flex-direction: column; }
+  .wtg9ga_regionArea { flex: 1; min-height: 0; overflow: auto; }
+  .GAkraW_sectionHeader { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; }
+  .GAkraW_listArea [role="treeitem"] { padding: 4px 8px; }
+  .wtg9ga_footArea { margin-top: auto; display: flex; justify-content: flex-end; }
+  html[data-windows-titlebar] .wtg9ga_toggle { position: fixed; top: 6px; left: 12px; z-index: 30; }
+  html[data-windows-titlebar] .wtg9ga_collapsed { padding: 0; }
+  html[data-windows-titlebar] .wtg9ga_collapsed .wtg9ga_logoRow { height: 0; }
+  html[data-windows-titlebar] .wtg9ga_collapsed .wtg9ga_newSession { position: fixed; top: 6px; left: 48px; z-index: 30; width: 28px; height: 28px; padding: 0; justify-content: center; }
+  html[data-windows-titlebar] .wtg9ga_collapsed :is(.wtg9ga_panelList, .wtg9ga_regionArea, .wtg9ga_footArea) { display: none; }
+  .wtg9ga_collapsed .xx_wide, .wtg9ga_collapsed .GAkraW_listArea, .wtg9ga_root:not(.wtg9ga_collapsed) .GAkraW_rail { display: none; }
+  .GAkraW_rail { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  #fixture-log { position: fixed; left: 50%; bottom: 4px; z-index: 50; margin: 0; background: #fff; color: #111; font: 700 11px/1.4 sans-serif; padding: 3px 8px; pointer-events: none; }
+  #fixture-menu { position: fixed; z-index: 60; display: none; background: #2b2b2b; color: #eee; font: 13px/1.8 sans-serif; padding: 6px 14px; box-shadow: 0 6px 18px #000a; }
+</style>
+<script>
+  /* Preload stand-ins, created before the plugin loads (like the real preload). */
+  (() => {
+    const params = new URLSearchParams(location.search)
+    const log = (text) => {
+      window.__ccLog = (window.__ccLog || []).concat(text)
+      const out = document.getElementById('fixture-log')
+      if (out) out.textContent = `夹具窗口桩：${text}`
+    }
+    let maximized = params.get('max') === '1'
+    if (params.get('api') !== '0') {
+      window.dshDesktop = {
+        protocolVersion: 1,
+        windowControls: {
+          invoke: async (action) => {
+            log(action)
+            if (action === 'maximize') maximized = true
+            if (action === 'restore') maximized = false
+            return { maximized, minimized: false }
+          },
+          menu: async (name, x, y) => {
+            log(`menu ${name} @ ${Math.round(x)},${Math.round(y)}`)
+            const menu = document.getElementById('fixture-menu')
+            menu.textContent = name === 'edit' ? '撤销 · 重做 · 剪切 · 复制 · 粘贴' : '关于 · 设置 · 退出'
+            menu.style.left = `${x}px`
+            menu.style.top = `${y}px`
+            menu.style.display = 'block'
+            await new Promise((resolve) => setTimeout(resolve, 900))
+            menu.style.display = 'none'
+            return true
+          },
+        },
+      }
+    }
+    const shadowHost = (attr, css, labels) => {
+      const host = document.createElement('div')
+      host.setAttribute(attr, '')
+      const root = host.attachShadow({ mode: 'open' })
+      root.innerHTML = `<style>${css} button{height:40px;border:0;background:transparent;color:#ccc;font:13px sans-serif;padding:0 10px}</style>` + labels.map((label) => `<button type="button">${label}</button>`).join('')
+      document.documentElement.append(host)
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      shadowHost('data-windows-menu', ':host{position:fixed;top:0;left:var(--dsh-windows-menu-start,48px);height:40px;z-index:1100;display:flex}', ['应用', '编辑'])
+      shadowHost('data-industrial-caption-fallback', ':host{position:fixed;top:0;right:0;height:40px;z-index:1101;display:flex} button{width:46px}', ['—', '☐', '✕'])
+    })
+  })()
+</script>
+</head>
+<body>
+<div id="frame">
+  <div class="xx_sidebarCol">
+    <div class="wtg9ga_root" id="sideRoot">
+      <div class="wtg9ga_logoRow" data-window-drag>
+        <button type="button" class="xx_wide" style="background:none;border:0;padding:4px 6px" aria-label="新建会话"><span class="dsh-cc-name">DSH <span>斩噪</span></span></button>
+        <button type="button" data-sidebar-toggle class="wtg9ga_iconButton wtg9ga_toggle" aria-label="收起侧边栏"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1"/><line x1="6" y1="3" x2="6" y2="13"/></svg></button>
+      </div>
+      <button type="button" class="wtg9ga_newSession" aria-label="New Session"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3v10M3 8h10"/></svg><span class="xx_wide">New Session</span></button>
+      <nav class="wtg9ga_panelList" aria-label="全局面板">
+        <button type="button" class="wtg9ga_panelRow" aria-label="Plugins" data-fixture-panel><span class="wtg9ga_panelGlyph"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="4" height="4"/><rect x="9" y="3" width="4" height="4"/><rect x="3" y="9" width="4" height="4"/><rect x="9" y="9" width="4" height="4"/></svg></span><span class="xx_wide">Plugins</span></button>
+        <button type="button" class="wtg9ga_panelRow" aria-label="Automation tasks"><span class="wtg9ga_panelGlyph"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="5"/><path d="M8 5v3l2 2"/></svg></span><span class="xx_wide">Automation tasks</span></button>
+      </nav>
+      <div class="wtg9ga_regionArea">
+        <div class="GAkraW_root">
+          <div class="GAkraW_sectionHeader xx_wide"><span>项目</span><button type="button" class="wtg9ga_iconButton" aria-label="添加项目"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h5l1 1h6v7H2z"/></svg></button></div>
+          <div class="GAkraW_rail">
+            <button type="button" class="wtg9ga_iconButton" aria-label="添加项目"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h5l1 1h6v7H2z"/></svg></button>
+            <button type="button" class="wtg9ga_iconButton" aria-label="搜索会话"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4"/><path d="M10 10l3 3"/></svg></button>
+          </div>
+          <div class="GAkraW_listArea">
+            <div role="treeitem" data-row-key="workspace:demo">夹具项目</div>
+            <div role="treeitem" data-row-key="session:demo-1" aria-selected="true">检查令牌刷新</div>
+            <div role="treeitem" data-row-key="session:demo-2" aria-selected="false">整理交付说明</div>
+            <div role="treeitem" data-row-key="session:demo-3" aria-selected="false">阅读边界用例</div>
+            <div role="treeitem" data-row-key="session:demo-4" aria-selected="false">Refactor auth middleware</div>
+          </div>
+        </div>
+      </div>
+      <div class="wtg9ga_footArea">
+        <button type="button" class="wtg9ga_iconButton" aria-label="设置"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <div id="center">
+   <div data-phase="active">
+    <div data-conversation-header-leading>当前会话 · 夹具标题</div>
+    <div data-conversation-region="chat" data-conversation-scroll>
+      <article data-chat-flow-kind="user"><p>把窗口按钮也做成怪盗风格。</p></article>
+      <article data-chat-flow-kind="assistant-step">
+        <h2>夹具回复</h2>
+        <p>这是桌面端夹具：顶部原本有一条 40px 的网页标题栏，皮肤接管后由右上角的票签式按钮代替。示例正文，没有模型调用。</p>
+      </article>
+    </div>
+    <form data-composer-seat data-conversation-region="composer">
+      <div data-composer-card>
+        <textarea data-composer-input placeholder="下一步，要让 DSH 做什么？"></textarea>
+        <button class="send" type="button">SEND</button>
+      </div>
+    </form>
+   </div>
+  </div>
+  <div data-shell-overlay></div>
+</div>
+<p id="fixture-log" data-fixture-status>测试夹具 · 不是桌面端</p>
+<div id="fixture-menu"></div>
+<script>
+  /* Host-like collapse: attribute + inline grid + collapsed class; lists stop rendering. */
+  (() => {
+    const frame = document.getElementById('frame')
+    const root = document.getElementById('sideRoot')
+    const toggle = document.querySelector('[data-sidebar-toggle]')
+    const set = (collapsed, animate) => {
+      if (animate) {
+        frame.setAttribute('data-animating', '')
+        setTimeout(() => frame.removeAttribute('data-animating'), 260)
+      }
+      frame.toggleAttribute('data-sidebar-collapsed', collapsed)
+      root.classList.toggle('wtg9ga_collapsed', collapsed)
+      frame.style.gridTemplateColumns = `${collapsed ? 0 : 280}px minmax(400px, 1fr) minmax(0px, 0px)`
+      toggle.setAttribute('aria-label', collapsed ? '打开侧边栏' : '收起侧边栏')
+      document.documentElement.style.setProperty('--dsh-windows-menu-start', collapsed ? '84px' : '48px')
+      const list = document.querySelector('.GAkraW_listArea')
+      if (collapsed) { window.__ccRows = list.innerHTML; list.innerHTML = '' } else if (window.__ccRows) list.innerHTML = window.__ccRows
+    }
+    toggle.addEventListener('click', () => set(!frame.hasAttribute('data-sidebar-collapsed'), true))
+    document.querySelector('.GAkraW_listArea').addEventListener('click', (event) => {
+      const row = event.target.closest('[data-row-key^="session:"]')
+      if (!row) return
+      for (const other of document.querySelectorAll('[data-row-key^="session:"]')) other.setAttribute('aria-selected', String(other === row))
+      const out = document.getElementById('fixture-log')
+      out.textContent = `夹具：打开 ${row.textContent}`
+      window.__ccLog = (window.__ccLog || []).concat(`open ${row.getAttribute('data-row-key')}`)
+    })
+    window.__ccSetCollapsed = set
+    if (new URLSearchParams(location.search).get('collapsed') === '1') {
+      /* The skin remembers rows while expanded, like a real session that started open. */
+      window.__ccCollapseAfterBoot = true
+    }
+  })()
+</script>
+<script src="fixture.js"></script>
+<script>
+  if (window.__ccCollapseAfterBoot) {
+    const wait = () => document.querySelector('.dsh-cc-chrome') ? setTimeout(() => window.__ccSetCollapsed(true, false), 50) : setTimeout(wait, 20)
+    wait()
+  }
+</script>
+</body>
+</html>

@@ -208,9 +208,17 @@ test('built client registers tokens and removes them on dispose', async () => {
   }
   render(overlay?.component({}), mount)
   effects.forEach((fn) => fn())
-  assert.equal(mount.querySelectorAll('.dsh-cc-glyph').length, 15)
+  assert.equal(mount.querySelectorAll('.dsh-cc-glyph').length, 18)
+  assert.equal(mount.querySelectorAll('.dsh-cc-railbrand .dsh-cc-glyph').length, 3)
   assert.equal(mount.querySelector('.dsh-cc-architecture')?.getAttribute('aria-label'), 'DEEPSEEK HARNESS')
-  assert.equal(mount.querySelector('.dsh-cc-replay')?.textContent?.includes('重播转场'), true)
+  // 0.5.2: the replay stamp is gone; the caption cluster exists but stays off without the desktop API.
+  assert.equal(mount.querySelector('.dsh-cc-replay'), null)
+  assert.equal(mount.textContent?.includes('重播转场'), false)
+  assert.equal(mount.querySelectorAll('.dsh-cc-win').length, 3)
+  assert.equal(mount.querySelectorAll('.dsh-cc-menu').length, 2)
+  assert.equal(mount.querySelector('.dsh-cc-chrome')?.hasAttribute('data-on'), false)
+  assert.equal(window.document.documentElement.hasAttribute('data-cc-caption'), false)
+  assert.ok(mount.querySelector('nav.dsh-cc-tickets'))
   assert.equal(mount.querySelector('.dsh-cc-overlay')?.getAttribute('class'), 'dsh-cc-overlay')
   const panel = window.document.createElement('button')
   panel.textContent = 'Plugins'

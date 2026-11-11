@@ -74,9 +74,11 @@ function boot() {
       return
     }
     if (typeof node.type !== 'string') return
-    const el = document.createElement(node.type)
+    const svg = /^(svg|g|path|polygon|polyline|rect|line|circle)$/.test(node.type)
+    const el = svg ? document.createElementNS('http://www.w3.org/2000/svg', node.type) : document.createElement(node.type)
     const props = node.props || {}
-    if (props.className) el.className = props.className
+    if (props.className) el.setAttribute('class', props.className)
+    if (props.title) el.setAttribute('title', props.title)
     if (props.role) el.setAttribute('role', props.role)
     if (props['aria-label']) el.setAttribute('aria-label', props['aria-label'])
     if (props['aria-hidden']) el.setAttribute('aria-hidden', props['aria-hidden'])

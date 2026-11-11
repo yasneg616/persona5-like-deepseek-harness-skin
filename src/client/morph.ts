@@ -30,8 +30,10 @@ const STATE: Array<[string, MorphKind]> = [
   ['.dsh-cc-caption-no', 'cap-no'],
   ['.dsh-cc-caption-body', 'cap-body'],
   ['[data-cc-hero-tag]', 'tag'],
+  ['[data-cc-rail-btn][aria-current="page"]', 'button'],
 ]
-const HOVER = '[data-cc-leaf], [data-row-key^="session:"], [data-composer-card] button, .dsh-cc-replay'
+const HOVER = '[data-cc-leaf], [data-row-key^="session:"], [data-composer-card] button, '
+  + '.dsh-cc-win, .dsh-cc-menu, [data-sidebar-toggle], [data-cc-rail-btn], .dsh-cc-ticket'
 const COMPOSER = '[data-composer-card]'
 
 export interface MorphTracker {

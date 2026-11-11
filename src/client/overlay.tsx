@@ -6,9 +6,11 @@ import { countFlows, burstFor, createBurst } from './sfx.ts'
 import { createEntryTracker } from './motion.ts'
 import { createMorphTracker } from './morph.ts'
 import { createGiant } from './giant.ts'
+import { mountChrome } from './chrome.ts'
+import { createRail } from './rail.ts'
 import { type LetterMode, SETTLE_MS as LETTER_SETTLE_MS, clearMode, hasPending, readMode, syncMessageCollage, writeMode } from './letters.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
-import { NAV_DURATION_MS, REPLAY_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
+import { NAV_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
 
 function LetterLine({ word }: { word: string }) {
   const letters = cutoutFor(word)
@@ -77,7 +79,47 @@ function transcriptKey(documentRef: Document): string {
   return `${row}|${phase}`
 }
 
-/** Frame overlay: architectural type, non-blocking paper cut, replay control. */
+/**
+ * Calling-card caption for the frameless Windows window: 应用 / 编辑 menu tabs
+ * and minimize / maximize / close tiles. Hidden unless the desktop preload's
+ * window-controls API is there (see chrome.ts).
+ */
+function WindowChrome() {
+  return (
+    <div className="dsh-cc-chrome">
+      <div className="dsh-cc-menus" role="menubar" aria-label="菜单栏">
+        <button type="button" className="dsh-cc-menu" data-menu="application" role="menuitem" aria-haspopup="menu" aria-expanded="false">
+          <span className="dsh-cc-menu-label">应用</span>
+          <span className="dsh-cc-menu-latin" aria-hidden="true">APP</span>
+        </button>
+        <button type="button" className="dsh-cc-menu" data-menu="edit" role="menuitem" aria-haspopup="menu" aria-expanded="false">
+          <span className="dsh-cc-menu-label">编辑</span>
+          <span className="dsh-cc-menu-latin" aria-hidden="true">EDIT</span>
+        </button>
+      </div>
+      <div className="dsh-cc-wins">
+        <button type="button" className="dsh-cc-win" data-win="minimize" aria-label="最小化" title="最小化">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><polygon className="dsh-cc-wglyph" points="3,11 17,9.4 17,12.4 3,13.8" /></svg>
+        </button>
+        <button type="button" className="dsh-cc-win" data-win="maximize" aria-label="最大化" title="最大化">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <polygon className="dsh-cc-glyph-max" points="3.5,4.5 16.5,3.2 16,16 4,16.8" />
+            <polygon className="dsh-cc-glyph-restore" points="7,3.4 16.8,2.6 16.4,12.4 6.6,13" />
+            <polygon className="dsh-cc-glyph-restore" points="3.4,7.2 13,6.6 12.6,16.6 3,17.2" />
+          </svg>
+        </button>
+        <button type="button" className="dsh-cc-win" data-win="close" aria-label="关闭" title="关闭">
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <polygon className="dsh-cc-wglyph" points="3.6,5.6 5.6,3.4 16.6,14.2 14.4,16.6" />
+            <polygon className="dsh-cc-wglyph" points="14.6,3.2 16.8,5.4 5.4,16.8 3.2,14.4" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/** Frame overlay: architectural type, non-blocking paper cut, window chrome, collapsed rail. */
 export function CallingCardOverlay() {
   const host = useRef<HTMLDivElement>(null)
   const live = useRef<HTMLDivElement>(null)
@@ -112,6 +154,8 @@ export function CallingCardOverlay() {
     node.appendChild(burst.root)
     const entries = createEntryTracker(document, window)
     const morph = createMorphTracker(document, window)
+    const chrome = mountChrome(document, window, node.querySelector<HTMLElement>('.dsh-cc-chrome'))
+    const rail = createRail(document, window, node.querySelector<HTMLElement>('.dsh-cc-tickets'), node.querySelector<HTMLElement>('.dsh-cc-railbrand'))
     const storage = safeStorage()
     let letters: LetterMode = readMode(storage)
     const toggle = node.querySelector<HTMLButtonElement>('.dsh-cc-letters')
@@ -141,6 +185,8 @@ export function CallingCardOverlay() {
       syncNavLeaves(document)
       syncHeroType(document)
       syncSideWidth(document)
+      rail.sync()
+      chrome.sync()
       syncCollage(document)
       runLetters()
       const signals = readViewSignals(document)
@@ -195,19 +241,16 @@ export function CallingCardOverlay() {
       childList: true,
       characterData: true,
       attributes: true,
-      attributeFilter: ['aria-current', 'aria-selected', 'data-row-key'],
+      attributeFilter: ['aria-current', 'aria-selected', 'data-row-key', 'data-sidebar-collapsed', 'data-sidebar-drawer', 'lang'],
     })
-    const onResize = () => syncSideWidth(document)
+    const onResize = () => {
+      syncSideWidth(document)
+      rail.sync()
+    }
     window.addEventListener('resize', onResize)
     const handle = frame?.querySelector('[data-side="sidebar"]')
     const handleObserver = new MutationObserver(() => syncSideWidth(document))
     if (handle) handleObserver.observe(handle, { attributes: true, attributeFilter: ['style'] })
-    const replay = node.querySelector<HTMLButtonElement>('.dsh-cc-replay')
-    const onReplay = () => {
-      layer.play(current, REPLAY_DURATION_MS, kicker)
-      status.textContent = prefersReducedMotion(window) ? '已跳过转场' : '重播转场'
-    }
-    replay?.addEventListener('click', onReplay)
     const onToggle = () => {
       letters = letters === 'collage' ? 'plain' : 'collage'
       writeMode(storage, letters)
@@ -231,7 +274,8 @@ export function CallingCardOverlay() {
     }
     window.addEventListener('storage', onStorage)
     return () => {
-      replay?.removeEventListener('click', onReplay)
+      chrome.dispose()
+      rail.dispose()
       toggle?.removeEventListener('click', onToggle)
       window.removeEventListener('storage', onStorage)
       window.clearTimeout(settleLetters)
@@ -260,9 +304,13 @@ export function CallingCardOverlay() {
         <LetterTiles />
       </div>
       <LetterToggle />
-      <button type="button" className="dsh-cc-replay">
-        重播转场 <span aria-hidden="true">↗</span>
-      </button>
+      <div className="dsh-cc-drag" aria-hidden="true" />
+      <WindowChrome />
+      <div className="dsh-cc-railbrand" aria-hidden="true">
+        <LetterLine word="DSH" />
+        <i className="dsh-cc-railbrand-star" />
+      </div>
+      <nav className="dsh-cc-tickets" aria-label="最近会话" />
       <div className="dsh-cc-live" role="status" aria-live="polite" ref={live} />
     </div>
   )

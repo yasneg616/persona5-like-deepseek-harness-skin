@@ -17,6 +17,12 @@ const GLOSS: Record<string, string> = {
 export function syncNavLeaves(documentRef: Document): void {
   const side = sidebarColumn(documentRef)
   if (!side) return
+  // Collapsed to the rail: no paper leaves; rail.ts turns the controls into tickets.
+  const frame = side.parentElement
+  if (frame?.hasAttribute('data-sidebar-collapsed') && !frame.hasAttribute('data-sidebar-drawer')) {
+    clearNavLeaves(documentRef)
+    return
+  }
   let index = 0
   for (const button of Array.from(side.querySelectorAll('button'))) {
     const text = (button.textContent || '').replace(/\s+/g, ' ').trim()
@@ -96,7 +102,7 @@ export function syncHeroType(documentRef: Document): void {
   tag?.setAttribute(HERO_TAG, '')
 }
 
-function sidebarColumn(documentRef: Document): Element | null {
+export function sidebarColumn(documentRef: Document): Element | null {
   const toggle = documentRef.querySelector('[data-sidebar-toggle]')
   const frame = documentRef.querySelector('div:has(> [data-shell-overlay])')
   if (!toggle || !frame) return null

@@ -10,7 +10,7 @@ Calling-card skin for the DeepSeek Harness **web** client. One red / black / whi
 | --- | --- |
 | `ctx.theme.overrideTokens` | Yes. Both `light` and `dark` carry the same value, so the host Appearance control does not grow a second theme and this plugin does not write that setting. |
 | Plugin stylesheet | Yes. One `<style data-plugin="dsh-calling-card-skin">` removed when the bundle unloads. Rules sit under `html[data-dsh-calling-card-skin]`. |
-| `shell.overlay` | Yes. Architectural type, paper-cut, and a replay button. The overlay root is click-through. |
+| `shell.overlay` | Yes. Architectural type, paper-cut, the letters switch, the desktop caption cluster and the collapsed-rail tickets. The overlay root is click-through. |
 | `sidebar.brand.mark` / `sidebar.brand.name` | Yes, at priority `-1`, released on unload. |
 | `root`, `sidebar`, `main`, `rightbar` | Not registered. ui-renderer documents that replacing `root` removes the frame and every seat inside it. |
 
@@ -26,13 +26,39 @@ Live sessions, Markdown, streaming, the composer, and tool rows stay the host's.
 
 Messages and the composer use a heavy, condensed set that ships with the skin and works offline: Barlow Semi Condensed (SemiBold for body, ExtraBold for prompts and bold) for Latin, Noto Sans SC Bold / Black subsets (`CcHeavy`) for Chinese, and Anton for headings. Fallbacks are Microsoft YaHei UI, Microsoft YaHei, PingFang SC and Noto Sans CJK SC. No brush or calligraphy face is used for reading text.
 
-A **LETTERS 信笺** switch sits under the replay stamp in the upper right: **平文 PLAIN** (default) or **拼贴 COLLAGE**. The choice is stored in `localStorage` under `dsh-cc-message-style` (the only value this skin stores) and survives restarts. In collage mode, settled paragraphs and headings in prompts and replies are shown as cutout letters in mixed faces. The host's own text stays in place underneath (zero size), so streaming, copying and screen readers still use the real text. Code, links, lists, tables, quotes and tool cards stay plain. A paragraph over 220 characters stays plain, each message cuts at most 480 letters, and only the latest 12 messages are cut. The welcome headline is cut in both modes. DSH 0.2.x has no settings API for client plugins, so the switch lives in the overlay.
+A **LETTERS 信笺** switch sits on the sheet's top-right corner: **平文 PLAIN** (default) or **拼贴 COLLAGE**. The choice is stored in `localStorage` under `dsh-cc-message-style` (the only value this skin stores) and survives restarts. In collage mode, settled paragraphs and headings in prompts and replies are shown as cutout letters in mixed faces. The host's own text stays in place underneath (zero size), so streaming, copying and screen readers still use the real text. Code, links, lists, tables, quotes and tool cards stay plain. A paragraph over 220 characters stays plain, each message cuts at most 480 letters, and only the latest 12 messages are cut. The welcome headline is cut in both modes. DSH 0.2.x has no settings API for client plugins, so the switch lives in the overlay.
+
+## Window chrome and collapsed rail (0.5.2)
+
+The replay stamp is gone. The **LETTERS 信笺** switch now sits on the sheet's top-right corner.
+
+On the Windows desktop app the 40px title bar is not native. The main window is frameless (`titleBarStyle: "hidden"`, `titleBarOverlay: false`). The desktop preload draws that bar in the page: an 应用 / 编辑 menubar host (`[data-windows-menu]`) and a minimize / maximize / close host (`[data-industrial-caption-fallback]`). It also exposes `window.dshDesktop.windowControls` (`invoke(action)`, `menu(name, x, y)`).
+
+**When that API is present**, the skin:
+- draws its own caption cluster in the top right: two torn menu tabs (they open the same native menus) and three slanted tiles (minimize, maximize/restore, close; close turns to a white quad with a red cross on hover);
+- sets `html[data-cc-caption]`, hides the two preload hosts, and removes the frame's 40px padding;
+- keeps the top 40px as a drag band (`-webkit-app-region: drag`; double-click maximizes as before), with every control set to `no-drag`.
+
+**Without the API** (browser profile, macOS, a desktop build without it), nothing is hidden and the host bar stays.
+
+The collapse toggle is a red ticket at the deck's top-right corner. Collapsed, the sidebar becomes a 96px black slanted strip with a red blade:
+- the host's real controls (new session, panels, project add/search, settings) are shown again as numbered paper tickets with the host tooltips;
+- the current panel is red;
+- recent sessions appear as red tickets (number + first letter, title in a flyout). Clicking one expands the sidebar and clicks the real row;
+- a vertical **DSH** cut brand sits at the foot when there is room.
+
+Collapse and expand are a 300ms snap. Hovering any of these controls gives the lunge and the drifting red quad. Reduced motion turns the motion off.
+
+Limits:
+- Session rows are not rendered by the host while collapsed. The tickets come from the last expanded list (key, title and selected flag only, kept in memory).
+- Rail sections are found by structure (the sidebar root's direct children that the host hides), not by hashed class names.
+- Checked in `preview/desktop.html`, a labeled fixture that imitates the preload with a logging stub. It was not verified live inside the desktop app before this release.
 
 ## Honest gaps
 
 - There is no supported layout-replacement API that keeps sessions, streaming, and the composer. The center column's content box stays a rectangle. The stepped white frame and the offset red backing are `::before` / `::after` in the margin. They do not clip the transcript, the composer, or the workspace controls.
 - The content box inside the sheet stays rectangular so the composer, selection, and scroll are not clipped. The jagged edge is the white and red margin around it.
-- The sidebar floor is 32% of the frame. Dragging the handle above that widens the column; dragging below it stays at 32%. The host's own 264–420 clamp still stores the drag, and the visible width is `max(32%, that stored left)`. Collapsed and drawer modes are left on the host grid.
+- The sidebar floor is 32% of the frame. Dragging the handle above that widens the column; dragging below it stays at 32%. The host's own 264–420 clamp still stores the drag, and the visible width is `max(32%, that stored left)`. The drawer mode is left on the host grid; the collapsed mode is the 96px rail described above.
 - The Plugins switch writes `dsh.profile.bundles` and leaves the dependency installed. On this host, HMR is off, so `setBundleEnabled` returns `restart-required` / `no-hmr`. The running client fiber stays until the DSH process restarts. A page reload does not remove the style, the root attribute, or the architectural word. Quit DSH and start it again. `dsh plugin --profile calling-card remove dsh-calling-card-skin` deletes only this dependency, and that also takes effect at the next process start. The unit test covers fiber dispose. It does not stand in for that restart.
 - Headings are stamped as whole elements. The prototype's per-letter Chinese cutouts rewrite text nodes; doing that here would fight React while a reply streams. Body paragraphs and code are not rotated.
 - The giant **SESSION** word is skin chrome. The real session title stays in the host header and is shown again, as plain text, on the navigation stamp.
@@ -54,7 +80,7 @@ dsh --profile calling-card --from-default-profile web
 Stop that process, then:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.1.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.2.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -72,7 +98,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.1.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.2.tgz
 ```
 
 ## Develop

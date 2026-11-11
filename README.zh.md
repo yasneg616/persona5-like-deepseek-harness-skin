@@ -10,7 +10,7 @@ DeepSeek Harness 网页客户端的预告信皮肤。只有一套红、黑、白
 
 - **`ctx.theme.overrideTokens(source, tokens)`**。每个令牌都是 `{ light, dark }`，而且两边写同一个值。宿主「外观」仍然只有浅色 / 深色 / 跟随系统。本插件不调用 `setTheme`，不把选择写进设置。
 - **插件自己的样式表**。一条带 `data-plugin="dsh-calling-card-skin"` 的 `<style>`。卸载或禁用时由客户端模块系统连同本插件的 effect 一起摘掉。选择器都挂在 `html[data-dsh-calling-card-skin]` 下。
-- **`shell.overlay`**。这是布局包声明的列表槽，说明文字写明它用来放浮层，并且层本身不接点击。建筑字、斜切转场和「重播转场」放在这里。根节点 `pointer-events: none`，只有重播按钮重新打开点击。
+- **`shell.overlay`**。这是布局包声明的列表槽，说明文字写明它用来放浮层，并且层本身不接点击。建筑字、斜切转场、信笺开关、桌面端窗口按钮和收起侧栏的会话票签放在这里。根节点 `pointer-events: none`，只有这些按钮重新打开点击。
 - **`sidebar.brand.mark` 与 `sidebar.brand.name`**。侧栏文档写明这里可以换掉鱼标和默认名称。注册优先级 `-1`，卸下后原来的占用者回来。若该格点已被同样优先级占用，会留下警告并放弃这一格，主题令牌仍然生效。
 
 没有注册 `root`、`sidebar`、`main`、`rightbar`。`ui-renderer` 写明：往 `root` 再注册会盖掉整个 AppFrame，侧栏和会话一起消失。那不是皮肤，是把客户端拆掉。
@@ -21,7 +21,36 @@ DeepSeek Harness 网页客户端的预告信皮肤。只有一套红、黑、白
 
 消息和输入框换成随皮肤打包、离线可用的粗体窄体：拉丁字母用 Barlow Semi Condensed（正文 SemiBold，提问和加粗用 ExtraBold），中文用 Noto Sans SC 的 Bold / Black 子集（`CcHeavy`），标题用 Anton。缺字时依次回退到 Microsoft YaHei UI、Microsoft YaHei、PingFang SC、Noto Sans CJK SC。正文不用毛笔或书法字体。
 
-右上角「重播转场」下面有一个 **LETTERS 信笺** 开关：**平文 PLAIN**（默认）或 **拼贴 COLLAGE**。选择存进 `localStorage` 的 `dsh-cc-message-style`（这是本皮肤唯一存的值），重启后仍然有效。拼贴模式下，提问和回复里已经稳定的段落和标题会变成混合字体的剪贴字；宿主原来的文字仍留在下面（字号为 0），所以流式输出、复制和读屏仍然用真实文字。代码、链接、列表、表格、引用和工具卡保持平文。超过 220 字的段落保持平文，每条消息最多剪 480 个字，只剪最近 12 条消息。欢迎标题无论哪种模式都是拼贴。DSH 0.2.x 没有给客户端插件的设置接口，所以开关放在浮层里。
+主纸右上角有一个 **LETTERS 信笺** 开关：**平文 PLAIN**（默认）或 **拼贴 COLLAGE**。选择存进 `localStorage` 的 `dsh-cc-message-style`（这是本皮肤唯一存的值），重启后仍然有效。拼贴模式下，提问和回复里已经稳定的段落和标题会变成混合字体的剪贴字；宿主原来的文字仍留在下面（字号为 0），所以流式输出、复制和读屏仍然用真实文字。代码、链接、列表、表格、引用和工具卡保持平文。超过 220 字的段落保持平文，每条消息最多剪 480 个字，只剪最近 12 条消息。欢迎标题无论哪种模式都是拼贴。DSH 0.2.x 没有给客户端插件的设置接口，所以开关放在浮层里。
+
+## 窗口按钮与收起侧栏（0.5.2）
+
+「重播转场」已经去掉。**LETTERS 信笺** 开关移到主纸右上角。
+
+Windows 桌面端顶部那条 40px 的栏不是系统原生的。主窗口无边框（`titleBarStyle: "hidden"`、`titleBarOverlay: false`），这条栏由桌面端 preload 画在网页里：
+- 一个「应用 / 编辑」菜单宿主（`[data-windows-menu]`）；
+- 一个最小化 / 最大化 / 关闭宿主（`[data-industrial-caption-fallback]`）；
+- 同时提供 `window.dshDesktop.windowControls`（`invoke(action)`、`menu(name, x, y)`）。
+
+**有这个接口时**，皮肤会：
+- 在右上角画自己的一组：两张撕边菜单签（打开的是同一个原生菜单），三块斜切票签（最小化、最大化/还原、关闭；关闭悬停时变成白色漂移四边形加红叉）；
+- 设 `html[data-cc-caption]`，隐藏两个 preload 宿主，去掉框架顶部 40px 的留白；
+- 顶部 40px 仍是拖动区（`-webkit-app-region: drag`，双击照常最大化），所有按钮设为 `no-drag`。
+
+**没有这个接口时**（浏览器 profile、macOS、没有这个接口的桌面版本）什么都不隐藏，宿主栏照旧。
+
+展开/收起按钮是侧栏右上角的一张红票签。收起后侧栏变成 96px 的黑色斜切条，配一道红刃：
+- 宿主真实的按钮（新会话、各面板、添加项目/搜索、设置）重新显示为带编号的纸票签，悬停时仍是宿主自己的提示；
+- 当前面板是红色；
+- 最近会话显示成红票签（编号加首字，悬停弹出标题），点击会先展开侧栏再点真实的那一行；
+- 空间够时底部有竖排剪贴的 **DSH**。
+
+展开和收起是 300ms 的弹性切换。这些按钮悬停时会前冲，并出现漂移红四边形。「减少动态效果」时不动。
+
+限制：
+- 收起时宿主不渲染会话行。票签来自上一次展开时的列表，只记会话键、标题和是否选中，只存在内存里。
+- 收起条的各段按结构找（侧栏根节点下被宿主隐藏的直接子节点），不依赖带哈希的类名。
+- 本版只在 `preview/desktop.html` 夹具里核对过。夹具模仿 preload，窗口接口是只记日志的桩。发布前没有在桌面端里实机验证。
 
 ## 和已确认的 v9 稿之间的差别
 
@@ -29,7 +58,7 @@ v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去
 
 - 没有「换掉整个布局」的受支持接口，同时又保住会话、流式回复和输入框。中间栏的内容盒仍是矩形。阶梯白纸框和错位的红底是栏边距上的 `::before` / `::after`，不裁切正文、输入框或工作区按钮。
 - 侧栏宽度仍走宿主轨道。布局把拖拽夹在 264 到 420（`SIDEBAR_MIN` / `SIDEBAR_MAX`），手柄的 `left` 用的就是这个宽度。皮肤测量这一列，不改 `grid-template-columns`。另写一套宽度会让手柄留在旧边上。1440 上原型的导航比 280 宽；这里用大字号和左侧结构字来撑起尺度。
-- 结构字画在各栏后面，导航纸片压住字的下沿。侧栏宽度至少是画面的 32%，拖拽手柄跟这个宽度走；再往右拖会变宽，往左不会窄过 32%。折叠和抽屉仍用宿主自己的网格。
+- 结构字画在各栏后面，导航纸片压住字的下沿。侧栏宽度至少是画面的 32%，拖拽手柄跟这个宽度走；再往右拖会变宽，往左不会窄过 32%。抽屉模式仍用宿主自己的网格；收起时是上面说的 96px 收起条。
 - 插件页的开关只改 `dsh.profile.bundles`，依赖还在。这台宿主没有开 HMR，`setBundleEnabled` 返回 `restart-required` / `no-hmr`。已经跑着的客户端纤维要等 DSH 进程重启才卸。刷新页面不会去掉样式、根属性或结构字。先退出 DSH 再启动。`dsh plugin --profile calling-card remove dsh-calling-card-skin` 只删这个依赖，同样在下一次进程启动后生效。单元测试只覆盖纤维销毁，不能代替这次重启。
 - 正文和代码不逐字旋转。标题做成整块印章。原型里的逐字中文剪贴会改掉 React 正在更新的文本节点，流式输出时会打架。
 - 巨大的 **SESSION** 是皮肤自己的结构字。真正的会话标题仍在宿主顶栏；切换会话时，转场印章上再显示这份真实标题（纯文本，不是逐字剪贴）。
@@ -43,7 +72,7 @@ v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去
 
 `preview/conversation.html` 是标明的对话样式夹具，不是宿主，也不是模型输出。
 
-转场约 600ms，重播约 1050ms。遮罩不接收点击。连续切换以最后一次标题为准。系统「减少动态效果」时不播放，也不闪白。Esc 只收起转场；焦点在输入框、可编辑区域或已打开的对话框上时不动它，事件继续交给宿主。
+转场约 600ms。遮罩不接收点击。连续切换以最后一次标题为准。系统「减少动态效果」时不播放，也不闪白。Esc 只收起转场；焦点在输入框、可编辑区域或已打开的对话框上时不动它，事件继续交给宿主。
 
 ## 安装（Windows PowerShell）
 
@@ -64,7 +93,7 @@ dsh --profile calling-card --from-default-profile web
 停掉这个进程，再安装本包（路径换成 tarball 的实际位置）：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.1.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.2.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -84,7 +113,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.1.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.2.tgz
 ```
 
 ## 本地构建与夹具
