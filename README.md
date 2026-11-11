@@ -1,8 +1,10 @@
-# dsh-calling-card-skin
+# Persona 5-like Skin for DeepSeek Harness
 
 Calling-card skin for the DeepSeek Harness **web** client. One red / black / white palette, a two-line paper-cut **DEEPSEEK / HARNESS** mark, stepped session rows, black prompt slips, and collage response sheets. It is a separate installable bundle. It does not replace DeepSeek Harness, `dsh-industrial-acid-skin`, or `dsh-audio-reactive`.
 
 中文说明见 [README.zh.md](README.zh.md). Compatibility evidence is in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
+
+[Download the 1.0.0 plugin](https://github.com/yasneg616/persona5-like-skin/releases/tag/v1.0.0). The tarball includes the compiled plugin, styles, and fonts. Install it as `dsh-calling-card-skin` in a compatible Harness Web profile.
 
 ## What it actually changes
 
@@ -81,6 +83,32 @@ Limits:
 
 Limits: the fade, header and account selectors use CSS-module local names (`_fade`, `_sectionHeader`, `_sectionLabel`) and the host's `data-signed-out` / `aria-haspopup` attributes. Checked in `preview/desktop.html` (host-like markup from the installed sidebar, workspace and account modules), not live in the desktop app before this release.
 
+## Popups, rail foot and session tickets (0.5.5)
+
+- **Every secondary menu** is one cut panel. The account **更多** menu, the session / project **…** context menus, the model and **完全权限** pickers, the composer **+** menu, file-card "open with" menus and dock tab menus all come from the host's single Menu primitive (`[data-menu-material]`), so they all change together. The host's frosted material is dropped. Each menu is a black panel with a white edge, a red offset slab and a red cut tab, and it slams in with a short rotate / scale / translate. Items are slanted strips. On hover, keyboard focus or an open submenu, an item lunges right, a white strip snaps in, a red quad drifts behind it, and the text turns black. Shortcut keys (设置 **Ctrl ,**) are red cut chips; dividers are red slanted bars with a white chip; group labels are red caps; picked options get a red bar and a red check; delete / sign-out items are red.
+- **Tooltips** are small black tags with a white edge, a red notch and a red offset. **Hover cards**, such as the session card with title, path, age and **◆ 空闲**, are black dossier cards with a white frame, a red offset and an **INFO** tab. Document previews and media cards keep their content look with a squared red offset.
+- **Collapsed rail, 更多 is back.** The rail used to look for the sidebar's sections right under the column. In the desktop app a wrapper sits in between, so the panel tickets and **更多** never came back when collapsed. The rail now finds the root that actually holds the sections. The account control's section is always the foot, even when the host leaves it in the layout. **更多** is a red **MORE** foot ticket that opens the host's own menu upward. The vertical DSH brand is measured to sit above the foot and drops out when there is no room. Hidden wide-only buttons no longer use up ticket numbers. Rail ticket titles read the row title only, without the age label.
+- **Session tickets under projects.** Rows are torn paper tickets with a punched stub. The paper moved to `::before`, so the black and red offsets show again; before, the row's own clip cut them off. The title has its own lane with ellipsis, and the age is a small black tag. The inline **… / pin / archive** buttons show only on hover, focus or an open menu. They appear in a black chip bar that replaces the age and never covers the title. Picked and hovered rows put the red quad on an offset paper slab with a black edge, so they read on the red band as well. The tilt and lunge are gentler, so the right end stays inside the column.
+- **CUT THE NOISE** no longer hides under the center column's top blade when collapsed. It turns into a vertical stamp in the free strip between the rail and the brand.
+
+Limits: the 应用 / 编辑 menus on Windows are native Electron menus and cannot be styled. The selectors match the host Menu / Tooltip / HoverCard attributes plus CSS-module local names (`_material_`, `_submenu_`, `_shortcut`, `_danger_`, `_check_`, `_card_`, `_preview_`, `_media_`, `_rowActions`, `_rowResting`, `_title`, `_time`, `_menuOpen`). These were checked in `preview/menus.html` and `preview/desktop.html` (host-like markup taken from the installed modules), not live in the desktop app before this release.
+
+## Popup completion (0.5.6)
+
+Fixes the MORE label disappearing on hover, clipped model-menu backing, model checks, tooltip keycaps and the submenu's animation-end jump. Submenus retain the host pointer bridge; model lists still scroll internally. `npm run test:ui` uses local Chrome / Edge (or `BROWSER_EXE`) to check fixture mouse and keyboard interactions, reduced motion and three window sizes. It does not connect to desktop sessions.
+
+## Compact navigation (0.5.7)
+
+The brand tagline is **TAKE YOUR HEART**. Navigation cards use smaller type and dimensions with a 3px black border, including the expanded account ticket. Hover and selection stay inside the border; the collapsed rail keeps its existing size.
+
+## Workspace room (0.5.8)
+
+Reduced brand-to-navigation spacing and workspace-header margins give the workspace list more vertical room. Navigation sizes, session text and collapsed controls stay unchanged.
+
+## Diagonal navigation (0.5.9)
+
+Compact navigation cards share a 2° tilt and step 10px to the right per card. The selected highlight stays still after the selection animation. Text-only updates in existing replies skip the full skin refresh, while collage letters still settle as before.
+
 ## Honest gaps
 
 - There is no supported layout-replacement API that keeps sessions, streaming, and the composer. The center column's content box stays a rectangle. The stepped white frame and the offset red backing are `::before` / `::after` in the margin. They do not clip the transcript, the composer, or the workspace controls.
@@ -91,28 +119,29 @@ Limits: the fade, header and account selectors use CSS-module local names (`_fad
 - The giant **SESSION** word is skin chrome. The real session title stays in the host header and is shown again, as plain text, on the navigation stamp.
 - Hashed CSS-module class names are not targeted. Selectors are data attributes and the frame's child order checked in `@deepseek-ai/dsh-client-ui-layout@0.2.0-rc.2`.
 - `0.2.1.x` is inside the declared range because the token API matches at `0.2.0-rc.2` and `0.2.2-rc.1`. Those intermediate builds were not booted here.
-- This environment cannot open the Windows desktop install or its sessions.
 
 ## Install
 
 Use the `dsh` that belongs to the installed app. `dsh --version` must print a version inside `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1`. The old checkout at `0.1.3-alpha.2` is outside that range.
 
-Prefer a **separate profile** so this skin and the industrial skin are not two token layers in one composition. Windows PowerShell, from the folder that contains the tarball:
+Use a **separate Web profile** for this skin. In Windows PowerShell, from the folder containing the release tarball, initialize `calling-card` on first install only. `--from-default-profile` replaces the named profile, so skip this step when upgrading it.
 
 ```powershell
 dsh --version
-dsh --profile calling-card --from-default-profile web
+dsh --profile calling-card --from-default-profile web --dump-config
 ```
 
-Stop that process, then:
+With the target profile stopped, install the package and start the profile:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.4.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-1.0.0.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
 
 `--dump-config` should show a `# == dsh-calling-card-skin` layer. The first `plugin add` creates a base-backed profile if you skip `--from-default-profile`; a skin needs the **web** template so the GUI bundles are present.
+
+Open the full local URL printed by `dsh` if the browser does not open automatically.
 
 The npm `dsh` command refuses plugin changes to the reserved `desktop` profile. The Desktop-bundled `dsh` can manage it. Installing there stacks this skin on top of whatever that profile already enables, including industrial and audio. To avoid that, keep this skin on `calling-card`.
 
@@ -125,7 +154,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.4.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-1.0.0.tgz
 ```
 
 ## Develop

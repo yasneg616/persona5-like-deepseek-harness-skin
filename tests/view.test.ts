@@ -7,6 +7,10 @@ import { resolveArchitectureLabel } from '../src/client/title.ts'
 import { cutoutFor } from '../src/client/cutouts.ts'
 
 test('the brand stays two cutout lines and the panel is only a chip', () => {
+  const overlay = readFileSync(new URL('../src/client/overlay.tsx', import.meta.url), 'utf8')
+  const fixture = readFileSync(new URL('../src/client/fixture-boot.ts', import.meta.url), 'utf8')
+  assert.match(overlay, /className="dsh-cc-tagline">TAKE YOUR HEART</)
+  assert.match(fixture, /tag.textContent = 'TAKE YOUR HEART'/)
   assert.deepEqual(resolveArchitectureLabel({
     panelLabel: 'Plugins',
     headerLabel: null,

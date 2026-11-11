@@ -1,8 +1,10 @@
-# dsh-calling-card-skin
+# Persona 5 风格的 DeepSeek Harness 皮肤
 
 DeepSeek Harness 网页客户端的预告信皮肤。只有一套红、黑、白。巨大的剪贴字 **SESSION**、斜向阶梯会话条、黑色提问纸条、白色回复信纸。这是独立可安装的 bundle，不覆盖 DeepSeek Harness 本体，也不改 `dsh-industrial-acid-skin` 和 `dsh-audio-reactive`。
 
 兼容性证据见 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)。英文安装说明见 [README.md](README.md)。
+
+[下载 1.0.0 插件](https://github.com/yasneg616/persona5-like-skin/releases/tag/v1.0.0)。安装包内含编译好的插件、样式和字体，在兼容的 Harness Web 配置档中以 `dsh-calling-card-skin` 安装。
 
 ## 它真正接上的接口
 
@@ -79,6 +81,32 @@ Windows 桌面端顶部那条 40px 的栏不是系统原生的。主窗口无边
 
 限制：渐隐、标题和账号按钮按 CSS 模块本地名（`_fade`、`_sectionHeader`、`_sectionLabel`）和宿主的 `data-signed-out` / `aria-haspopup` 属性匹配。本版在 `preview/desktop.html`（按已安装的侧栏、工作区、账号模块仿写的结构）里核对过，发布前没有在桌面端实机验证。
 
+## 弹出菜单、收起条底部和会话票（0.5.5）
+
+- **所有二级菜单**统一成一种斜切面板。账号 **更多** 菜单、会话 / 项目的 **…** 右键菜单、模型和 **完全权限** 选择器、输入框 **+** 菜单、文件卡片的「打开方式」和停靠标签菜单都来自宿主同一个 Menu 组件（`[data-menu-material]`），所以一起改。宿主的毛玻璃底去掉，换成黑色面板：白边、红色错位底板和一块红色切角标签，打开时带一下短促的旋转、缩放、位移砸入。菜单项是斜切条：悬停、键盘聚焦或子菜单展开时向右前冲，白条砸入，背后一块红四边形漂移，文字反成黑色。快捷键（设置 **Ctrl ,**）是红色斜切小票；分隔线是红色斜条加一小块白；分组标题用红色大写字；已选项有红条和红色对勾；删除 / 退出登录为红色。
+- **悬停提示**是带白边、红缺口和红色错位的黑色小标签。**悬停卡片**（例如会话卡片：标题、路径、时间、**◆ 空闲**）是黑色档案卡：白框、红色错位，顶上一枚 **INFO** 标签。文档预览和媒体卡片保留原内容样式，只改成方角加红色错位。
+- **收起条的「更多」回来了。** 收起条原先在列的正下方找侧栏分区，桌面端中间多包了一层，所以收起后面板票签和 **更多** 都没回来。现在会找真正装着各分区的那一层；账号按钮所在的分区总是放到底部，即使宿主没有把它隐藏。**更多** 是一张红色 **MORE** 底部票，向上打开宿主自己的菜单。竖排 DSH 品牌字会按底部高度量好位置放在它上面，放不下就先隐藏。被隐藏的宽版按钮不再占用编号；收起条票签只读会话标题，不带时间。
+- **项目下的会话票。** 会话行是撕边纸票，左端打孔。纸色改画在 `::before` 上，黑色和红色错位阴影重新出现（之前被行自身的裁切切掉了）。标题单独占一条通道，超长显示省略号；时间是一枚黑色小标签。行内的 **… / 置顶 / 归档** 按钮只在悬停、聚焦或菜单打开时出现，放在替换掉时间的黑色按钮条里，不再压住标题。选中和悬停的行把红四边形放在一张带黑边的错位纸上，在红色底带上也看得清。倾斜和前冲幅度调小，右端不会滑出列外。
+- 收起时 **CUT THE NOISE** 不再被中间栏顶部的刀口挡住，改成竖排印章，放在收起条和品牌字之间的空档里。
+
+限制：Windows 上的 应用 / 编辑 菜单是原生 Electron 菜单，无法改样式。选择器匹配宿主 Menu / Tooltip / HoverCard 的属性，以及 CSS 模块本地名（`_material_`、`_submenu_`、`_shortcut`、`_danger_`、`_check_`、`_card_`、`_preview_`、`_media_`、`_rowActions`、`_rowResting`、`_title`、`_time`、`_menuOpen`）。本版在 `preview/menus.html` 和 `preview/desktop.html`（按已安装模块仿写的结构）里核对过，发布前没有在桌面端实机验证。
+
+## 弹出菜单收尾（0.5.6）
+
+修正收起条 MORE 标签悬停消失、模型菜单红底裁切与选中对勾、提示快捷键样式，以及子菜单动画结束跳变。子菜单保留宿主的鼠标通道；模型列表仍可独立滚动。`npm run test:ui` 使用本机 Chrome / Edge（或 `BROWSER_EXE`）检查测试夹具中的鼠标、键盘、减少动态效果和三种窗口尺寸；不连接桌面会话。
+
+## 紧凑导航（0.5.7）
+
+品牌标语改为 **TAKE YOUR HEART**。导航卡缩小字号和尺寸，加上 3px 黑色包边，展开侧栏底部的账号票签也同步调整。悬停和选中色块保持在黑边内；收起条尺寸不变。
+
+## 工作区空间（0.5.8）
+
+缩减品牌与导航之间及工作区标题周围的留白，为工作区列表腾出更多可见高度。导航尺寸、会话文字和收起条控件保持不变。
+
+## 斜排导航（0.5.9）
+
+紧凑导航卡统一倾斜 2°，每张向右错开 10px。选中动画结束后，高亮底板保持静止。已有回复只更新正文时，皮肤跳过全局刷新，拼贴信仍会在文字稳定后生成。
+
 ## 和已确认的 v9 稿之间的差别
 
 v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去冒充客户端：
@@ -91,7 +119,6 @@ v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去
 - 巨大的 **SESSION** 是皮肤自己的结构字。真正的会话标题仍在宿主顶栏；切换会话时，转场印章上再显示这份真实标题（纯文本，不是逐字剪贴）。
 - 不依赖会随构建变化的 CSS Modules 哈希类名。用的是数据属性，以及 `0.2.0-rc.2` 布局源码里的子节点顺序（侧栏、中间栏、`data-rightbar-col`、`data-shell-overlay`）。
 - 声明的版本范围含 `0.2.1` 一线，因为两端的 `overrideTokens` 形状一致。中间版本没有在这里启动过。
-- 这里打不开 Windows 上已安装的 DeepSeek Harness，也看不到本机会话。
 
 画面底是第九稿的结构：白纸斜面、红断层，以及一条斜向的大嵌套星带（`assets/star-field.svg`）。巨大结构字是 `clamp(96px, 11vw, 168px)`，画在各栏后面，字面留在导航上方，导航只碰到基线。侧栏轨道至少 32%。宿主侧栏根节点带着布局存下来的行内 `width`；皮肤把它改成 `width: 100%`，纸片铺满这一列，不再缩在 280px 的黑条里、旁边留空。拖拽手柄的 `left` 跟同一条轨道。主纸从 `max(180px, 24vh)` 开始，在标题下面，带阶梯白框和红底。导航卡片一行、偏矮，和列同宽。会话行仍是宿主标题。空白会话的鱼标换成原创星标（`conversation.hero.brand.mark`）。宿主标题和 Preview 标签从这颗星往上找到标题组。0.2.2-rc.1 上星标外面即使多包一层也找得到。
 
@@ -111,21 +138,23 @@ dsh --version
 
 输出必须落在 `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1`。已安装的 `0.2.0-rc.2` 在这个范围内。
 
-建议单独开一个配置档，避免和工业风皮肤叠两层令牌：
+建议为皮肤使用单独的 Web 配置档。仅首次安装时初始化 `calling-card`。`--from-default-profile` 会替换同名配置档，升级时跳过这一步。
 
 ```powershell
-dsh --profile calling-card --from-default-profile web
+dsh --profile calling-card --from-default-profile web --dump-config
 ```
 
-停掉这个进程，再安装本包（路径换成 tarball 的实际位置）：
+退出目标配置档后，安装下载的包，再启动配置档：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.4.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-1.0.0.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
 
 `--dump-config` 里应出现 `# == dsh-calling-card-skin`。必须从 **web** 模板建档，皮肤才有网页界面可画。只含 `@deepseek-ai/dsh-base` 的空档没有这套 GUI。
+
+浏览器若未自动打开，请使用 `dsh` 输出的完整本地网址。
 
 npm 上的 `dsh` 拒绝改名为 `desktop` 的预留配置档。桌面版自带的 `dsh` 可以改它。装进 `desktop` 会叠在该档已经启用的工业风和音频插件之上。不想叠，就用 `calling-card`。
 
@@ -140,7 +169,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.4.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-1.0.0.tgz
 ```
 
 ## 本地构建与夹具

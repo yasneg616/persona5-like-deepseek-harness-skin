@@ -7,7 +7,9 @@ import { syncNavLeaves } from '../src/client/leaves.ts'
 const css = readFileSync(new URL('../src/client/skin.css', import.meta.url), 'utf8')
 const start = css.indexOf('* 0.5.4 sidebar polish.')
 const reduce = css.lastIndexOf('@media (prefers-reduced-motion: reduce)')
-const block = css.slice(start, reduce)
+// The 0.5.4 block ends where the 0.5.5 popups block starts (or at reduced motion).
+const next = css.indexOf('/* ===== 0.5.5 popups', start)
+const block = css.slice(start, next > start ? next : reduce)
 
 test('brand slots stay occupied but draw no DSH mark or 斩噪 name', () => {
   const overlay = readFileSync(new URL('../src/client/overlay.tsx', import.meta.url), 'utf8')
@@ -17,7 +19,7 @@ test('brand slots stay occupied but draw no DSH mark or 斩噪 name', () => {
   assert.match(block, /\.dsh-cc-void \{\s*display: none !important;/)
   // The cutout brand moves up into the freed space; the first leaf follows.
   assert.match(block, /\.dsh-cc-architecture \{\s*top: 24px;/)
-  assert.match(block, /\[data-cc-leaf\]\[data-cc-i="0"\] \{\s*margin-top: clamp\(138px, 19vh, 186px\);/)
+  assert.match(block, /\[data-cc-leaf\]\[data-cc-i="0"\] \{\s*margin-top: clamp\(108px, 17vh, 162px\);/)
 })
 
 test('the account "更多" control and the empty brand button never become paper leaves', () => {

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hans" data-dsh-calling-card-skin data-input-modality="keyboard">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeek Harness · popups fixture</title>
+<link rel="stylesheet" href="../lib/skin.css">
+<style>
+  /* Test fixture, not the Harness client: host-like popup primitives (Menu, Tooltip,
+     HoverCard) with their built class names and attributes, frozen open. */
+  html, body { margin: 0; height: 100%; background: #141414; color: #ddd; font: 14px/1.5 system-ui, sans-serif; }
+  body { --dsw-radius-md: 8px; --dsw-radius-sm: 6px; --dsw-radius-lg: 12px; --dsw-menu-surface-fill: #2b2b2dcc; --dsw-alias-label-primary: #eee; --dsw-alias-label-tertiary: #999; --dsw-alias-menu-icon: #bbb; --dsw-alias-border-l2: #444; }
+  ._list_1p5el_7 { box-sizing: border-box; padding: 4px; display: flex; flex-direction: column; gap: 0; box-shadow: 0 10px 30px #000a; border-radius: 12px; min-width: 144px; }
+  ._portal_1p5el_46 { position: fixed; z-index: 1100; }
+  ._surface_1w4el_1 { isolation: isolate; }
+  ._material_1w4el_21 { position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--dsw-menu-surface-fill); backdrop-filter: blur(20px); pointer-events: none; }
+  ._itemWrap_1p5el_105 { position: relative; }
+  ._item_1p5el_105 { display: flex; align-items: center; gap: 6px; width: 100%; min-height: 34px; padding: 6px 8px; border: none; border-radius: var(--dsw-radius-md); background: transparent; cursor: pointer; font-size: 13px; line-height: 20px; color: var(--dsw-alias-label-primary); text-align: left; }
+  ._item_1p5el_105:hover { background: #ffffff14; }
+  ._denseList_1p5el_141 ._item_1p5el_105 { min-height: 30px; padding-block: 4px; }
+  ._compactList_1p5el_150 ._item_1p5el_105 { min-height: 24px; gap: 5px; padding: 2px 6px; font-size: 11px; line-height: 17px; }
+  ._itemIcon_1p5el_165 { display: inline-flex; flex: none; width: 14px; height: 14px; align-items: center; justify-content: center; color: var(--dsw-alias-menu-icon); }
+  ._itemIcon_1p5el_165 svg, ._check_1p5el_197 { width: 14px; height: 14px; flex: none; }
+  ._itemLabel_1p5el_208 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  ._shortcut_1p5el_216 { flex: none; margin-inline-start: auto; }
+  html:not([data-input-modality=keyboard]) ._shortcut_1p5el_216 { display: none; }
+  ._label_1p5el_146 { padding: 6px 8px; font-size: 11px; line-height: 15px; color: var(--dsw-alias-label-tertiary); }
+  ._separator_1p5el_89 { height: .5px; margin: 3px 8px; background: var(--dsw-alias-border-l2); }
+  ._danger_1p5el_250 { color: #ff5d5d; }
+  ._bubble_44yfq_1 { display: inline-flex; align-items: center; gap: 8px; position: fixed; z-index: 1100; width: max-content; padding: 3px 7px; border-radius: 6px; background: #3a3a3c; color: #eee; font-size: 12px; }
+  ._bubble_44yfq_1[data-side=bottom] { transform: translate(-50%); }
+  ._bubble_44yfq_1[data-side=right] { transform: translateY(-50%); }
+  ._portal_bgejw_96 { display: contents; }
+  ._card_bgejw_9 { --dsw-hovercard-bg: #2C2C2E; position: fixed; z-index: 100; box-sizing: border-box; width: 244px; padding: 12px 16px; border-radius: 12px; background: var(--dsw-hovercard-bg); }
+  .fixture-banner { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; background: #fff; color: #111; font: 700 12px/1.4 sans-serif; padding: 6px 10px; }
+  .anchor { position: fixed; padding: 4px 10px; border: 1px dashed #555; color: #888; font-size: 12px; }
+  ._submenu_1p5el_8 { position: absolute; bottom: -4px; left: calc(100% + 10px); z-index: 101; min-width: 180px; }
+  ._submenu_1p5el_8::before { content: ''; position: absolute; top: 0; bottom: 0; left: -10px; width: 10px; }
+  ._9r0rkG_menu { display: flex; flex-direction: column; max-height: 300px; overflow: hidden; }
+  ._9r0rkG_groups { min-height: 0; overflow: hidden auto; }
+  ._9r0rkG_check { display: grid; flex: 0 0 14px; color: #fff; }
+  ._keys_38b9q_1 { display: inline-flex; gap: 3px; }
+</style>
+</head>
+<body>
+<span class="anchor" style="left:40px;bottom:60px">更多（账号菜单锚点）</span>
+<span class="anchor" style="left:300px;top:112px">会话 …（右键菜单）</span>
+<span class="anchor" style="left:560px;top:292px">模型 / 完全权限 选择器</span>
+<span class="anchor" style="left:880px;top:82px">输入框 +</span>
+<span class="anchor" style="left:880px;top:382px">文件卡片 · 打开方式</span>
+<span class="anchor" style="left:40px;top:262px">会话悬停卡片</span>
+<div id="m-acct" role="menu" data-menu-material="translucent" data-menu-phase="enter" class="_surface_1w4el_1 _list_1p5el_7 _portal_1p5el_46 _sideTop_1p5el_54 _signedOutMenu_5Qcc8a_1" style="left:40px;bottom:96px;min-width:200px" ><div aria-hidden="true" class="_material_1w4el_21"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="2.2"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2"/></svg></span><span class="_itemLabel_1p5el_208">设置</span><span class="_shortcut_1p5el_216"><span class="_shortcutKeys_1p5el_221"><kbd>Ctrl</kbd><kbd>,</kbd></span></span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z"/></svg></span><span class="_itemLabel_1p5el_208">意见反馈</span></button></div><div role="separator" class="_separator_1p5el_89"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 3h4v10H9M2.5 8h7M7 5.5 9.5 8 7 10.5"/></svg></span><span class="_itemLabel_1p5el_208">登录</span></button></div></div>
+<div id="m-ctx" role="menu" data-menu-material="translucent" data-menu-phase="enter" class="_surface_1w4el_1 _list_1p5el_7 _portal_1p5el_46 " style="left:300px;top:150px;min-width:210px" data-context-menu><div aria-hidden="true" class="_material_1w4el_21"></div><div role="presentation" class="_label_1p5el_146">会话</div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 2.5h4l-.5 4 2 2H4.5l2-2zM8 8.5V14"/></svg></span><span class="_itemLabel_1p5el_208">置顶</span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " data-highlighted><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 13l1-3 7-7 2 2-7 7z"/></svg></span><span class="_itemLabel_1p5el_208">重命名</span><span class="_shortcut_1p5el_216"><span class="_shortcutKeys_1p5el_221"><kbd>F2</kbd></span></span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " aria-haspopup="menu" aria-expanded="false"><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="4" cy="3.5" r="1.5"/><circle cx="12" cy="3.5" r="1.5"/><circle cx="8" cy="12.5" r="1.5"/><path d="M4 5c0 4 4 3 4 6M12 5c0 4-4 3-4 6"/></svg></span><span class="_itemLabel_1p5el_208">派生到新会话</span><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><path d="M6 4l5 4-5 4z"/></svg></span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2.5" y="3" width="11" height="3"/><path d="M3.5 6v7h9V6"/></svg></span><span class="_itemLabel_1p5el_208">归档</span><span class="_shortcut_1p5el_216"><span class="_shortcutKeys_1p5el_221"><kbd>Ctrl</kbd><kbd>E</kbd></span></span></button></div><div role="separator" class="_separator_1p5el_89"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 _danger_1p5el_250" ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 8.5h5.6l.7-8.5"/></svg></span><span class="_itemLabel_1p5el_208">删除</span><span class="_shortcut_1p5el_216"><span class="_shortcutKeys_1p5el_221"><kbd>Del</kbd></span></span></button></div></div>
+<div id="m-model" role="menu" data-menu-material="translucent" data-menu-phase="enter" class="_surface_1w4el_1 _list_1p5el_7 _portal_1p5el_46 _denseList_1p5el_141" style="left:560px;top:330px;min-width:230px" ><div aria-hidden="true" class="_material_1w4el_21"></div><div role="presentation" class="_label_1p5el_146">模型</div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 _selected_1p5el_240" aria-checked="true"><span class="_itemLabel_1p5el_208">DeepSeek V4</span><svg class="_check_1p5el_197" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5l3 3 7-7"/></svg></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemLabel_1p5el_208">DeepSeek V4 Flash</span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemLabel_1p5el_208">DeepSeek R2 推理</span></button></div><div role="separator" class="_separator_1p5el_89"></div><div role="presentation" class="_label_1p5el_146">权限</div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 _selected_1p5el_240" aria-checked="true"><span class="_itemLabel_1p5el_208">完全权限</span><svg class="_check_1p5el_197" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5l3 3 7-7"/></svg></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemLabel_1p5el_208">每步确认</span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " aria-disabled="true"><span class="_itemLabel_1p5el_208">只读</span></button></div></div>
+<div id="m-plus" role="menu" data-menu-material="translucent" data-menu-phase="enter" class="_surface_1w4el_1 _list_1p5el_7 _portal_1p5el_46 _compactList_1p5el_150" style="left:880px;top:120px;min-width:190px" ><div aria-hidden="true" class="_material_1w4el_21"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2h5l3 3v9H4z"/></svg></span><span class="_itemLabel_1p5el_208">添加文件</span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="2" y="3" width="12" height="10"/><path d="M2 11l4-4 3 3 2-2 3 3"/></svg></span><span class="_itemLabel_1p5el_208">添加图片</span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4.5h4l1.2 1.3H14v6.7H2z"/></svg></span><span class="_itemLabel_1p5el_208">引用工作区</span></button></div><div role="separator" class="_separator_1p5el_89"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemLabel_1p5el_208">斜杠命令</span><span class="_shortcut_1p5el_216"><span class="_shortcutKeys_1p5el_221"><kbd>/</kbd></span></span></button></div></div>
+<div id="m-open" role="menu" data-menu-material="translucent" data-menu-phase="enter" class="_surface_1w4el_1 _list_1p5el_7 _portal_1p5el_46 " style="left:880px;top:420px;min-width:200px" ><div aria-hidden="true" class="_material_1w4el_21"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 _selected_1p5el_240" ><span class="_itemLabel_1p5el_208">用 WPS Office 打开</span><svg class="_check_1p5el_197" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8.5l3 3 7-7"/></svg></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemLabel_1p5el_208">用 记事本 打开</span></button></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " data-highlighted><span class="_itemIcon_1p5el_165"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4.5h4l1.2 1.3H14v6.7H2z"/></svg></span><span class="_itemLabel_1p5el_208">在资源管理器中显示</span></button></div><div role="separator" class="_separator_1p5el_89"></div><div class="_itemWrap_1p5el_105"><button type="button" role="menuitem" class="_item_1p5el_105 " ><span class="_itemLabel_1p5el_208">复制路径</span><span class="_shortcut_1p5el_216"><span class="_shortcutKeys_1p5el_221"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>C</kbd></span></span></button></div></div>
+<span role="tooltip" class="_bubble_44yfq_1" data-side="bottom" data-align="center" data-portal style="left:420px;top:76px"><span class="_label_44yfq_30">新会话</span><span class="_keys_38b9q_1"><kbd>Ctrl</kbd><kbd>N</kbd></span></span>
+<span role="tooltip" class="_bubble_44yfq_1" data-side="right" data-align="center" data-portal style="left:190px;top:40px">收起侧边栏</span>
+<span class="_portal_bgejw_96"><div class="_card_bgejw_9" style="left:40px;top:300px"><div class="xx_hoverTitle" style="font-weight:700;font-size:14px;line-height:20px">检查令牌刷新</div><div class="xx_hoverPath" style="font-size:12px;color:var(--dsw-alias-label-tertiary);margin-top:4px">C:\work\dsh</div><div style="display:flex;gap:10px;margin-top:8px;font-size:12px;color:var(--dsw-alias-label-secondary)"><span>24天前</span><span>◆ 空闲</span></div></div></span>
+<p class="fixture-banner" data-fixture-status>测试夹具 · 不是桌面端 · 宿主菜单 / 提示 / 悬停卡片结构的静态复刻（类名与属性按已安装模块）</p>
+<script>
+  const model = document.getElementById('m-model')
+  model.classList.add('_9r0rkG_menu')
+  model.setAttribute('role', 'group')
+  const groups = document.createElement('div')
+  groups.className = '_9r0rkG_groups'
+  groups.setAttribute('role', 'menu')
+  for (const child of [...model.children]) {
+    if (!child.className.includes('_material_')) groups.append(child)
+  }
+  model.append(groups)
+  for (const option of model.querySelectorAll('button')) option.setAttribute('role', 'menuitemradio')
+  for (const check of model.querySelectorAll('svg[class*="_check_"]')) {
+    const wrap = document.createElement('span')
+    wrap.className = '_9r0rkG_check'
+    check.replaceWith(wrap)
+    wrap.append(check)
+  }
+  const trigger = document.querySelector('#m-ctx [aria-haspopup="menu"]')
+  const wrapper = trigger.parentElement
+  const submenu = document.createElement('div')
+  submenu.id = 'fixture-submenu'
+  submenu.className = '_surface_1w4el_1 _list_1p5el_7 _submenu_1p5el_8'
+  submenu.setAttribute('role', 'menu')
+  submenu.setAttribute('data-menu-material', 'translucent')
+  submenu.style.display = 'none'
+  for (const label of ['保留全部消息', '仅保留当前分支']) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = '_item_1p5el_105'
+    button.setAttribute('role', 'menuitem')
+    button.textContent = label
+    submenu.append(button)
+  }
+  wrapper.append(submenu)
+  const show = open => {
+    trigger.setAttribute('aria-expanded', String(open))
+    submenu.style.display = open ? 'flex' : 'none'
+  }
+  wrapper.addEventListener('pointerenter', () => show(true))
+  wrapper.addEventListener('pointerleave', () => show(false))
+  trigger.addEventListener('click', () => show(trigger.getAttribute('aria-expanded') !== 'true'))
+  wrapper.addEventListener('keydown', event => {
+    if (event.key === 'ArrowRight') { event.preventDefault(); show(true); submenu.firstElementChild.focus() }
+    if (event.key === 'Escape' || event.key === 'ArrowLeft') { event.preventDefault(); show(false); trigger.focus() }
+  })
+</script>
+</body>
+</html>

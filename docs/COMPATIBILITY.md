@@ -1,5 +1,11 @@
 # Compatibility
 
+## 1.0.0 standalone package
+
+The release tarball was installed offline in a fresh Web profile with the Windows desktop distribution's `dsh` at `0.2.2-rc.1`. Its only added dependency was `dsh-calling-card-skin`. The profile composed the stock base, Web app, and this skin; no other skin or audio plugin was present. Chromium loaded the real Harness landing page with the scoped stylesheet and calling-card overlay. The host still supplies the theme and slot APIs, so the package needs a compatible Harness Web client. No model request was made.
+
+The checks below describe earlier builds.
+
 Checked on 2026-11-09 from published npm tarballs. No Windows desktop process was started. No model call was made.
 
 ## Gate

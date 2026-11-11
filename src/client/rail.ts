@@ -30,7 +30,9 @@ export function railCollapsed(documentRef: Document): boolean {
 
 function rowTitle(row: Element): string {
   const label = row.getAttribute('aria-label')?.trim()
-  const text = (row.textContent || '').replace(/\s+/g, ' ').trim()
+  // Real rows hold a time label and action buttons next to the title span; read the title only.
+  const titleSpan = row.querySelector(':scope > [class*="_title"]')
+  const text = ((titleSpan ?? row).textContent || '').replace(/\s+/g, ' ').trim()
   return (label || text).slice(0, 80)
 }
 
@@ -60,9 +62,7 @@ export function markRail(documentRef: Document, windowRef: Window, collapsed: bo
     clearRailMarks(documentRef)
     return 0
   }
-  let root: Element | null = side.querySelector('[data-sidebar-toggle]')
-  while (root && root.parentElement !== side) root = root.parentElement
-  root = root ?? side.firstElementChild
+  const root = railRoot(side)
   if (root && root !== side && !root.hasAttribute(ROOT)) root.setAttribute(ROOT, '')
   let index = 0
   let lastPart: Element | null = null
@@ -75,9 +75,6 @@ export function markRail(documentRef: Document, windowRef: Window, collapsed: bo
       button.removeAttribute(BTN)
       continue
     }
-    index += 1
-    const num = String(index).padStart(2, '0')
-    if (button.getAttribute(BTN) !== num) button.setAttribute(BTN, num)
     // Only the root's own sections are shown again (the host hides those when collapsed);
     // anything hidden deeper is hidden on purpose (wide-only headers) and stays hidden.
     let section: Element | null = button
@@ -85,13 +82,59 @@ export function markRail(documentRef: Document, windowRef: Window, collapsed: bo
     if (section && section !== button && (section.hasAttribute(PART) || windowRef.getComputedStyle(section).display === 'none')) {
       if (!section.hasAttribute(PART)) section.setAttribute(PART, '')
     }
+    if (hiddenWithin(windowRef, button, section)) {
+      button.removeAttribute(BTN)
+      continue
+    }
+    index += 1
+    const num = String(index).padStart(2, '0')
+    if (button.getAttribute(BTN) !== num) button.setAttribute(BTN, num)
     if (section && section.hasAttribute(PART)) lastPart = section
   }
+  // The account / 更多 control always gets its own foot ticket, even when the host keeps
+  // its section in the layout (not display:none) or a wrapper sits around the sidebar.
+  const account = side.querySelector(ACCOUNT)
+  let accountPart: Element | null = account
+  while (accountPart && accountPart.parentElement !== root) accountPart = accountPart.parentElement
+  if (account && accountPart && accountPart !== account) {
+    if (!accountPart.hasAttribute(PART)) accountPart.setAttribute(PART, '')
+    lastPart = accountPart
+  }
   for (const part of Array.from(side.querySelectorAll(`[${PART}]`))) {
-    const want = part === lastPart && index > 1 ? 'foot' : ''
+    const want = part === lastPart && (index > 1 || part === accountPart) ? 'foot' : ''
     if (part.getAttribute(PART) !== want) part.setAttribute(PART, want)
   }
   return index
+}
+
+/** True when something between the button and its section is display:none (wide-only parts). */
+function hiddenWithin(windowRef: Window, button: Element, section: Element | null): boolean {
+  let node: Element | null = button
+  while (node && node !== section) {
+    if (windowRef.getComputedStyle(node).display === 'none') return true
+    node = node.parentElement
+  }
+  return false
+}
+
+/** The host's account / 更多 trigger (signed in or out). */
+export const ACCOUNT = 'button[data-signed-out][aria-haspopup="menu"]'
+
+/**
+ * The sidebar root: the lowest ancestor of the collapse toggle that holds the sidebar's
+ * sections (three or more element children), so slot wrappers between the column and
+ * the host's root do not hide the sections from the rail.
+ */
+export function railRoot(side: Element): Element {
+  const toggle = side.querySelector('[data-sidebar-toggle]')
+  let node: Element | null = toggle?.parentElement ?? null
+  while (node && node !== side) {
+    if (node.children.length >= 3) return node
+    node = node.parentElement
+  }
+  let top: Element | null = toggle
+  while (top && top.parentElement !== side) top = top.parentElement
+  return top ?? side.firstElementChild ?? side
 }
 
 export function clearRailMarks(documentRef: Document): void {
@@ -188,16 +231,22 @@ export function createRail(documentRef: Document, windowRef: Window, nav: HTMLEl
       const rect = button.getBoundingClientRect()
       if (rect.height > 0 && rect.top < footLine) top = Math.max(top, rect.bottom + 22)
     }
+    // The foot (account / 更多 and any footer actions) keeps its room; the brand sits above it.
+    const foot = side?.querySelector(`[${PART}="foot"]`)
+    const footRect = foot?.getBoundingClientRect()
+    const footTop = footRect && footRect.height > 0 ? footRect.top : height - 84
+    const footRoom = Math.max(84, Math.round(height - footTop + 12))
     const brandTall = brand ? Math.min(brand.scrollHeight || 210, 230) : 0
-    let bottom = height - 96 - brandTall
+    let bottom = height - footRoom - brandTall
     let fit = Math.floor((bottom - top) / TICKET_STEP)
     let brandOff = false
     if (fit < Math.min(2, items.length) && brand) {
       brandOff = true
-      bottom = height - 96
+      bottom = height - footRoom
       fit = Math.floor((bottom - top) / TICKET_STEP)
     }
     brand?.toggleAttribute('data-off', brandOff)
+    brand?.style.setProperty('--cc-rail-foot', `${footRoom}px`)
     nav.style.setProperty('--cc-rail-top', `${Math.round(top)}px`)
     return items.slice(0, Math.max(0, fit))
   }
@@ -225,6 +274,7 @@ export function createRail(documentRef: Document, windowRef: Window, nav: HTMLEl
       nav?.removeEventListener('click', onClick)
       nav?.replaceChildren()
       brand?.removeAttribute('data-off')
+      brand?.style.removeProperty('--cc-rail-foot')
       html.removeAttribute(RAIL_ATTR)
       clearRailMarks(documentRef)
     },

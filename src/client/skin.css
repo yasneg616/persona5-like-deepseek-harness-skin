@@ -262,30 +262,34 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sideb
   --dsw-alias-label-primary: #141414;
   --dsw-alias-label-secondary: #333;
   --dsw-radius-md: 0px;
-  margin: 7px 16px 9px calc(4px + (var(--cc-i, 0) * 8px));
-  min-height: 44px;
-  max-height: 56px;
-  padding: 6px 14px;
+  margin: 7px 16px 9px calc(4px + (var(--cc-i, 0) * 10px));
+  box-sizing: border-box;
+  min-height: 36px;
+  max-height: 40px;
+  padding: 3px 8px;
+  border: 3px solid #0c0c0c;
+  border-radius: 0;
   background: #fff;
   color: #141414;
   font-family: Anton, CcDisplay, sans-serif;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  width: calc(100% - 28px);
-  font-size: clamp(26px, 3.2vw, 44px);
+  gap: 4px;
+  width: calc(100% - 96px);
+  font-size: clamp(18px, 2.1vw, 30px);
   line-height: 0.9;
   white-space: nowrap;
   letter-spacing: -0.03em;
   text-transform: uppercase;
-  clip-path: polygon(0 10%, 100% 0, 95% 86%, 0 100%);
+  clip-path: none;
   filter:
     drop-shadow(1px 0 0 #111)
     drop-shadow(-1px 0 0 #111)
     drop-shadow(0 1px 0 #111)
     drop-shadow(0 -1px 0 #111)
     drop-shadow(8px 8px 0 #111);
-  transform: rotate(-3.5deg);
+  transform: rotate(-2deg);
   transform-origin: left center;
 }
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-i="0"] {
@@ -293,9 +297,9 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sideb
 }
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-lines="2"] {
   white-space: normal;
-  font-size: clamp(22px, 2.4vw, 36px);
-  line-height: 0.88;
-  min-height: 62px;
+  font-size: clamp(16px, 1.5vw, 22px);
+  line-height: 0.95;
+  min-height: 40px;
   max-height: none;
   height: auto;
 }
@@ -303,8 +307,8 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sideb
   white-space: normal !important;
 }
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-lines="1"] {
-  font-size: clamp(28px, 3.2vw, 44px);
-  height: 58px;
+  font-size: clamp(18px, 2.1vw, 30px);
+  height: 40px;
 }
 html[data-dsh-calling-card-skin] [data-cc-leaf] * {
   white-space: nowrap !important;
@@ -320,9 +324,9 @@ html[data-dsh-calling-card-skin] [data-cc-leaf]::before {
 }
 html[data-dsh-calling-card-skin] [data-cc-leaf][data-cc-gloss]::after {
   content: attr(data-cc-gloss);
-  margin-left: 8px;
+  margin-left: 4px;
   font-family: CcDisplay, CcSans, sans-serif;
-  font-size: max(16px, 0.42em);
+  font-size: max(12px, 0.42em);
   letter-spacing: 0;
   text-transform: none;
   white-space: nowrap;
@@ -1129,18 +1133,18 @@ html[data-dsh-calling-card-skin] [data-status] {
     transform: rotate(-2deg);
   }
   html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf] {
-    min-height: 40px;
+    min-height: 36px;
     margin-bottom: 4px;
-    font-size: 22px;
+    font-size: 20px;
   }
   html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-lines="1"] {
-    height: 42px;
-    font-size: 24px;
+    height: 36px;
+    font-size: 20px;
   }
   html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-lines="2"] {
-    min-height: 46px;
-    max-height: 52px;
-    font-size: 18px;
+    min-height: 40px;
+    max-height: 44px;
+    font-size: 16px;
   }
   html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-i="0"] {
     margin-top: 148px;
@@ -1214,20 +1218,13 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sideb
   transition-duration: 60ms;
   filter: brightness(1.35) drop-shadow(6px 6px 0 #fff);
 }
-/* The current page punches once, then breathes with a small stepped tilt. */
 html[data-dsh-calling-card-skin] [data-cc-leaf][aria-current="page"]:not([data-cc-enter]) {
-  animation:
-    dsh-cc-pick 260ms var(--cc-punch) both,
-    dsh-cc-idle-tilt 1.6s steps(4, jump-none) 260ms infinite alternate;
+  animation: dsh-cc-pick 260ms var(--cc-punch) both;
 }
 @keyframes dsh-cc-pick {
   0% { scale: 1.16 0.86; rotate: 3deg; }
   60% { scale: 0.96 1.05; rotate: -1deg; }
   100% { scale: 1; rotate: 0deg; }
-}
-@keyframes dsh-cc-idle-tilt {
-  from { rotate: 0deg; translate: 0 0; }
-  to { rotate: 1.4deg; translate: 3px -2px; }
 }
 
 /* Session rows and the project tree: stagger in, slide and cut red on hover, pulse when picked. */
@@ -1631,32 +1628,10 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) > div:has([data
   box-shadow: 16px 16px 0 #000, 16px 16px 0 3px #fff;
 }
 
-/* Colliding menu: bigger leaves, alternating tilts, overlapping, giant hollow numbers. */
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf] {
-  margin-top: 12px;
+  margin-top: 14px;
   margin-bottom: 2px;
-  font-size: clamp(28px, 3.4vw, 50px);
-  filter:
-    drop-shadow(1px 0 0 #111)
-    drop-shadow(-1px 0 0 #111)
-    drop-shadow(0 1px 0 #111)
-    drop-shadow(0 -1px 0 #111)
-    drop-shadow(10px 9px 0 var(--dsh-cc-red));
-}
-html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-lines="1"] {
-  font-size: clamp(28px, 3.4vw, 50px);
-  height: 60px;
-}
-html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf]:is([data-cc-i="0"], [data-cc-i="2"], [data-cc-i="4"], [data-cc-i="6"]) {
-  transform: rotate(-4.5deg);
-  clip-path: polygon(0 14%, 100% 0, 96% 84%, 1% 100%);
-}
-html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf]:is([data-cc-i="1"], [data-cc-i="3"], [data-cc-i="5"], [data-cc-i="7"]) {
-  transform: rotate(1.6deg);
-  transform-origin: left center;
-  z-index: 1;
-  clip-path: polygon(0 0, 97% 10%, 100% 100%, 3% 88%);
-  margin-left: calc(18px + (var(--cc-i, 0) * 10px));
+  filter: drop-shadow(4px 4px 0 var(--dsh-cc-red));
 }
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-i="0"] {
   margin-top: clamp(170px, 23vh, 220px);
@@ -1665,7 +1640,7 @@ html[data-dsh-calling-card-skin] [data-cc-leaf]::before {
   font-family: Anton, var(--dsh-cc-display);
   font-size: 1.12em;
   line-height: 0.8;
-  margin-right: 10px;
+  margin-right: 6px;
   color: transparent;
   -webkit-text-stroke: 1.6px var(--dsh-cc-red);
   letter-spacing: -0.04em;
@@ -1677,13 +1652,16 @@ html[data-dsh-calling-card-skin] [data-cc-leaf][data-cc-morph]::before {
 /* Selection and hover lunge out of the stack. */
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-morph] {
   z-index: 2;
-  translate: 26px -2px;
-  scale: 1.07;
+  translate: 12px -2px;
+  scale: 1.03;
   filter: none !important;
 }
-html[data-dsh-calling-card-skin] [data-cc-morph="leaf"] {
-  --cc-bx: 22px;
-  --cc-by: 9px;
+/* Keep the red plate inside the black border rather than painting over it. */
+html[data-dsh-calling-card-skin] [data-cc-leaf] > .dsh-cc-morph,
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > .dsh-cc-morph {
+  inset: 0;
+  clip-path: none;
+  animation: none;
 }
 
 /* Session rows: torn tickets with alternating tilt; picked or hovered ones jump out. */
@@ -3284,14 +3262,14 @@ html[data-dsh-calling-card-skin] .dsh-cc-architecture {
   top: 24px;
 }
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-i="0"] {
-  margin-top: clamp(138px, 19vh, 186px);
+  margin-top: clamp(108px, 17vh, 162px);
 }
 @media (max-height: 640px) {
   html[data-dsh-calling-card-skin] .dsh-cc-architecture {
     top: 22px;
   }
   html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-i="0"] {
-    margin-top: 118px;
+    margin-top: 86px;
   }
 }
 
@@ -3303,9 +3281,9 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) span[class$="_f
 /* Workspace header: a paper stamp with a red rule, slanted icon tiles. */
 html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionHeader"] {
   position: relative;
-  height: 36px !important;
+  height: 32px !important;
   gap: 6px !important;
-  margin: 16px 10px 8px 4px !important;
+  margin: 2px 10px 4px 4px !important;
   padding-left: 6px !important;
   border-radius: 0 !important;
 }
@@ -3410,20 +3388,23 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sideb
 html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) {
   position: relative;
   isolation: isolate;
-  height: 42px !important;
-  margin: 6px 16px 16px 2px;
-  padding: 0 16px 0 10px !important;
-  gap: 14px !important;
-  border: 0 !important;
+  box-sizing: border-box;
+  width: calc(100% - 96px);
+  height: 32px !important;
+  margin: 6px 16px 16px 34px;
+  padding: 0 8px !important;
+  gap: 8px !important;
+  border: 3px solid #0c0c0c !important;
   border-radius: 0 !important;
   background: transparent !important;
   color: #fff !important;
   font-family: var(--dsh-cc-chat);
-  font-size: 16px !important;
+  font-size: 14px !important;
   font-weight: 900;
-  letter-spacing: 0.2em;
-  rotate: -2deg;
-  transition: translate 180ms var(--cc-snap), rotate 180ms var(--cc-snap);
+  letter-spacing: 0.12em;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+  transition: translate 180ms var(--cc-snap);
   animation: dsh-cc-w-in 320ms var(--cc-punch) backwards;
 }
 html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"])::before {
@@ -3434,18 +3415,15 @@ html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([da
   pointer-events: none;
   background:
     linear-gradient(102deg, #f7f4ee 0 40px, #0c0c0c 40.5px);
-  clip-path: polygon(0 4px, 100% 0, calc(100% - 12px) 100%, 3px calc(100% - 2px));
+  clip-path: none;
 }
 html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"])::after {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: -3px;
   z-index: -2;
   pointer-events: none;
-  background: #fff;
-  clip-path: polygon(0 4px, 100% 0, calc(100% - 12px) 100%, 3px calc(100% - 2px));
-  translate: 5px 5px;
-  transition: translate 180ms var(--cc-snap);
+  box-shadow: 5px 5px 0 #fff;
 }
 html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > [class*="_label"]::after {
   content: "MORE";
@@ -3490,11 +3468,10 @@ html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"][data-cc
 @media (hover: hover) {
   html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]):hover {
     z-index: 2;
-    translate: 8px -3px;
-    rotate: -0.5deg;
+    translate: 8px -2px;
   }
   html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]):hover::after {
-    translate: 14px 11px;
+    box-shadow: 8px 8px 0 #fff;
   }
 }
 html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"][data-cc-morph] > :is(svg, [class*="_avatar"]) {
@@ -3503,6 +3480,464 @@ html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"][data-cc
 html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]):focus-visible {
   outline: 3px solid var(--dsh-cc-red) !important;
   outline-offset: 3px;
+}
+
+/* ===== 0.5.5 popups, rail foot, session tickets ===== */
+
+/* Menus (account 更多, session / project …, model and permission pickers, composer +,
+   open-with, dock tabs): one host primitive, so one black cut panel with a white edge,
+   a red offset slab and a red tab. The host's frosted material is dropped. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) {
+  --dsw-alias-label-primary: #fff;
+  --dsw-alias-label-secondary: #e8e8e8;
+  --dsw-alias-label-tertiary: #c9c9c9;
+  --dsw-alias-menu-icon: currentColor;
+  --dsw-radius-md: 0px;
+  --dsw-radius-sm: 0px;
+  isolation: isolate;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 18px 10px 10px 10px !important;
+  color: #fff;
+  font-family: var(--dsh-cc-chat);
+  rotate: -1deg;
+  animation: dsh-cc-pop-slam 200ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) > [class*="_material_"],
+html[data-dsh-calling-card-skin] [data-menu-backing] {
+  display: none !important;
+}
+/* Panel: white edge (border box) around black, with a red cut tab on the top edge. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]):not([class*="_submenu_"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 3px solid transparent;
+  background:
+    linear-gradient(100deg, transparent 10px, var(--dsh-cc-red) 10px, var(--dsh-cc-red) 64px, transparent 64px) 0 0 / 100% 9px no-repeat padding-box,
+    linear-gradient(100deg, transparent 70px, #fff 70px, #fff 78px, transparent 78px) 0 0 / 100% 9px no-repeat padding-box,
+    linear-gradient(#0b0b0b, #0b0b0b) padding-box,
+    linear-gradient(#fff, #fff) border-box;
+  clip-path: polygon(0 0, 100% 3px, calc(100% - 3px) 100%, 2px calc(100% - 2px));
+  pointer-events: none;
+}
+/* Red offset slab under the panel. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]):not([class*="_submenu_"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  translate: 7px 7px;
+  background: var(--dsh-cc-red);
+  clip-path: polygon(0 0, 100% 3px, calc(100% - 3px) 100%, 2px calc(100% - 2px));
+  pointer-events: none;
+}
+/* Submenus keep the host's hover bridge pseudo, so they use plain shadows instead. */
+html[data-dsh-calling-card-skin] [data-menu-material][class*="_submenu_"],
+html[data-dsh-calling-card-skin] [role="menu"][class*="_submenu_"] {
+  background: #0b0b0b !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 0 3px #fff, 7px 7px 0 3px var(--dsh-cc-red) !important;
+  padding: 8px !important;
+  rotate: none;
+  animation: none;
+}
+html[data-dsh-calling-card-skin] [data-menu-material]:has(> [class*="_groups"]) {
+  overflow: visible !important;
+}
+html[data-dsh-calling-card-skin] [data-menu-material] > [class*="_groups"] {
+  padding-right: 10px;
+}
+@keyframes dsh-cc-pop-slam {
+  0% { translate: -18px 12px; scale: 0.82 0.6; rotate: -7deg; }
+  60% { translate: 3px -2px; scale: 1.04 1.04; rotate: 0.5deg; }
+  100% { translate: 0 0; scale: 1 1; rotate: -1deg; }
+}
+
+/* Items: slanted strips. Hover / keyboard focus / open submenu: lunge right, a white strip
+   slams in, a red quad drifts behind it, the text turns black. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]) {
+  position: relative;
+  isolation: isolate;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  min-height: 34px;
+  transition: translate 150ms var(--cc-punch), color 0s;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"])::before {
+  content: "";
+  position: absolute;
+  inset: 3px 12px 3px 0;
+  z-index: -1;
+  background: #fff;
+  clip-path: var(--cc-slant);
+  scale: 0 1;
+  transform-origin: left center;
+  transition: scale 160ms var(--cc-snap);
+  pointer-events: none;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"])::after {
+  content: "";
+  position: absolute;
+  inset: -2px -6px -5px 22px;
+  z-index: -2;
+  background: var(--dsh-cc-red);
+  clip-path: polygon(4% 10%, 100% 0, 95% 100%, 0 86%);
+  scale: 0 1;
+  transform-origin: left center;
+  transition: scale 200ms var(--cc-snap);
+  pointer-events: none;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]):is(:hover, :focus-visible, [data-highlighted], [aria-expanded="true"]):not(:disabled):not([aria-disabled="true"]) {
+  color: #0b0b0b !important;
+  translate: 8px 0;
+  outline: none;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]):is(:hover, :focus-visible, [data-highlighted], [aria-expanded="true"]):not(:disabled):not([aria-disabled="true"])::before {
+  scale: 1 1;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]):is(:hover, :focus-visible, [data-highlighted], [aria-expanded="true"]):not(:disabled):not([aria-disabled="true"])::after {
+  scale: 1 1;
+  animation: dsh-cc-pop-quad 1.2s ease-in-out infinite alternate;
+}
+@keyframes dsh-cc-pop-quad {
+  0% { clip-path: polygon(4% 10%, 100% 0, 95% 100%, 0 86%); }
+  50% { clip-path: polygon(0 0, 97% 14%, 100% 88%, 5% 100%); }
+  100% { clip-path: polygon(7% 18%, 100% 6%, 92% 94%, 2% 100%); }
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"] [class*="_itemIcon"] {
+  color: inherit;
+}
+html[data-dsh-calling-card-skin] [data-menu-material] [role^="menuitem"]:is(:hover, :focus-visible, [data-highlighted]) [class*="_cellValue"] {
+  color: inherit;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"]:is([aria-disabled="true"], :disabled) {
+  color: #8a8a8a !important;
+}
+/* Picked option (model / permission pickers): a red bar and a red check. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"]:is([class*="_selected"], [aria-checked="true"]) {
+  box-shadow: inset 5px 0 0 var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [class*="_check"] {
+  color: var(--dsh-cc-red) !important;
+  scale: 1.25;
+}
+/* Danger (delete / sign out): red text, red strip on hover. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"][class*="_danger_"] {
+  color: #ff4d5e !important;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"][class*="_danger_"]:is(:hover, :focus-visible, [data-highlighted]):not(:disabled):not([aria-disabled="true"])::before {
+  background: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"][class*="_danger_"]:is(:hover, :focus-visible, [data-highlighted]):not(:disabled):not([aria-disabled="true"]) {
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"][class*="_danger_"]:is(:hover, :focus-visible, [data-highlighted]):not(:disabled):not([aria-disabled="true"])::after {
+  background: #fff;
+}
+/* Keyboard shortcut chips (设置 Ctrl+,): red cut chips. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu], span[role="tooltip"]) [class*="_shortcut"] {
+  display: inline-flex;
+  gap: 3px;
+  align-items: center;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu], span[role="tooltip"]) [class*="_shortcut"] > :is(kbd, span),
+html[data-dsh-calling-card-skin] span[role="tooltip"] kbd {
+  display: inline-block;
+  min-width: 14px;
+  padding: 1px 5px;
+  background: var(--dsh-cc-red);
+  color: #fff !important;
+  font-family: Anton, var(--dsh-cc-display);
+  font-size: 11px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+  rotate: -3deg;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role^="menuitem"]:is(:hover, :focus-visible, [data-highlighted]) [class*="_shortcut"] > :is(kbd, span) {
+  background: #0b0b0b;
+}
+/* Dividers: a red slanted bar with a white chip. Group labels: red display caps. */
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [role="separator"] {
+  height: 4px !important;
+  margin: 6px 2px !important;
+  background: linear-gradient(100deg, var(--dsh-cc-red) 0 78%, transparent 78% 81%, #fff 81% 90%, transparent 90%) !important;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 4px) 100%, 4px 100%);
+  rotate: -1.2deg;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [class*="_label_"][role="presentation"] {
+  color: var(--dsh-cc-red) !important;
+  font-family: Anton, var(--dsh-cc-display);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+html[data-dsh-calling-card-skin] :is([data-menu-material], [data-dockkit-tab-menu]) [class*="_footer_"] {
+  border-top: 2px solid var(--dsh-cc-red) !important;
+}
+
+/* Tooltips: small black tags with a white edge and a red notch. The host positions them
+   with transform, so only rotate and scale move here. */
+html[data-dsh-calling-card-skin] span[role="tooltip"] {
+  border-radius: 0 !important;
+  background:
+    linear-gradient(100deg, var(--dsh-cc-red) 0 7px, transparent 7px),
+    #0b0b0b !important;
+  color: #fff !important;
+  box-shadow: inset 0 0 0 2px #fff, 4px 4px 0 0 var(--dsh-cc-red) !important;
+  padding: 4px 10px 4px 13px !important;
+  font-family: var(--dsh-cc-chat);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  rotate: -2deg;
+  animation: dsh-cc-tip-pop 150ms var(--cc-snap) backwards;
+}
+@keyframes dsh-cc-tip-pop {
+  0% { scale: 0.6; rotate: -9deg; }
+  100% { scale: 1; rotate: -2deg; }
+}
+
+/* Hover cards (session title, path, age, ◆ 空闲): a black dossier card with a white
+   frame, red offset and an INFO tab. Previews and media cards keep their content look. */
+html[data-dsh-calling-card-skin] body > span[class*="_portal_"] > div[class*="_card_"]:not([class*="_preview_"]):not([class*="_media_"]) {
+  --dsw-hovercard-bg: #0b0b0b;
+  --dsw-alias-label-primary: #fff;
+  --dsw-alias-label-secondary: #e6e6e6;
+  --dsw-alias-label-tertiary: #c4c4c4;
+  --dsw-alias-label-caption: #c4c4c4;
+  background: #0b0b0b !important;
+  color: #fff;
+  border-radius: 0 !important;
+  box-shadow: 0 0 0 3px #fff, 9px 9px 0 3px var(--dsh-cc-red) !important;
+  overflow: visible;
+  rotate: -1deg;
+  animation: dsh-cc-pop-slam 200ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] body > span[class*="_portal_"] > div[class*="_card_"]:not([class*="_preview_"]):not([class*="_media_"])::before {
+  content: "INFO";
+  position: absolute;
+  top: -14px;
+  left: 12px;
+  padding: 1px 10px 1px 8px;
+  background: var(--dsh-cc-red);
+  color: #fff;
+  font-family: Anton, var(--dsh-cc-display);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.12em;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  rotate: -4deg;
+  pointer-events: none;
+}
+html[data-dsh-calling-card-skin] body > span[class*="_portal_"] > div[class*="_card_"]:is([class*="_preview_"], [class*="_media_"]) {
+  border-radius: 0 !important;
+  box-shadow: 0 0 0 3px #0b0b0b, 8px 8px 0 3px var(--dsh-cc-red) !important;
+}
+
+/* Collapsed rail: the account / 更多 control is a clear red foot ticket; the vertical brand
+   sits above the foot (rail.ts measures it into --cc-rail-foot). */
+html[data-dsh-calling-card-skin][data-cc-rail] .dsh-cc-railbrand:not([data-off]) {
+  bottom: var(--cc-rail-foot, 92px);
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"] {
+  width: 60px !important;
+  height: 50px !important;
+  margin-top: 6px !important;
+  background: var(--dsh-cc-red) !important;
+  color: #fff !important;
+  --dsw-alias-label-primary: #fff;
+  clip-path: polygon(6% 0, 100% 5%, 94% 100%, 0 92%);
+  rotate: -4deg;
+  place-items: start center !important;
+  padding-top: 7px !important;
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"] > :is(svg, [class*="_avatar"]) {
+  width: 22px !important;
+  height: 18px !important;
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"]::before {
+  content: "MORE";
+  display: block;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  margin: 0 auto;
+  width: max-content;
+  padding: 0 5px;
+  background: #0b0b0b;
+  color: #fff;
+  font-family: Anton, var(--dsh-cc-display);
+  font-size: 12px;
+  line-height: 15px;
+  letter-spacing: 0.1em;
+  rotate: -3deg;
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"]::after {
+  color: #fff;
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"]:is([aria-expanded="true"], [data-cc-morph]) {
+  background: #f7f4ee !important;
+  color: #0b0b0b !important;
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"]:is([aria-expanded="true"], [data-cc-morph])::before {
+  background: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [data-cc-rail-btn][data-signed-out][aria-haspopup="menu"][data-cc-morph]::after {
+  color: var(--dsh-cc-red);
+}
+
+/* A vertical stamp keeps the collapsed tagline clear of the center column's top blade. */
+html[data-dsh-calling-card-skin][data-cc-rail] .dsh-cc-tagline {
+  position: absolute;
+  left: -25px;
+  top: 128px;
+  margin: 0;
+  white-space: nowrap;
+  transform-origin: left top;
+  rotate: -90deg;
+  box-shadow: 3px -3px 0 var(--dsh-cc-red);
+}
+
+/* Session rows under projects: torn paper tickets with a punched stub, the title in its
+   own lane, the age as a small black tag. Inline actions (…, pin, archive) only show on
+   hover / focus / open menu, in a black chip bar that replaces the age, never over the title. */
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding-left: 18px !important;
+  padding-right: 14px !important;
+  isolation: isolate;
+  background: transparent !important;
+  clip-path: none !important;
+}
+/* The paper lives on ::before so the row's own drop-shadows (black + red) are no longer
+   clipped away; a punched stub and a perforation mark it as a ticket. */
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 7px 50%, #0b0b0b 0 3px, transparent 3.5px),
+    linear-gradient(90deg, transparent 12px, #0b0b0b33 12px 13px, transparent 13px),
+    #fff;
+  clip-path: polygon(0 6%, 100% 0, calc(100% - 5px) 100%, 0 94%);
+  pointer-events: none;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]:nth-child(even)::before {
+  clip-path: polygon(0 0, 100% 7%, calc(100% - 3px) 100%, 0 92%);
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"][aria-selected="true"]:not([data-cc-morph])::before {
+  background:
+    radial-gradient(circle at 7px 50%, #0b0b0b 0 3px, transparent 3.5px),
+    var(--dsh-cc-red);
+}
+/* Picked / hovered: the red morph plate rides on an offset paper slab with a black edge,
+   so it reads on the red sidebar band and on black alike. */
+html[data-dsh-calling-card-skin] [data-row-key^="session:"][data-cc-morph]::before {
+  inset: -3px -2px -4px -3px;
+  border: 3px solid transparent;
+  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(#0b0b0b, #0b0b0b) border-box;
+  clip-path: polygon(0 5%, 100% 0, calc(100% - 4px) 100%, 3px 96%);
+}
+/* Gentler tilt and lunge so the action bar at the right end never slides under the next
+   ticket or past the sidebar edge; the active ticket rides on top. */
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] {
+  transform: rotate(-1.6deg);
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]:nth-child(even) {
+  transform: rotate(1.1deg);
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]:is([data-cc-morph], :hover, :focus-within) {
+  z-index: 2;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"][data-cc-morph] {
+  translate: 8px 0;
+  scale: 1.015;
+}
+/* The red quad drifts inside that paper, so a moving white margin outlines it. */
+html[data-dsh-calling-card-skin] [data-row-key^="session:"][data-cc-morph] > .dsh-cc-morph {
+  inset: 1px 2px 0 1px;
+  --cc-bx: 10px;
+  --cc-by: 5px;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_title"] {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_slot"]:empty {
+  display: none;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] [class*="_time"] {
+  display: inline-block;
+  padding: 0 5px;
+  background: #0b0b0b;
+  color: #fff !important;
+  font-family: Anton, var(--dsh-cc-display);
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.05em;
+  rotate: 3deg;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_rowResting"] {
+  flex: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_rowActions"] {
+  display: none !important;
+  flex: none !important;
+  margin-left: 0 !important;
+  gap: 2px !important;
+  height: 22px !important;
+  align-items: center;
+  padding: 0 6px;
+  background: #0b0b0b;
+  clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]:is(:hover, :focus-within, [class*="_menuOpen"]) > [class*="_rowActions"] {
+  display: inline-flex !important;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]:is(:hover, :focus-within, [class*="_menuOpen"]) > [class*="_rowResting"] {
+  display: none !important;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_rowActions"] :is([class*="_rowQuickActions"], [class*="_rowQuickActions"] > [data-slot]) {
+  display: inline-flex;
+  gap: 2px;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_rowActions"] button {
+  width: 22px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+  background: transparent !important;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] > [class*="_rowActions"] button:is(:hover, :focus-visible) {
+  background: var(--dsh-cc-red) !important;
+  outline: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3522,7 +3957,7 @@ html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([da
     display: none !important;
   }
   /* Static look: no hover lift, no squash; the star field holds its first frame. */
-  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, [data-sidebar-toggle], .dsh-cc-menu, .dsh-cc-win, [data-cc-rail-btn], .dsh-cc-ticket, [data-presented-file], [data-presented-file] [class*="_fileIcon"], [data-open-target] > button, [data-turn-trigger] > button, [data-code-block-banner] button, [data-terminal] [class*="_copyButton"], [data-approval-key] [class*="_actionRow"] button, span[class$="_stopped"], [data-signed-out][aria-haspopup="menu"], [data-row-key^="workspace:"], [class*="_sectionHeader"] button) {
+  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, [data-sidebar-toggle], .dsh-cc-menu, .dsh-cc-win, [data-cc-rail-btn], .dsh-cc-ticket, [data-presented-file], [data-presented-file] [class*="_fileIcon"], [data-open-target] > button, [data-turn-trigger] > button, [data-code-block-banner] button, [data-terminal] [class*="_copyButton"], [data-approval-key] [class*="_actionRow"] button, span[class$="_stopped"], [data-signed-out][aria-haspopup="menu"], [data-row-key^="workspace:"], [class*="_sectionHeader"] button, [data-menu-material], [data-dockkit-tab-menu], [role^="menuitem"], span[role="tooltip"], body > span[class*="_portal_"] > div[class*="_card_"], [data-row-key^="session:"] > [class*="_rowActions"]) {
     translate: none !important;
     scale: none !important;
     rotate: none !important;

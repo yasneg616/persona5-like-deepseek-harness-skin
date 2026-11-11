@@ -1,10 +1,14 @@
 {
   "name": "dsh-calling-card-skin",
-  "version": "0.5.4",
+  "version": "1.0.0",
   "private": true,
   "description": "Calling-card skin for the DeepSeek Harness web client. Red, black, and white paper geometry over live sessions, messages, and the composer.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yasneg616/persona5-like-skin.git"
+  },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "exports": {
@@ -19,7 +23,11 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "lib",
+    "lib/client.js",
+    "lib/client.d.ts",
+    "lib/index.js",
+    "lib/index.d.ts",
+    "lib/skin.css",
     "assets",
     "LICENSES",
     "cordis.patch.yml",
@@ -60,8 +68,10 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "prepack": "npm run build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "npm run build && node --experimental-strip-types --test tests/*.test.ts",
+    "test:ui": "npm run build && node --test tests/browser.test.mjs",
     "preview": "node scripts/preview-server.mjs"
   },
   "devDependencies": {

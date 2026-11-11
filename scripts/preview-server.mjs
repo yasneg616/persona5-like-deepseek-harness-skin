@@ -17,6 +17,12 @@ const routes = new Map([
   ['/skin.css', 'lib/skin.css'],
   ['/client.js', 'lib/client.js'],
   ['/conversation.html', 'preview/conversation.html'],
+  ['/desktop.html', 'preview/desktop.html'],
+  ['/menus.html', 'preview/menus.html'],
+  ['/widgets.html', 'preview/widgets.html'],
+  ['/lib/skin.css', 'lib/skin.css'],
+  ['/lib/client.js', 'lib/client.js'],
+  ['/lib/fixture-boot.js', 'lib/fixture-boot.js'],
   ['/fixture-boot.js', 'lib/fixture-boot.js'],
 ])
 
@@ -38,5 +44,5 @@ const server = createServer((req, res) => {
 })
 
 server.listen(port, '127.0.0.1', () => {
-  console.log(`preview http://127.0.0.1:${port}`)
+  console.log(`preview http://127.0.0.1:${server.address().port}`)
 })

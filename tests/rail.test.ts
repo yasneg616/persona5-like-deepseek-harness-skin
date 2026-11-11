@@ -46,7 +46,9 @@ test('collapsed: host sections shown again as tickets, wide-only parts stay hidd
   assert.equal(document.getElementById('wide')?.hasAttribute('data-cc-rail-part'), false)
   assert.equal(document.querySelector('[data-sidebar-toggle]')?.hasAttribute('data-cc-rail-btn'), false)
   assert.equal(document.getElementById('new')?.getAttribute('data-cc-rail-btn'), '01')
-  assert.equal(count, 6)
+  // The wide-only button inside a shown section stays hidden and gets no ticket number.
+  assert.equal(document.querySelector('#wide button')?.hasAttribute('data-cc-rail-btn'), false)
+  assert.equal(count, 5)
   // Sticky: once shown, a section stays marked even though it is no longer display:none.
   document.getElementById('panels')?.removeAttribute('style')
   markRail(document, window, true)

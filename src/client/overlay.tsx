@@ -8,7 +8,7 @@ import { createMorphTracker } from './morph.ts'
 import { createGiant } from './giant.ts'
 import { mountChrome } from './chrome.ts'
 import { createRail } from './rail.ts'
-import { clearWidgets, syncWidgets } from './widgets.ts'
+import { CARD, clearWidgets, syncWidgets } from './widgets.ts'
 import { type LetterMode, SETTLE_MS as LETTER_SETTLE_MS, clearMode, hasPending, readMode, syncMessageCollage, writeMode } from './letters.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
@@ -45,7 +45,7 @@ function LetterTiles() {
     <div className="dsh-cc-architecture" role="img" aria-label="DEEPSEEK HARNESS">
       <LetterLine word="DEEPSEEK" />
       <LetterLine word="HARNESS" />
-      <i className="dsh-cc-tagline">CUT THE NOISE.</i>
+      <i className="dsh-cc-tagline">TAKE YOUR HEART</i>
     </div>
   )
 }
@@ -78,6 +78,14 @@ function transcriptKey(documentRef: Document): string {
   const row = documentRef.querySelector('[data-row-key^="session:"][aria-selected="true"]')?.getAttribute('data-row-key') ?? ''
   const phase = documentRef.querySelector('[data-phase]')?.getAttribute('data-phase') ?? ''
   return `${row}|${phase}`
+}
+
+function isReplyTextChange(record: MutationRecord): boolean {
+  if (record.type !== 'characterData' && (record.type !== 'childList'
+    || Array.from(record.addedNodes).some((node) => node.nodeType !== Node.TEXT_NODE)
+    || Array.from(record.removedNodes).some((node) => node.nodeType !== Node.TEXT_NODE))) return false
+  const target = record.target instanceof Element ? record.target : record.target.parentElement
+  return target?.closest('[data-chat-flow-kind="assistant-step"] p') != null && !target.closest(CARD)
 }
 
 /**
@@ -231,6 +239,11 @@ export function CallingCardOverlay() {
       settleHeadings = window.setTimeout(() => syncCollage(document), 560)
     }
     const observer = new MutationObserver((records) => {
+      // Text streaming in an existing reply does not change the shell or add a flow.
+      if (records.every(isReplyTextChange)) {
+        if (letters === 'collage') runLetters()
+        return
+      }
       paint(true)
       const relevant = records.some((record) => {
         const target = record.target instanceof Element ? record.target : record.target.parentElement

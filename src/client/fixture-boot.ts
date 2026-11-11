@@ -30,7 +30,7 @@ if (field) {
   }
   const tag = document.createElement('i')
   tag.className = 'dsh-cc-tagline'
-  tag.textContent = 'CUT THE NOISE.'
+  tag.textContent = 'TAKE YOUR HEART'
   arch.append(tag)
   field.replaceChildren(arch)
 }
