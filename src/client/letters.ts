@@ -27,7 +27,9 @@ const STABLE = 'data-cc-collage-since'
 const FLOWS = '[data-chat-flow-kind="user"], [data-chat-flow-kind="steering"], [data-chat-flow-kind="assistant-step"]'
 const BLOCKS = 'p, h1, h2, h3, h4'
 /** Never cut inside these. */
-const PLAIN_ZONE = 'li, table, blockquote, pre, code, details, [data-composer-card], [contenteditable="true"], .katex, mjx-container'
+/** Host widgets (0.5.3) stay plain too: trigger notices, file cards, approvals, terminals, tool rows. */
+const PLAIN_ZONE = 'li, table, blockquote, pre, code, details, [data-composer-card], [contenteditable="true"], .katex, mjx-container, '
+  + '[data-turn-trigger], [data-presented-file], [data-approval-key], [data-terminal], [data-code-block-banner], [data-tool]'
 /** Inline nodes copied as-is into the clone: links stay clickable, code stays code. */
 const KEEP = 'a[href], code, kbd, samp, img, svg, math, .katex, mjx-container, input, button'
 

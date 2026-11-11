@@ -33,7 +33,9 @@ const STATE: Array<[string, MorphKind]> = [
   ['[data-cc-rail-btn][aria-current="page"]', 'button'],
 ]
 const HOVER = '[data-cc-leaf], [data-row-key^="session:"], [data-composer-card] button, '
-  + '.dsh-cc-win, .dsh-cc-menu, [data-sidebar-toggle], [data-cc-rail-btn], .dsh-cc-ticket'
+  + '.dsh-cc-win, .dsh-cc-menu, [data-sidebar-toggle], [data-cc-rail-btn], .dsh-cc-ticket, '
+  + '[data-presented-file], [data-open-target] button, [data-turn-trigger] > button, [data-code-block-banner] button, '
+  + '[data-terminal] [class*="_copyButton"], [data-approval-key] [class*="_actionRow"] button'
 const COMPOSER = '[data-composer-card]'
 
 export interface MorphTracker {

@@ -52,6 +52,23 @@ Windows 桌面端顶部那条 40px 的栏不是系统原生的。主窗口无边
 - 收起条的各段按结构找（侧栏根节点下被宿主隐藏的直接子节点），不依赖带哈希的类名。
 - 本版只在 `preview/desktop.html` 夹具里核对过。夹具模仿 preload，窗口接口是只记日志的桩。发布前没有在桌面端里实机验证。
 
+## 对话里的控件（0.5.3）
+
+对话里的卡片和提示也改成了同一套怪盗卡语言：
+- **交付文件卡**（回复下方的文件，例如 `atrium-notes.md`、`after-atrium.png`）：斜切的纸票，右上角一块红楔，背后一道红色切口。通用图标换成粗体文件类型印章（`MD`、`PNG`、`TSX`……；文档黑色，图片和数据红色，代码黑底红字）。文件名加粗，说明保持 12px 的普通字。「用…打开」分体按钮变成两块斜切小票（黑色应用票、红色箭头票，菜单打开时箭头翻转）。悬停时卡片前冲并出现漂移红四边形；打开按钮有各自的悬停效果。
+- **消息附件**：同样的票签，白纸版。
+- **触发提示**（例如「后台任务状态更新」）：斜切纸条加红刃，标题是黑色印章，时间是空心数字，右侧红色切口箭头展开时甩转。展开后的内容是普通纸面加红线，正常阅读。
+- **已停止**：黑色横幅印章，带红缺口和流动的红斜线。
+- **本轮错误和警告**（任务已停止……）：黑色警示板，左侧红条，红色错位阴影；标题是斜切红签（警告是白签加红下划线），状态点变成红星，说明文字保持普通、易读。
+- **其余**：代码块标题栏（黑条、红色语言签、斜切白色操作票，自动换行按下时变红）、终端（红线、红色复制签）、工具行（红色菱形分隔、错误/已停止标签、黑色 `+` 和红色 `−` 差异片）、批准卡（黑卡、红色等待带、斜切按钮）、状态点改成菱形、加载圈和步骤箭头变红，回复里的链接是粗字加红下划线，悬停时红色填满。
+
+这些控件不参与拼贴信，不会被剪成字块；拼贴模式本身没有改变。「减少动态效果」时所有新动画和悬停前冲都关闭。
+
+限制：
+- 宿主没有 data 属性的地方，按 CSS 模块的本地类名匹配（`[class*="_fileName"]`、`span[class$="_stopped"]`、`[class*="_turnErrorRow"]` 等），不依赖哈希前缀。宿主更新若改了这些本地名，对应控件会退回宿主原样，不会坏。
+- 文件类型印章只取自看得到的文件名；`widgets.ts` 写入 `data-cc-ext` / `data-cc-kind`，卸载时移除。
+- 本版只在 `preview/widgets.html` 夹具（标明是夹具、仿宿主结构）里核对过，发布前没有在桌面端里实机验证。
+
 ## 和已确认的 v9 稿之间的差别
 
 v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去冒充客户端：
@@ -93,7 +110,7 @@ dsh --profile calling-card --from-default-profile web
 停掉这个进程，再安装本包（路径换成 tarball 的实际位置）：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.2.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.3.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -113,7 +130,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.2.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.3.tgz
 ```
 
 ## 本地构建与夹具

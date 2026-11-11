@@ -2593,6 +2593,684 @@ html[data-dsh-calling-card-skin] .dsh-cc-field {
   transition: left 300ms var(--cc-snap);
 }
 
+/* ================================================================
+ * 0.5.3 widgets. File cards, the trigger notice, the stopped stamp, the turn
+ * error slab, code banners, terminals, tool rows, approvals and state dots in
+ * calling-card language. Host markup is matched by data attributes where the
+ * host has them and by CSS-module local names ([class*="_name"]) otherwise.
+ * Reading text (descriptions, messages, code) keeps a plain face and contrast.
+ * ================================================================ */
+html[data-dsh-calling-card-skin] {
+  --cc-cut-l: polygon(0 3px, 100% 0, calc(100% - 9px) 100%, 5px calc(100% - 2px));
+  --cc-slant: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+}
+@keyframes dsh-cc-w-in {
+  from { translate: -36px 4px; rotate: -5deg; }
+}
+@keyframes dsh-cc-w-slam {
+  0% { scale: 1.9; rotate: -24deg; }
+  55% { scale: 0.9; rotate: 3deg; }
+  100% { scale: 1; }
+}
+@keyframes dsh-cc-w-chev {
+  0% { scale: 1.7; rotate: -120deg; }
+  70% { scale: 0.85; }
+}
+@keyframes dsh-cc-w-hatch {
+  from { background-position: 0 0; }
+  to { background-position: 40px 0; }
+}
+
+/* --- File cards: black ticket on an offset paper cut, red corner wedge. --- */
+html[data-dsh-calling-card-skin] [data-presented-file] {
+  position: relative;
+  isolation: isolate;
+  overflow: visible !important;
+  height: 64px !important;
+  padding: 8px 14px 8px 10px !important;
+  gap: 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #0c0c0c;
+  transition: translate 180ms var(--cc-snap), rotate 180ms var(--cc-snap);
+  animation: dsh-cc-w-in 320ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] :is([data-presented-file], [class*="_fileCard"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(225deg, var(--dsh-cc-red) 0 15px, transparent 15.5px),
+    #f7f4ee;
+  clip-path: var(--cc-cut-l);
+}
+html[data-dsh-calling-card-skin] :is([data-presented-file], [class*="_fileCard"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: var(--dsh-cc-red);
+  clip-path: polygon(2px 0, calc(100% - 3px) 5px, 100% 100%, 0 calc(100% - 5px));
+  translate: -5px 5px;
+  transition: translate 180ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] [data-presented-file] [class*="_cardPreview"] {
+  border-radius: 0 !important;
+}
+html[data-dsh-calling-card-skin] [data-presented-file] [class*="_cardPreview"]:focus-visible {
+  outline: 3px solid var(--dsh-cc-red) !important;
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-presented-file]:hover {
+    z-index: 2;
+    translate: 4px -3px;
+    rotate: -1.2deg;
+  }
+  html[data-dsh-calling-card-skin] [data-presented-file]:hover::after {
+    translate: -9px 8px;
+    background: #fff;
+  }
+}
+html[data-dsh-calling-card-skin] [data-presented-file][data-cc-morph]::before {
+  display: none;
+}
+
+/* File-type stamp replaces the generic icon. */
+html[data-dsh-calling-card-skin] [class*="_fileIcon"][data-cc-ext] {
+  display: grid !important;
+  place-items: center;
+  width: 46px !important;
+  height: 34px !important;
+  flex: none;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  background: #0c0c0c;
+  color: #fff;
+  clip-path: polygon(4px 0, 100% 3px, calc(100% - 3px) 100%, 0 calc(100% - 4px));
+  rotate: -6deg;
+  transition: rotate 180ms var(--cc-snap), scale 180ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] [class*="_fileIcon"][data-cc-ext] > * {
+  display: none !important;
+}
+html[data-dsh-calling-card-skin] [class*="_fileIcon"][data-cc-ext]::after {
+  content: attr(data-cc-ext);
+  font-family: var(--dsh-cc-display);
+  font-size: 17px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+html[data-dsh-calling-card-skin] [data-cc-kind="image"] [class*="_fileIcon"][data-cc-ext],
+html[data-dsh-calling-card-skin] [data-cc-kind="data"] [class*="_fileIcon"][data-cc-ext] {
+  background: var(--dsh-cc-red);
+  color: #fff;
+}
+html[data-dsh-calling-card-skin] [data-cc-kind="data"] [class*="_fileIcon"][data-cc-ext] {
+  color: #0c0c0c;
+}
+html[data-dsh-calling-card-skin] [data-cc-kind="code"] [class*="_fileIcon"][data-cc-ext] {
+  color: var(--dsh-cc-red);
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-presented-file]:hover [class*="_fileIcon"][data-cc-ext] {
+    rotate: 4deg;
+    scale: 1.12;
+  }
+}
+html[data-dsh-calling-card-skin] [data-presented-file] [class*="_fileName"] {
+  font-family: var(--dsh-cc-chat);
+  font-size: 15px !important;
+  font-weight: 900;
+  line-height: 20px;
+  letter-spacing: 0.02em;
+  color: #0c0c0c !important;
+}
+html[data-dsh-calling-card-skin] [data-presented-file] [class*="_description"] {
+  font-size: 12px !important;
+  line-height: 17px !important;
+  color: #3d3d3d !important;
+}
+html[data-dsh-calling-card-skin] [data-presented-file] [class*="_previewHint"] {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  background: var(--dsh-cc-red);
+  padding: 0 6px;
+}
+html[data-dsh-calling-card-skin] [data-presented-file][data-cc-morph] :is([class*="_description"], [class*="_fileName"]) {
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] [data-presented-file][data-cc-morph] [class*="_previewHint"] {
+  background: #0c0c0c;
+}
+
+/* Message attachments: the white-paper variant. */
+html[data-dsh-calling-card-skin] [class*="_fileCard"] {
+  position: relative;
+  isolation: isolate;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"]::before {
+  background:
+    linear-gradient(225deg, var(--dsh-cc-red) 0 13px, transparent 13.5px),
+    #f7f4ee;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"]::after {
+  background: var(--dsh-cc-red);
+  translate: 4px 4px;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"] [class*="_fileName"] {
+  font-family: var(--dsh-cc-chat);
+  font-weight: 900;
+  color: #0c0c0c !important;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"] [class*="_fileMeta"] {
+  color: #4a4a4a !important;
+  font-size: 12px;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"] [class*="_fileIcon"][data-cc-ext] {
+  width: 40px !important;
+  height: 30px !important;
+  background: #0c0c0c;
+  color: #fff;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"] [class*="_fileIcon"][data-cc-ext]::after {
+  font-size: 15px;
+}
+html[data-dsh-calling-card-skin] [class*="_fileCard"][data-cc-kind="image"] [class*="_fileIcon"][data-cc-ext] {
+  background: var(--dsh-cc-red);
+}
+
+/* "Open with" split: two slanted mini tiles, white app tile and red chevron. */
+html[data-dsh-calling-card-skin] [data-open-target] {
+  gap: 3px;
+  height: 26px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+html[data-dsh-calling-card-skin] [data-open-target] > button {
+  position: relative;
+  isolation: isolate;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 3px 11px !important;
+  background: #0c0c0c !important;
+  color: #fff !important;
+  clip-path: var(--cc-slant);
+  transition: translate 160ms var(--cc-snap), rotate 160ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] [data-open-target] > [data-open-path-more] {
+  padding: 3px 10px 3px 8px !important;
+  background: var(--dsh-cc-red) !important;
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] [data-open-target] > [data-open-path-more] svg {
+  stroke-width: 2.6;
+  transition: rotate 220ms var(--cc-punch);
+}
+html[data-dsh-calling-card-skin] [data-open-target] > [data-open-path-more][aria-expanded="true"] svg {
+  rotate: 180deg;
+}
+html[data-dsh-calling-card-skin] [data-open-target][data-state="busy"] > button {
+  background: #8a8a8a !important;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-open-target] > button:hover {
+    z-index: 1;
+    translate: 0 -3px;
+    rotate: -5deg;
+  }
+}
+html[data-dsh-calling-card-skin] [data-open-target] > button:focus-visible {
+  outline: 2px solid var(--dsh-cc-red) !important;
+  outline-offset: 2px;
+}
+
+/* --- Trigger notice: black slanted bar, red blade, white stamp, hollow time. --- */
+html[data-dsh-calling-card-skin] [data-turn-trigger] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-block: 14px !important;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button {
+  position: relative;
+  isolation: isolate;
+  gap: 12px !important;
+  padding: 10px 22px 10px 12px !important;
+  border-radius: 0 !important;
+  color: #0c0c0c !important;
+  background: transparent !important;
+  transition: translate 180ms var(--cc-snap), rotate 180ms var(--cc-snap);
+  animation: dsh-cc-w-in 320ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(104deg, var(--dsh-cc-red) 0 38px, #f7f4ee 38.5px calc(100% - 52px), var(--dsh-cc-red) calc(100% - 51.5px));
+  clip-path: polygon(0 0, 100% 4px, calc(100% - 10px) 100%, 3px calc(100% - 2px));
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button[data-cc-morph]::before {
+  display: none;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button[data-cc-morph] > time {
+  -webkit-text-stroke-color: #fff;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button > [class*="_icon"] {
+  color: #fff !important;
+  width: 16px;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button > [class*="_title"] {
+  display: inline-block;
+  padding: 2px 12px 3px 10px;
+  background: #0c0c0c;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-size: 14px !important;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  clip-path: var(--cc-slant);
+  rotate: -2deg;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button > time {
+  font-family: var(--dsh-cc-display);
+  font-size: 22px !important;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: transparent !important;
+  -webkit-text-stroke: 1.3px #0c0c0c;
+  margin-right: 14px;
+  paint-order: stroke fill;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button > svg:last-child {
+  width: 16px;
+  height: 14px;
+  color: transparent !important;
+  background: #fff;
+  clip-path: polygon(0 18%, 42% 18%, 50% 46%, 58% 18%, 100% 18%, 50% 100%);
+  transition: transform 260ms var(--cc-punch);
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button[aria-expanded="true"] > svg:last-child {
+  background: #fff;
+  animation: dsh-cc-w-chev 300ms var(--cc-punch);
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-turn-trigger] > button:hover {
+    z-index: 1;
+    translate: 6px -2px;
+    rotate: -0.6deg;
+  }
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > button:focus-visible {
+  outline: 3px solid var(--dsh-cc-red) !important;
+  outline-offset: 3px;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > [class*="_body"] {
+  margin: 0 10px 0 18px;
+  padding: 10px 16px 12px !important;
+  background: #f7f4ee;
+  color: #1b1b1b !important;
+  border-left: 5px solid var(--dsh-cc-red);
+  font-size: 13px !important;
+  line-height: 1.6;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > [class*="_body"] [class*="_explanation"] {
+  color: #3a3a3a !important;
+}
+html[data-dsh-calling-card-skin] [data-turn-trigger] > [class*="_body"] [class*="_content"] {
+  color: #111 !important;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 12.5px;
+}
+
+/* --- "Stopped" chip: a black banner stamp with a red notch and a hatched rule. --- */
+html[data-dsh-calling-card-skin] span[class$="_stopped"] {
+  position: relative;
+  isolation: isolate;
+  align-self: flex-start;
+  display: inline-block;
+  margin: 6px 0 4px 2px;
+  padding: 4px 18px 5px 20px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-size: 15px !important;
+  font-weight: 900;
+  line-height: 20px !important;
+  letter-spacing: 0.3em;
+  rotate: -3deg;
+  animation: dsh-cc-w-slam 380ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] span[class$="_stopped"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, var(--dsh-cc-red) 0 7px, #0c0c0c 7.5px);
+  clip-path: polygon(0 0, 100% 2px, calc(100% - 9px) 100%, 0 100%, 0 62%, 5px 50%, 0 38%);
+}
+html[data-dsh-calling-card-skin] span[class$="_stopped"]::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 10px);
+  top: calc(50% - 4px);
+  width: 120px;
+  height: 8px;
+  background: repeating-linear-gradient(-60deg, var(--dsh-cc-red) 0 5px, transparent 5px 10px);
+  background-size: 40px 8px;
+  animation: dsh-cc-w-hatch 1.6s linear infinite;
+}
+
+/* --- Turn error: black slab, red strip and offset shadow, slanted red tag. --- */
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] {
+  position: relative;
+  isolation: isolate;
+  grid-template-columns: 16px minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  margin: 18px 10px 18px 0 !important;
+  padding: 12px 16px 13px 18px !important;
+  color: #ececec;
+  animation: dsh-cc-w-in 320ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"]::before,
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: polygon(0 0, 100% 4px, calc(100% - 8px) 100%, 4px calc(100% - 3px));
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"]::before {
+  z-index: -1;
+  background: linear-gradient(90deg, var(--dsh-cc-red) 0 7px, #0c0c0c 7.5px);
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"]::after {
+  z-index: -2;
+  background: var(--dsh-cc-red);
+  translate: 6px 6px;
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] [class*="_turnErrorDot"] {
+  width: 16px !important;
+  height: 16px !important;
+  margin-top: 3px !important;
+  color: var(--dsh-cc-red) !important;
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] span[class*="_turnErrorDot"][data-state]::after {
+  inset: 0 !important;
+  border-radius: 0 !important;
+  background: var(--dsh-cc-red) !important;
+  clip-path: polygon(50% 0, 63% 35%, 100% 38%, 71% 61%, 81% 100%, 50% 77%, 19% 100%, 29% 61%, 0 38%, 37% 35%);
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] :is([class*="_turnErrorTitle"], [class*="_maxTokensTitle"]) {
+  display: inline-block;
+  margin: 0 10px 6px 0 !important;
+  padding: 2px 14px 3px 12px;
+  background: var(--dsh-cc-red);
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-size: 14px;
+  font-weight: 900 !important;
+  letter-spacing: 0.14em;
+  clip-path: var(--cc-slant);
+  rotate: -2deg;
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] [class*="_maxTokensTitle"] {
+  background: #fff;
+  color: #0c0c0c !important;
+  box-shadow: inset 0 -3px 0 var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] [class*="_turnErrorMessage"] {
+  display: block;
+  color: #ececec !important;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+html[data-dsh-calling-card-skin] [class*="_turnErrorRow"] [class*="_turnErrorCode"] {
+  align-self: start;
+  margin-top: 2px;
+  padding: 1px 8px;
+  background: #fff;
+  color: #0c0c0c !important;
+  font-size: 11.5px !important;
+  clip-path: var(--cc-slant);
+}
+
+/* --- Code block banner and terminal. --- */
+html[data-dsh-calling-card-skin] :has(> [data-code-block-banner]) {
+  border-radius: 0 !important;
+  background: #161616 !important;
+  border-left: 4px solid var(--dsh-cc-red);
+  overflow: visible;
+}
+html[data-dsh-calling-card-skin] :has(> [data-code-block-banner]) pre {
+  border-left: 0 !important;
+  margin-top: 0 !important;
+}
+html[data-dsh-calling-card-skin] [data-code-block-banner] {
+  padding: 6px 12px 6px 0 !important;
+  background: #0c0c0c;
+  color: #f7f4ee !important;
+  border-bottom: 3px solid var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [data-code-block-banner] > div:first-child > span:first-child {
+  display: inline-block;
+  margin-left: -4px;
+  padding: 1px 14px 1px 12px;
+  background: var(--dsh-cc-red);
+  color: #fff !important;
+  font-family: var(--dsh-cc-display);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+html[data-dsh-calling-card-skin] [data-code-block-banner] > div:first-child > span + span {
+  color: #d9d4ca !important;
+  font-weight: 700;
+}
+html[data-dsh-calling-card-skin] [data-code-block-banner] button {
+  width: 30px !important;
+  height: 24px !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #0c0c0c !important;
+  clip-path: var(--cc-slant);
+  transition: translate 160ms var(--cc-snap), rotate 160ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] [data-code-block-banner] button[aria-pressed="true"] {
+  background: var(--dsh-cc-red) !important;
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] [data-terminal] {
+  border-radius: 0 !important;
+  background: #0c0c0c !important;
+  color: #f7f4ee;
+  border-left: 4px solid var(--dsh-cc-red);
+  overflow: visible !important;
+}
+html[data-dsh-calling-card-skin] [data-terminal] > div:first-child {
+  border-bottom: 3px solid var(--dsh-cc-red) !important;
+  background: #161616;
+  align-items: center;
+}
+html[data-dsh-calling-card-skin] [data-terminal] [class*="_status_"] {
+  font-family: var(--dsh-cc-chat);
+  font-weight: 900;
+  color: #ff5a64 !important;
+}
+html[data-dsh-calling-card-skin] [data-terminal] [class*="_copyButton"],
+html[data-dsh-calling-card-skin] [data-terminal] [class*="_expand"] {
+  padding: 2px 12px 3px !important;
+  border-radius: 0 !important;
+  background: var(--dsh-cc-red) !important;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-weight: 900;
+  font-size: 12px !important;
+  letter-spacing: 0.12em;
+  clip-path: var(--cc-slant);
+  transition: translate 160ms var(--cc-snap), rotate 160ms var(--cc-snap);
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] :is([data-code-block-banner] button, [data-terminal] [class*="_copyButton"]):hover {
+    translate: 0 -2px;
+    rotate: -6deg;
+  }
+}
+html[data-dsh-calling-card-skin] :is([data-code-block-banner] button, [data-terminal] [class*="_copyButton"]):focus-visible {
+  outline: 2px solid var(--dsh-cc-red) !important;
+  outline-offset: 2px;
+}
+
+/* --- Tool rows: red separators, error/stopped tags, diff chips. --- */
+html[data-dsh-calling-card-skin] [data-tool] [class*="_sep"] {
+  width: 6px !important;
+  height: 6px !important;
+  background: var(--dsh-cc-red) !important;
+  rotate: 45deg;
+}
+html[data-dsh-calling-card-skin] [data-tool] :is([class*="_errorSummary"], [class*="_stoppedSummary"]) {
+  padding: 0 10px 0 8px;
+  background: var(--dsh-cc-red);
+  color: #fff !important;
+  font-weight: 800;
+  clip-path: var(--cc-slant);
+}
+html[data-dsh-calling-card-skin] [data-tool] [class*="_stoppedSummary"] {
+  background: #0c0c0c;
+}
+html[data-dsh-calling-card-skin] [data-tool] :is([class*="_diffAdded"], [class*="_diffRemoved"]) {
+  display: inline-block;
+  padding: 0 6px;
+  background: #0c0c0c;
+  color: #fff !important;
+  font-family: var(--dsh-cc-display);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  line-height: 18px;
+  clip-path: var(--cc-slant);
+}
+html[data-dsh-calling-card-skin] [data-tool] [class*="_diffRemoved"] {
+  background: var(--dsh-cc-red);
+}
+
+/* --- Approval: black card, red waiting band, slanted answer tiles. --- */
+html[data-dsh-calling-card-skin] [data-approval-key] > [class*="_card"] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #0c0c0c !important;
+  color: #ececec;
+  box-shadow: 7px 7px 0 var(--dsh-cc-red) !important;
+  overflow: visible !important;
+  animation: dsh-cc-w-in 320ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_strip"] {
+  margin: -6px 40px 0 -8px;
+  padding: 6px 22px 6px 14px !important;
+  background: var(--dsh-cc-red) !important;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-weight: 900;
+  font-size: 13px !important;
+  letter-spacing: 0.16em;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 6px 100%);
+  rotate: -1deg;
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_strip"] [class*="_dot_"] {
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_body"] {
+  color: #ececec !important;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_command"] {
+  border-radius: 0 !important;
+  background: #f7f4ee !important;
+  color: #111 !important;
+  border-left: 4px solid var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_actionRow"] button {
+  position: relative;
+  isolation: isolate;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 5px 20px 6px !important;
+  background: var(--dsh-cc-red) !important;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  clip-path: var(--cc-slant);
+  transition: translate 160ms var(--cc-snap), rotate 160ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_actionRow"] button[class*="_reject"] {
+  background: #fff !important;
+  color: #0c0c0c !important;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-approval-key] [class*="_actionRow"] button:hover {
+    translate: 0 -3px;
+    rotate: -4deg;
+  }
+}
+html[data-dsh-calling-card-skin] [data-approval-key] [class*="_actionRow"] button:focus-visible {
+  outline: 2px solid #fff !important;
+  outline-offset: 3px;
+}
+
+/* --- State dots, spinner, step chevrons, clocks, links. --- */
+html[data-dsh-calling-card-skin] span[class*="_dot_"][data-state]::after {
+  border-radius: 0 !important;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  inset: 6% !important;
+}
+html[data-dsh-calling-card-skin] span[class*="_dot_"][data-state="error"] {
+  color: var(--dsh-cc-red) !important;
+}
+html[data-dsh-calling-card-skin] [class*="_spinner_"] {
+  color: var(--dsh-cc-red) !important;
+}
+html[data-dsh-calling-card-skin] [data-step-process-chevron] {
+  color: var(--dsh-cc-red) !important;
+}
+html[data-dsh-calling-card-skin] [data-clock] {
+  font-family: var(--dsh-cc-display);
+  letter-spacing: 0.06em;
+}
+html[data-dsh-calling-card-skin] :is([data-chat-flow-kind="assistant-step"], [data-chat-flow-kind="tool-call"]) a[href]:not([data-cc-morph]) {
+  color: #0c0c0c !important;
+  font-weight: 800;
+  text-decoration: none !important;
+  background: linear-gradient(var(--dsh-cc-red), var(--dsh-cc-red)) left bottom / 100% 3px no-repeat;
+  transition: background-size 160ms var(--cc-snap), color 120ms linear;
+}
+html[data-dsh-calling-card-skin] :is([data-chat-flow-kind="assistant-step"], [data-chat-flow-kind="tool-call"]) a[href]:is(:hover, :focus-visible) {
+  color: #fff !important;
+  background-size: 100% 100%;
+  outline: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html[data-dsh-calling-card-skin] *,
   html[data-dsh-calling-card-skin] *::before,
@@ -2610,7 +3288,7 @@ html[data-dsh-calling-card-skin] .dsh-cc-field {
     display: none !important;
   }
   /* Static look: no hover lift, no squash; the star field holds its first frame. */
-  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, [data-sidebar-toggle], .dsh-cc-menu, .dsh-cc-win, [data-cc-rail-btn], .dsh-cc-ticket) {
+  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, [data-sidebar-toggle], .dsh-cc-menu, .dsh-cc-win, [data-cc-rail-btn], .dsh-cc-ticket, [data-presented-file], [data-presented-file] [class*="_fileIcon"], [data-open-target] > button, [data-turn-trigger] > button, [data-code-block-banner] button, [data-terminal] [class*="_copyButton"], [data-approval-key] [class*="_actionRow"] button, span[class$="_stopped"]) {
     translate: none !important;
     scale: none !important;
     rotate: none !important;

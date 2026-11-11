@@ -150,5 +150,5 @@ test('stylesheet: host caption hidden only under our caption, drag band and no-d
     const at = css.indexOf(`@keyframes ${name}`)
     assert.ok(at > 0 && at < reduce, name)
   }
-  assert.match(css.slice(reduce), /\.dsh-cc-menu, \.dsh-cc-win, \[data-cc-rail-btn\], \.dsh-cc-ticket\) \{\s*translate: none !important;/)
+  assert.match(css.slice(reduce), /\.dsh-cc-menu, \.dsh-cc-win, \[data-cc-rail-btn\], \.dsh-cc-ticket[^){]*\) \{\s*translate: none !important;/)
 })

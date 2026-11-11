@@ -8,6 +8,7 @@ import { createMorphTracker } from './morph.ts'
 import { createGiant } from './giant.ts'
 import { mountChrome } from './chrome.ts'
 import { createRail } from './rail.ts'
+import { clearWidgets, syncWidgets } from './widgets.ts'
 import { type LetterMode, SETTLE_MS as LETTER_SETTLE_MS, clearMode, hasPending, readMode, syncMessageCollage, writeMode } from './letters.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
@@ -187,6 +188,7 @@ export function CallingCardOverlay() {
       syncSideWidth(document)
       rail.sync()
       chrome.sync()
+      syncWidgets(document)
       syncCollage(document)
       runLetters()
       const signals = readViewSignals(document)
@@ -276,6 +278,7 @@ export function CallingCardOverlay() {
     return () => {
       chrome.dispose()
       rail.dispose()
+      clearWidgets(document)
       toggle?.removeEventListener('click', onToggle)
       window.removeEventListener('storage', onStorage)
       window.clearTimeout(settleLetters)

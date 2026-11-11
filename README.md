@@ -54,6 +54,23 @@ Limits:
 - Rail sections are found by structure (the sidebar root's direct children that the host hides), not by hashed class names.
 - Checked in `preview/desktop.html`, a labeled fixture that imitates the preload with a logging stub. It was not verified live inside the desktop app before this release.
 
+## Conversation widgets (0.5.3)
+
+The cards and notices inside a conversation now speak the same calling-card language:
+- **Presented files** (the cards under a reply, e.g. `atrium-notes.md`, `after-atrium.png`): slanted paper tickets with a red corner wedge and a red cut behind them. The generic icon is replaced by a bold file-type stamp (`MD`, `PNG`, `TSX`…; black for documents, red for images and data, red-on-black for code). The name is heavy, the description stays a plain 12px line. The "open with" split becomes two slanted mini tiles (black app tile, red chevron that flips when its menu opens). Hover gives the lunge and the drifting red quad; the open buttons get their own.
+- **Message attachments**: the same ticket in the white-paper variant.
+- **Trigger notice** (e.g. 后台任务状态更新): a slanted paper bar with a red blade, the title as a black stamp, the time in hollow numerals and a red cut chevron that slams round when it opens. The opened body is a plain paper panel with a red rule.
+- **已停止**: a black banner stamp with a red notch and a moving red hatch.
+- **Turn errors and warnings** (任务已停止 …): a black slab with a red strip and offset red shadow; the title is a slanted red tag (warnings: white tag with a red underline), the dot becomes a red star, and the explanation stays plain, readable text.
+- **Sweep**: code block banners (black bar, red language tag, slanted white action tiles; pressed wrap turns red), terminals (red rules, red copy tag), tool rows (red diamond separators, error/stopped tags, black `+` and red `−` diff chips), approval cards (black card, red waiting band, slanted answer tiles), state dots as diamonds, red spinners and step chevrons, and links in replies as heavy text on a red underline that fills on hover.
+
+These widgets are excluded from the collage letters, so they are never cut into tiles. The collage mode itself is unchanged. Reduced motion turns off every new animation and hover lunge.
+
+Limits:
+- Where the host has no data attribute, widgets are matched by CSS-module local names (`[class*="_fileName"]`, `span[class$="_stopped"]`, `[class*="_turnErrorRow"]` …), not by the hashed prefixes. A host update that renames those local names will drop the styling back to the host look (nothing breaks).
+- File-type stamps come from the visible file name only; `widgets.ts` writes `data-cc-ext` / `data-cc-kind` and removes them on unload.
+- Checked in `preview/widgets.html`, a labeled fixture with host-like markup. It was not verified live inside the desktop app before this release.
+
 ## Honest gaps
 
 - There is no supported layout-replacement API that keeps sessions, streaming, and the composer. The center column's content box stays a rectangle. The stepped white frame and the offset red backing are `::before` / `::after` in the margin. They do not clip the transcript, the composer, or the workspace controls.
@@ -80,7 +97,7 @@ dsh --profile calling-card --from-default-profile web
 Stop that process, then:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.2.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.3.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -98,7 +115,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.2.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.3.tgz
 ```
 
 ## Develop

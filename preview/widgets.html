@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-Hans" data-dsh-calling-card-skin>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepSeek Harness · widgets fixture</title>
+<link rel="stylesheet" href="../lib/skin.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; }
+  body { min-height: 100vh; }
+  #frame { height: calc(100vh - 32px); display: grid; grid-template-columns: 280px minmax(0, 1fr); position: relative; }
+  @media (max-width: 900px) {
+    #frame { height: auto; min-height: calc(100vh - 32px); grid-template-columns: 1fr; }
+    #sidebar { min-height: 0; }
+    #center { min-height: 70vh; }
+  }
+  #sidebar, #center { min-width: 0; min-height: 0; }
+  #center { display: flex; flex-direction: column; }
+  #center > [data-phase] { display: flex; flex-direction: column; min-height: 0; }
+  /* The host's shell overlay sits above the columns and is click-through. */
+  #frame > [data-shell-overlay] { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+  [data-conversation-header-leading] { padding: 16px 20px 8px; color: #f7f4ee; }
+  [data-conversation-scroll] { flex: 1; overflow: auto; padding: 12px 28px 24px; }
+  [data-composer-seat] { padding: 8px 20px 16px; }
+  [data-composer-card] { position: relative; padding: 12px 14px; }
+  [data-composer-input] { width: 100%; min-height: 52px; border: 0; background: transparent; resize: none; }
+  .fixture-banner { margin: 0; background: #fff; color: #111; font: 700 12px/1.4 sans-serif; padding: 6px 10px; }
+  .fixture-nav { border: 0; text-align: left; }
+  #sidebar { display: flex; flex-direction: column; overflow: hidden; }
+  button.send { background: #e60012; color: #fff; border: 0; font-weight: 800; padding: 8px 12px; }
+</style>
+
+<style>
+  /* Host-like widget styles (approximations of the installed modules; class names as built). */
+  body { --dsw-radius-sm: 6px; --dsw-radius-lg: 12px; --dsw-radius-xl: 16px; }
+  .xMeOpW_body { display: flex; flex-direction: column; gap: 16px; }
+  .xMeOpW_stopped { border-radius: 6px; background: #2a2a2a; color: #999; align-self: flex-start; padding: 0 6px; font-size: 11px; line-height: 18px; }
+  .hSzSIW_root { border: .5px solid #333; border-radius: 16px; background: #1c1c1c; margin: 10px 0; }
+  .hSzSIW_header { width: 100%; color: #999; font: inherit; text-align: left; cursor: pointer; background: none; border: 0; display: flex; align-items: center; gap: 10px; padding: 12px 16px; }
+  .hSzSIW_title { font-size: 14px; } .hSzSIW_time { margin-left: auto; font-size: 12px; }
+  .hSzSIW_openChevron { transform: rotate(180deg); }
+  .hSzSIW_body { padding: 0 16px 12px 40px; color: #bbb; font-size: 12px; } .hSzSIW_explanation { margin: 8px 0; }
+  .hSzSIW_content { white-space: pre-wrap; max-height: 240px; overflow: auto; }
+  .LOmM4q_turnErrorRow { font-size: 13px; line-height: 20px; display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 8px; padding: 2px 0; margin: 10px 0; }
+  .LOmM4q_turnErrorDot { margin-top: 5px; } .LOmM4q_turnErrorTitle { color: #e5484d; margin-right: 6px; font-weight: 600; } .LOmM4q_turnErrorMessage { color: #aaa; }
+  .LOmM4q_turnErrorCode { color: #888; font: 12px monospace; }
+  ._dot_1i3xo_2 { position: relative; display: inline-block; flex: none; width: 10px; height: 10px; }
+  ._dot_1i3xo_2::after { content: ""; position: absolute; inset: 20%; border-radius: 50%; background: currentColor; }
+  ._dot_1i3xo_2[data-state=error] { color: #e5484d; } ._dot_1i3xo_2[data-state=warning] { color: #f5a524; } ._dot_1i3xo_2[data-state=done] { color: #3fb950; }
+  .LOmM4q_attachmentRow { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin: 6px 0; }
+  .LOmM4q_fileCard { border: .5px solid #444; border-radius: 12px; background: #222; box-sizing: border-box; flex: 0 0 240px; display: inline-flex; align-items: center; gap: 10px; width: 240px; min-height: 64px; padding: 8px 12px; }
+  .LOmM4q_fileIcon { flex: none; width: 28px; height: 28px; } .LOmM4q_fileContent { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+  .LOmM4q_fileName { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color: #eee; font-size: 14px; font-weight: 500; } .LOmM4q_fileMeta { color: #888; font-size: 12px; }
+  .K5rwea_root { display: flex; flex-direction: column; gap: 16px; margin: 12px 0; container-type: inline-size; }
+  .K5rwea_presented { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .K5rwea_file { box-sizing: border-box; border: .5px solid #333; border-radius: 12px; background: #262626; height: 60px; color: #eee; display: flex; align-items: center; gap: 10px; padding: 8px 10px; position: relative; overflow: hidden; }
+  .K5rwea_cardPreview { z-index: 1; border-radius: inherit; cursor: pointer; background: none; border: 0; padding: 0; position: absolute; inset: 0; }
+  .K5rwea_fileIcon { z-index: 2; pointer-events: none; border: .5px solid #333; width: 40px; height: 40px; color: #6aa0ff; border-radius: 10px; display: grid; place-items: center; position: relative; overflow: hidden; flex: none; }
+  .K5rwea_fileBody { z-index: 2; pointer-events: none; flex: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; min-width: 0; position: relative; }
+  .K5rwea_details { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .K5rwea_fileName { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 13px; font-weight: 500; line-height: 20px; }
+  .K5rwea_description { color: #888; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 10px; line-height: 16px; }
+  .K5rwea_previewHint { display: none; } .K5rwea_actions { pointer-events: auto; display: inline-flex; flex: none; }
+  .mOxcpG_menuAnchor { display: inline-flex; align-self: center; }
+  .mOxcpG_split { box-sizing: border-box; border: .5px solid #555; border-radius: 6px; height: 24px; display: inline-flex; align-items: stretch; overflow: hidden; }
+  .mOxcpG_main, .mOxcpG_chevron { color: #eee; background: none; border: 0; cursor: pointer; display: inline-flex; align-items: center; font-size: 11px; }
+  .mOxcpG_main { gap: 4px; padding: 3px 5px; } .mOxcpG_chevron { border-left: .5px solid #555; color: #aaa; padding: 3px 4px 3px 3px; }
+  ._card_1mqf1_1 { position: relative; margin: 16px 0; background: #161616; border-radius: 12px; }
+  ._header_1mqf1_10 { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 18px 8px 22px; color: #999; font: 11px/18px sans-serif; }
+  ._heading_1mqf1_23 { display: flex; gap: 12px; } ._actions_1mqf1_43 { display: flex; gap: 4px; }
+  ._action_1mqf1_43 { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 6px; color: #aaa; background: transparent; cursor: pointer; }
+  ._body_1mqf1_81 { padding: 6px 22px 20px; overflow-x: auto; }
+  ._block_15hvo_1 { position: relative; margin: 16px 0; padding-left: 30px; color: #eee; background: #161616; border-radius: 12px; overflow: hidden; font: 13px/22px monospace; }
+  ._header_15hvo_32 { display: flex; gap: 12px; margin-left: -30px; padding: 9px 14px 9px 30px; } ._block_15hvo_1[data-body] ._header_15hvo_32 { border-bottom: .5px solid #333; }
+  ._prompt_15hvo_70 { flex: 1; } ._cwd_15hvo_108 { color: #888; } ._status_15hvo_124 { color: #e5484d; }
+  ._copyButton_15hvo_132 { background: #161616; border: none; padding: 0; color: #aaa; cursor: pointer; font: 13px sans-serif; }
+  ._output_15hvo_152 { padding: 12px 14px 12px 0; } ._line_15hvo_179 { white-space: pre; }
+  .hKdVjq_root { display: flex; flex-direction: column; } .hKdVjq_row { display: flex; align-items: center; gap: 6px; color: #aaa; font-size: 13px; line-height: 24px; }
+  .hKdVjq_sep { background: #777; width: 2px; height: 2px; margin: 0 8px; } .hKdVjq_errorSummary { color: #e5484d; } .hKdVjq_stoppedSummary { color: #f5a524; }
+  .hKdVjq_diffAdded { color: #3fb950; } .hKdVjq_diffRemoved { color: #e5484d; } .hKdVjq_summarySuffix { margin-left: 4px; }
+  .Zf6DNq_root { margin: 14px 0; } .Zf6DNq_card { border: .5px solid #444; border-radius: 12px; background: #1f1f1f; overflow: hidden; }
+  .Zf6DNq_strip { display: flex; align-items: center; gap: 8px; padding: 8px 14px; color: #f5a524; font-size: 12px; background: #2a2416; }
+  .Zf6DNq_body { padding: 10px 14px; color: #ddd; font-size: 13px; } .Zf6DNq_command { font: 12px monospace; color: #eee; background: #111; padding: 6px 8px; border-radius: 6px; margin-top: 6px; }
+  .Zf6DNq_actionRow { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; }
+  .Zf6DNq_actionRow button { border-radius: 8px; border: .5px solid #555; background: #333; color: #eee; padding: 5px 14px; font-size: 13px; cursor: pointer; }
+  .Zf6DNq_actionRow button.Zf6DNq_reject { background: transparent; }
+  ._spinner_1i3xo_37 { color: #888; }
+  [data-chat-flow-kind="widgets"] { display: block; margin: 8px 0; }
+</style>
+</head>
+<body>
+<p class="fixture-banner" data-fixture-status>测试夹具 · 不是已连接的 DeepSeek Harness · 示例控件</p>
+<div id="frame">
+  <div id="sidebar">
+    <button type="button" class="fixture-brand" style="background:none;border:0;padding:8px 12px"><span class="dsh-cc-name">DSH <span>斩噪</span></span></button>
+    <button type="button" data-sidebar-toggle aria-label="夹具侧栏折叠" hidden></button>
+    <button type="button" class="fixture-nav">New Session</button>
+    <button type="button" class="fixture-nav" data-fixture-panel>Plugins</button>
+    <button type="button" class="fixture-nav">Automation tasks</button>
+    <div role="treeitem" data-row-key="workspace:demo">夹具项目</div>
+    <div role="treeitem" data-row-key="session:demo-1" aria-selected="true">整理中庭方案</div>
+    <div role="treeitem" data-row-key="session:demo-2" aria-selected="false">阅读边界用例</div>
+  </div>
+  <div id="center">
+   <div data-phase="active">
+    <div data-conversation-header-leading>当前会话 · 控件夹具</div>
+    <div data-conversation-region="chat" data-conversation-scroll>
+      <article data-chat-flow-kind="user"><p>按这张图改一下中庭，再写个说明。</p>
+        <div class="LOmM4q_attachmentRow" data-message-attachments><div class="LOmM4q_fileCard"><span class="LOmM4q_fileIcon"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M8 3h9l6 6v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="#8b5cf6"/><g data-file-type-mark color="#fff"><path d="M10 15h8M10 18h6" stroke="currentColor" stroke-width="1.6"/></g></svg></span><div class="LOmM4q_fileContent"><span class="LOmM4q_fileName">before-atrium.png</span><span class="LOmM4q_fileMeta">PNG · 1.2 MB</span></div></div></div>
+      </article>
+      <section class="hSzSIW_root" data-turn-trigger="true" id="trigger">
+        <button class="hSzSIW_header" type="button" aria-expanded="false" aria-controls="tb"><span class="hSzSIW_icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="hSzSIW_title">后台任务状态更新</span><time class="hSzSIW_time" datetime="2026-11-11T09:41:00Z">18:41</time><svg width="12" height="12" viewBox="0 0 16 16" class="hSzSIW_chevron" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.6"/></svg></button>
+      </section>
+      <div data-tool="bash" data-state="done" data-variant="row" class="hKdVjq_root"><div class="hKdVjq_row"><span class="hKdVjq_title">运行</span><span class="hKdVjq_sep"></span><span class="hKdVjq_summary">npm run render -- atrium</span></div></div>
+      <div data-tool="edit_file" data-state="done" data-variant="row" class="hKdVjq_root"><div class="hKdVjq_row"><span class="hKdVjq_title">编辑</span><span class="hKdVjq_sep"></span><span class="hKdVjq_summary">notes/atrium.md</span><span class="hKdVjq_summarySuffix hKdVjq_diffStat"><span class="hKdVjq_diffAdded">+42</span> <span class="hKdVjq_diffRemoved">-7</span></span></div></div>
+      <div data-tool="bash" data-state="error" data-variant="row" class="hKdVjq_root"><div class="hKdVjq_row"><span class="hKdVjq_title">运行</span><span class="hKdVjq_sep"></span><span class="hKdVjq_summary hKdVjq_errorSummary">python export.py 失败</span></div></div>
+      <article data-chat-flow-kind="assistant-step"><div class="xMeOpW_root"><div class="xMeOpW_body">
+        <p>中庭改成双层挑空，说明写在 <a href="#">notes/atrium.md</a>。渲染命令如下：</p>
+        <div class="_card_1mqf1_1"><div class="_header_1mqf1_10" data-code-block-banner="true"><div class="_heading_1mqf1_23"><span class="_language_1mqf1_30">bash</span></div><div class="_actions_1mqf1_43"><button type="button" class="_action_1mqf1_43" aria-label="自动换行" aria-pressed="false"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M2 4h12M2 8h9a2 2 0 0 1 0 4H8" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></button><button type="button" class="_action_1mqf1_43" aria-label="复制"><svg width="14" height="14" viewBox="0 0 16 16"><rect x="5" y="5" width="8" height="8" stroke="currentColor" fill="none" stroke-width="1.5"/><path d="M3 11V3h8" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></button></div></div><div class="_body_1mqf1_81"><pre><code>npm run render -- atrium --out after-atrium.png</code></pre></div></div>
+        <div class="_block_15hvo_1" data-terminal="" data-body=""><div class="_header_15hvo_32"><div class="_prompt_15hvo_70"><div class="_promptLine_15hvo_78"><span class="_cwd_15hvo_108">~/work</span><span class="_command_15hvo_115">python export.py --dpi 300</span></div></div><span class="_status_15hvo_124">退出码 1</span><button type="button" class="_copyButton_15hvo_132">复制</button></div><div class="_output_15hvo_152"><div class="_line_15hvo_179">Traceback (most recent call last):</div><div class="_line_15hvo_179">  KeyError: 'dpi'</div></div></div>
+        <span class="xMeOpW_stopped">已停止</span>
+      </div></div></article>
+      <div class="Zf6DNq_root" data-approval-key="req-1"><div class="Zf6DNq_card"><div class="Zf6DNq_strip"><span class="_dot_1i3xo_2" data-state="warning"></span>等待批准</div><div class="Zf6DNq_body" data-approval-scroll="" role="group" aria-label="请求详情">运行命令以覆盖输出文件<div class="Zf6DNq_command">rm -f out/after-atrium.png</div></div><div class="Zf6DNq_actionRow"><button type="button" class="Zf6DNq_reject">拒绝</button><button type="button">允许</button></div></div></div>
+      <div class="LOmM4q_turnErrorRow" role="status"><span class="_dot_1i3xo_2 LOmM4q_turnErrorDot" data-state="error"></span><div class="LOmM4q_turnErrorCopy"><span class="LOmM4q_turnErrorTitle">任务已停止</span><span class="LOmM4q_turnErrorMessage">DSH 进程在本轮完成前退出（例如被强制结束、崩溃或关闭超时），重新启动后本轮已中止。未完成的工具调用结果未知。</span></div></div>
+      <div class="K5rwea_root" data-turn-tail><div class="K5rwea_presented">
+        <div class="K5rwea_file" data-presented-file="true"><button type="button" class="K5rwea_cardPreview" title="/work/atrium-notes.md" aria-label="预览 atrium-notes.md"></button><span class="K5rwea_fileIcon"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M8 3h9l6 6v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="#2f6fed"/><g data-file-type-mark color="#fff"><path d="M10 15h8M10 18h6" stroke="currentColor" stroke-width="1.6"/></g></svg></span><div class="K5rwea_fileBody"><div class="K5rwea_details"><span class="K5rwea_fileName">atrium-notes.md</span><span class="K5rwea_description" data-presented-description="true"><span class="K5rwea_secondaryText">中庭改造说明</span><span class="K5rwea_previewHint">预览</span></span></div><div class="K5rwea_actions"><div class="mOxcpG_menuAnchor"><div class="mOxcpG_split" data-open-target="file" data-size="compact" data-open-path="" data-state="idle"><button type="button" class="mOxcpG_main" aria-label="用 WPS Office 打开" data-open-path-open=""><span style="display:inline-block;width:13px;height:13px;background:#d33;border-radius:3px"></span></button><button type="button" class="mOxcpG_chevron" aria-haspopup="menu" aria-expanded="false" aria-label="更多打开方式" data-open-path-more=""><svg width="10" height="10" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.6"/></svg></button></div></div></div></div></div>
+        <div class="K5rwea_file" data-presented-file="true"><button type="button" class="K5rwea_cardPreview" title="/work/after-atrium.png" aria-label="预览 after-atrium.png"></button><span class="K5rwea_fileIcon"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M8 3h9l6 6v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="#8b5cf6"/><g data-file-type-mark color="#fff"><path d="M10 15h8M10 18h6" stroke="currentColor" stroke-width="1.6"/></g></svg></span><div class="K5rwea_fileBody"><div class="K5rwea_details"><span class="K5rwea_fileName">after-atrium.png</span><span class="K5rwea_description" data-presented-description="true"><span class="K5rwea_secondaryText">PNG</span><span class="K5rwea_previewHint">预览</span></span></div><div class="K5rwea_actions"><div class="mOxcpG_menuAnchor"><div class="mOxcpG_split" data-open-target="file" data-size="compact" data-open-path="" data-state="idle"><button type="button" class="mOxcpG_main" aria-label="用 WPS Office 打开" data-open-path-open=""><span style="display:inline-block;width:13px;height:13px;background:#d33;border-radius:3px"></span></button><button type="button" class="mOxcpG_chevron" aria-haspopup="menu" aria-expanded="false" aria-label="更多打开方式" data-open-path-more=""><svg width="10" height="10" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="currentColor" fill="none" stroke-width="1.6"/></svg></button></div></div></div></div></div>
+      </div></div>
+    </div>
+    <form data-composer-seat data-conversation-region="composer">
+      <div data-composer-card>
+        <textarea data-composer-input placeholder="下一步，要让 DSH 做什么？"></textarea>
+        <button class="send" type="button">SEND</button>
+      </div>
+    </form>
+   </div>
+  </div>
+  <div data-shell-overlay></div>
+</div>
+<script>
+  /* Host-like trigger disclosure: toggles aria-expanded, the chevron class and the body. */
+  document.querySelector('#trigger > button').addEventListener('click', (event) => {
+    const button = event.currentTarget
+    const open = button.getAttribute('aria-expanded') !== 'true'
+    button.setAttribute('aria-expanded', String(open))
+    button.querySelector('svg:last-child').setAttribute('class', open ? 'hSzSIW_openChevron' : 'hSzSIW_chevron')
+    const root = button.parentElement
+    root.querySelector('.hSzSIW_body')?.remove()
+    if (open) root.insertAdjacentHTML('beforeend', '<div id="tb" class="hSzSIW_body"><p class="hSzSIW_explanation">这一轮由后台任务的状态变化触发，不是你发的消息。</p><div class="hSzSIW_content">job render-atrium: exited (code 0)\nartifact: out/after-atrium.png</div></div>')
+  })
+  if (new URLSearchParams(location.search).get('open') === '1') document.querySelector('#trigger > button').click()
+</script>
+<script src="fixture.js"></script>
+</body>
+</html>
