@@ -71,6 +71,16 @@ Limits:
 - File-type stamps come from the visible file name only; `widgets.ts` writes `data-cc-ext` / `data-cc-kind` and removes them on unload.
 - Checked in `preview/widgets.html`, a labeled fixture with host-like markup. It was not verified live inside the desktop app before this release.
 
+## Sidebar polish (0.5.4)
+
+- The small top-left mark (red star badge, **DSH**, **斩噪**) is gone. The brand slots stay occupied so the host's own fish never returns, but they draw nothing. The DEEPSEEK / HARNESS cutout moves up into the freed space and the page leaves follow.
+- The session list no longer fades out at the bottom: the host's fade strip (`span.*_fade` under the list) is removed, so the last rows stay crisp.
+- The **工作区** header is a paper stamp with a red rule; its search / add buttons are slanted paper tiles.
+- Project rows (e.g. `dsh`, `stst`) keep the host's own row layout (folder, chevron, title, actions) as full-width black tags with a white edge and a red offset. Open projects carry a red blade; the folder is red. Before this they were squeezed into an inline tag.
+- The bottom-left **… 更多** account control (or your account name when signed in) is a ticket strip on the foot: paper blade with the host's icon or avatar, heavy label, hollow **MORE** / **ACCOUNT** kicker, white paper offset. Hover gives the lunge and the drifting red quad; open turns the strip red. It is still the host's button, so its menu opens exactly as before. Collapsed, it stays a rail ticket.
+
+Limits: the fade, header and account selectors use CSS-module local names (`_fade`, `_sectionHeader`, `_sectionLabel`) and the host's `data-signed-out` / `aria-haspopup` attributes. Checked in `preview/desktop.html` (host-like markup from the installed sidebar, workspace and account modules), not live in the desktop app before this release.
+
 ## Honest gaps
 
 - There is no supported layout-replacement API that keeps sessions, streaming, and the composer. The center column's content box stays a rectangle. The stepped white frame and the offset red backing are `::before` / `::after` in the margin. They do not clip the transcript, the composer, or the workspace controls.
@@ -97,7 +107,7 @@ dsh --profile calling-card --from-default-profile web
 Stop that process, then:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.3.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.4.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -115,7 +125,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.3.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.4.tgz
 ```
 
 ## Develop

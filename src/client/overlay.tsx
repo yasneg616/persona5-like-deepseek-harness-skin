@@ -319,21 +319,17 @@ export function CallingCardOverlay() {
   )
 }
 
-export function BrandMark({ size = 28 }: { size?: number }) {
-  return (
-    <svg className="dsh-cc-mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" fill="#e60012" />
-      <polygon points="16,3 19.6,12.2 29,13.2 21.8,19.6 23.8,29 16,24.2 8.2,29 10.2,19.6 3,13.2 12.4,12.2" fill="none" stroke="#fff" strokeWidth="1.6" />
-    </svg>
-  )
+/**
+ * The sidebar brand slots stay occupied (so the host's fish and "local build" fallbacks
+ * never show) but draw nothing since 0.5.4: the DEEPSEEK / HARNESS cutout is the only brand.
+ * The classes stay so leaves.ts and rail.ts keep skipping the brand button.
+ */
+export function BrandMark(_props: { size?: number }) {
+  return <span className="dsh-cc-mark dsh-cc-void" aria-hidden="true" />
 }
 
 export function BrandName() {
-  return (
-    <span className="dsh-cc-name">
-      DSH <span>斩噪</span>
-    </span>
-  )
+  return <span className="dsh-cc-name dsh-cc-void" aria-hidden="true" />
 }
 
 /** Replaces the blank-session fish with the original star. The host keeps the headline. */

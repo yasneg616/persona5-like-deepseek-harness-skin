@@ -3271,6 +3271,240 @@ html[data-dsh-calling-card-skin] :is([data-chat-flow-kind="assistant-step"], [da
   outline: none;
 }
 
+/* ================================================================
+ * 0.5.4 sidebar polish. The small DSH mark is gone (the cutout is the only
+ * brand), the session list no longer fades out at the bottom, the
+ * workspace header and project rows become tags, and the account "更多"
+ * control is a ticket strip anchored to the foot.
+ * ================================================================ */
+html[data-dsh-calling-card-skin] .dsh-cc-void {
+  display: none !important;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-architecture {
+  top: 24px;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-i="0"] {
+  margin-top: clamp(138px, 19vh, 186px);
+}
+@media (max-height: 640px) {
+  html[data-dsh-calling-card-skin] .dsh-cc-architecture {
+    top: 22px;
+  }
+  html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-i="0"] {
+    margin-top: 118px;
+  }
+}
+
+/* No bottom fade over the session list: rows stay crisp to the last one. */
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) span[class$="_fade"] {
+  display: none !important;
+}
+
+/* Workspace header: a paper stamp with a red rule, slanted icon tiles. */
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionHeader"] {
+  position: relative;
+  height: 36px !important;
+  gap: 6px !important;
+  margin: 16px 10px 8px 4px !important;
+  padding-left: 6px !important;
+  border-radius: 0 !important;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionHeader"]::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 0;
+  bottom: -3px;
+  height: 4px;
+  pointer-events: none;
+  background: var(--dsh-cc-red);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 4px) 100%, 3px 100%);
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionLabel"] {
+  flex: none !important;
+  margin-right: auto;
+  padding: 3px 16px 4px 10px;
+  background: #f7f4ee;
+  color: #0c0c0c !important;
+  font-family: var(--dsh-cc-chat);
+  font-size: 15px !important;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  line-height: 20px;
+  clip-path: var(--cc-slant);
+  rotate: -3deg;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionHeader"] button {
+  width: 28px !important;
+  height: 24px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f7f4ee !important;
+  color: #0c0c0c !important;
+  clip-path: var(--cc-slant);
+  transition: translate 160ms var(--cc-snap), rotate 160ms var(--cc-snap), background-color 120ms linear;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionHeader"] button:hover {
+    background: var(--dsh-cc-red) !important;
+    color: #fff !important;
+    translate: 0 -2px;
+    rotate: -6deg;
+  }
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [class*="_sectionHeader"] button:focus-visible {
+  outline: 2px solid var(--dsh-cc-red) !important;
+  outline-offset: 2px;
+}
+
+/* Project rows: full-width black tags; the host's flex layout (folder, chevron,
+ * title, actions) is kept, so nothing piles up inline. Open projects carry a red blade. */
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"] {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+  width: auto !important;
+  height: 34px !important;
+  margin: 14px 14px 6px 6px !important;
+  padding: 0 8px 0 10px !important;
+  border-radius: 0 !important;
+  background: #0c0c0c !important;
+  color: #fff !important;
+  box-shadow: 4px 4px 0 var(--dsh-cc-red), inset 0 0 0 2px #fff;
+  transform: rotate(-1.5deg);
+  transition: translate 180ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"][aria-expanded="true"] {
+  box-shadow: 4px 4px 0 var(--dsh-cc-red), inset 0 0 0 2px #fff, inset 8px 0 0 var(--dsh-cc-red);
+  padding-left: 14px !important;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"] [class*="_folder"] {
+  display: inline-flex !important;
+  color: var(--dsh-cc-red) !important;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"] [class*="_chevron"] {
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"] [class*="_title"] {
+  color: #fff !important;
+  font-family: var(--dsh-cc-blackface);
+  font-size: 14px !important;
+  letter-spacing: 0.06em;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"] button {
+  border-radius: 0 !important;
+  color: #fff !important;
+  background: transparent !important;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"] button:hover {
+    background: var(--dsh-cc-red) !important;
+  }
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-row-key^="workspace:"][data-cc-morph] {
+  box-shadow: none !important;
+}
+
+/* Account "更多" (or the signed-in name): a ticket strip on the foot, red blade with the
+ * host's own icon or avatar, heavy label, MORE kicker. The host's menu opens as before. */
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) {
+  position: relative;
+  isolation: isolate;
+  height: 42px !important;
+  margin: 6px 16px 16px 2px;
+  padding: 0 16px 0 10px !important;
+  gap: 14px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #fff !important;
+  font-family: var(--dsh-cc-chat);
+  font-size: 16px !important;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  rotate: -2deg;
+  transition: translate 180ms var(--cc-snap), rotate 180ms var(--cc-snap);
+  animation: dsh-cc-w-in 320ms var(--cc-punch) backwards;
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"])::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(102deg, #f7f4ee 0 40px, #0c0c0c 40.5px);
+  clip-path: polygon(0 4px, 100% 0, calc(100% - 12px) 100%, 3px calc(100% - 2px));
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: #fff;
+  clip-path: polygon(0 4px, 100% 0, calc(100% - 12px) 100%, 3px calc(100% - 2px));
+  translate: 5px 5px;
+  transition: translate 180ms var(--cc-snap);
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > [class*="_label"]::after {
+  content: "MORE";
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  translate: 0 -50%;
+  pointer-events: none;
+  font-family: var(--dsh-cc-display);
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: transparent;
+  -webkit-text-stroke: 1px #fff;
+}
+html[data-dsh-calling-card-skin] [data-signed-out="false"][aria-haspopup="menu"]:not([data-collapsed="true"]) > [class*="_label"]::after {
+  content: "ACCOUNT";
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > svg,
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > [class*="_avatar"] {
+  flex: none;
+  width: 20px !important;
+  height: 20px !important;
+  margin-left: 0;
+  color: #0c0c0c !important;
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > [class*="_avatar"] {
+  border-radius: 0 !important;
+  clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%);
+  box-shadow: none;
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]) > [class*="_label"] {
+  max-width: calc(100% - 128px);
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"][aria-expanded="true"]:not([data-collapsed="true"])::before {
+  background:
+    linear-gradient(102deg, #f7f4ee 0 40px, var(--dsh-cc-red) 40.5px);
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"][data-cc-morph]::before {
+  display: none;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]):hover {
+    z-index: 2;
+    translate: 8px -3px;
+    rotate: -0.5deg;
+  }
+  html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]):hover::after {
+    translate: 14px 11px;
+  }
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"][data-cc-morph] > :is(svg, [class*="_avatar"]) {
+  color: #fff !important;
+}
+html[data-dsh-calling-card-skin] [data-signed-out][aria-haspopup="menu"]:not([data-collapsed="true"]):focus-visible {
+  outline: 3px solid var(--dsh-cc-red) !important;
+  outline-offset: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html[data-dsh-calling-card-skin] *,
   html[data-dsh-calling-card-skin] *::before,
@@ -3288,7 +3522,7 @@ html[data-dsh-calling-card-skin] :is([data-chat-flow-kind="assistant-step"], [da
     display: none !important;
   }
   /* Static look: no hover lift, no squash; the star field holds its first frame. */
-  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, [data-sidebar-toggle], .dsh-cc-menu, .dsh-cc-win, [data-cc-rail-btn], .dsh-cc-ticket, [data-presented-file], [data-presented-file] [class*="_fileIcon"], [data-open-target] > button, [data-turn-trigger] > button, [data-code-block-banner] button, [data-terminal] [class*="_copyButton"], [data-approval-key] [class*="_actionRow"] button, span[class$="_stopped"]) {
+  html[data-dsh-calling-card-skin] :is([data-cc-leaf], [data-row-key], [data-composer-card] button, [data-sidebar-toggle], .dsh-cc-menu, .dsh-cc-win, [data-cc-rail-btn], .dsh-cc-ticket, [data-presented-file], [data-presented-file] [class*="_fileIcon"], [data-open-target] > button, [data-turn-trigger] > button, [data-code-block-banner] button, [data-terminal] [class*="_copyButton"], [data-approval-key] [class*="_actionRow"] button, span[class$="_stopped"], [data-signed-out][aria-haspopup="menu"], [data-row-key^="workspace:"], [class*="_sectionHeader"] button) {
     translate: none !important;
     scale: none !important;
     rotate: none !important;

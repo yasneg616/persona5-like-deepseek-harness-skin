@@ -39,9 +39,31 @@
   .wtg9ga_newSession, .wtg9ga_panelRow { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: #ddd; padding: 6px 8px; text-align: left; }
   .wtg9ga_panelList { display: flex; flex-direction: column; }
   .wtg9ga_regionArea { flex: 1; min-height: 0; overflow: auto; }
-  .GAkraW_sectionHeader { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; }
+  .GAkraW_sectionHeader { display: flex; align-items: center; justify-content: flex-end; gap: 4px; height: 36px; padding-left: 8px; color: #999; }
+  .GAkraW_sectionLabel { flex: 1; font-size: 13px; }
+  .GAkraW_searchButton { width: 24px; height: 24px; display: grid; place-items: center; background: transparent; border: 0; color: #aaa; padding: 0; }
+  .GAkraW_listArea { position: relative; }
   .GAkraW_listArea [role="treeitem"] { padding: 4px 8px; }
-  .wtg9ga_footArea { margin-top: auto; display: flex; justify-content: flex-end; }
+  /* host-like project row (Rows module): flex row of folder, chevron, title and actions */
+  .wnFoaW_projectRow { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 8px !important; box-sizing: border-box; color: #ccc; cursor: pointer; }
+  .wnFoaW_slot { display: inline-flex; width: 16px; height: 16px; flex: none; }
+  .wnFoaW_slot svg { width: 16px; height: 16px; }
+  .wnFoaW_projectRow .wnFoaW_chevron { display: none; }
+  .wnFoaW_projectRow:hover .wnFoaW_chevron { display: inline-flex; }
+  .wnFoaW_projectText { flex: 1; min-width: 0; overflow: hidden; } .wnFoaW_title { white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 13px; }
+  .wnFoaW_rowActions { display: inline-flex; gap: 2px; height: 20px; }
+  .wnFoaW_iconButton { width: 20px; height: 20px; display: grid; place-items: center; border: 0; background: transparent; color: #999; padding: 0; }
+  .wnFoaW_iconButton svg { width: 14px; height: 14px; }
+  /* host bottom fade over the list (WorkspaceBrowser .fade) */
+  .GAkraW_fade { left: 0; right: 0; background: linear-gradient(to bottom, transparent, #1b1b1c); pointer-events: none; height: 24px; position: absolute; bottom: 0; }
+  .wtg9ga_footArea { margin-top: auto; display: flex; flex-direction: column; }
+  .wtg9ga_footerActions { display: flex; }
+  .wtg9ga_settingsArea { display: flex; }
+  ._5Qcc8a_root { flex: 1; min-width: 0; } ._5Qcc8a_anchor { width: 100%; }
+  ._5Qcc8a_trigger { width: 100%; height: 32px; padding: 6px 8px; border: 0; border-radius: 8px; color: #ddd; background: transparent; display: flex; align-items: center; gap: 8px; font: inherit; font-size: 14px; cursor: pointer; }
+  ._5Qcc8a_trigger svg { width: 14px; height: 14px; }
+  .wtg9ga_brand { display: inline-flex; align-items: center; flex: 1; background: none; border: 0; padding: 0 0 0 8px; color: inherit; }
+  .wtg9ga_brandIdentity { display: inline-flex; align-items: center; gap: 5px; height: 24px; }
   html[data-windows-titlebar] .wtg9ga_toggle { position: fixed; top: 6px; left: 12px; z-index: 30; }
   html[data-windows-titlebar] .wtg9ga_collapsed { padding: 0; }
   html[data-windows-titlebar] .wtg9ga_collapsed .wtg9ga_logoRow { height: 0; }
@@ -105,7 +127,7 @@
   <div class="xx_sidebarCol">
     <div class="wtg9ga_root" id="sideRoot">
       <div class="wtg9ga_logoRow" data-window-drag>
-        <button type="button" class="xx_wide" style="background:none;border:0;padding:4px 6px" aria-label="新建会话"><span class="dsh-cc-name">DSH <span>斩噪</span></span></button>
+        <button type="button" class="wtg9ga_brand xx_wide"><span class="wtg9ga_brandIdentity" aria-hidden="true"><span class="wtg9ga_brandMark"><span class="dsh-cc-mark dsh-cc-void" aria-hidden="true"></span></span><span class="wtg9ga_brandName"><span class="dsh-cc-name dsh-cc-void" aria-hidden="true"></span></span></span></button>
         <button type="button" data-sidebar-toggle class="wtg9ga_iconButton wtg9ga_toggle" aria-label="收起侧边栏"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="10" rx="1"/><line x1="6" y1="3" x2="6" y2="13"/></svg></button>
       </div>
       <button type="button" class="wtg9ga_newSession" aria-label="New Session"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3v10M3 8h10"/></svg><span class="xx_wide">New Session</span></button>
@@ -115,22 +137,26 @@
       </nav>
       <div class="wtg9ga_regionArea">
         <div class="GAkraW_root">
-          <div class="GAkraW_sectionHeader xx_wide"><span>项目</span><button type="button" class="wtg9ga_iconButton" aria-label="添加项目"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h5l1 1h6v7H2z"/></svg></button></div>
+          <div class="GAkraW_sectionHeader xx_wide"><span class="GAkraW_sectionLabel">工作区</span><button type="button" class="GAkraW_searchButton" aria-label="搜索会话"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4"/><path d="M10 10l3 3"/></svg></button><button type="button" class="GAkraW_searchButton" aria-label="添加工作区"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h5l1 1h6v7H2z"/></svg></button></div>
           <div class="GAkraW_rail">
             <button type="button" class="wtg9ga_iconButton" aria-label="添加项目"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5h5l1 1h6v7H2z"/></svg></button>
             <button type="button" class="wtg9ga_iconButton" aria-label="搜索会话"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4"/><path d="M10 10l3 3"/></svg></button>
           </div>
           <div class="GAkraW_listArea">
-            <div role="treeitem" data-row-key="workspace:demo">夹具项目</div>
+            <div class="wnFoaW_projectRow" data-row-key="workspace:dsh" role="treeitem" aria-expanded="true"><span class="wnFoaW_slot wnFoaW_folder"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4.5h4l1.2 1.3H14v6.7H2z"/></svg></span><span class="wnFoaW_slot wnFoaW_chevron"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l5 4-5 4z"/></svg></span><span class="wnFoaW_projectText"><span class="wnFoaW_title">dsh</span></span><span class="wnFoaW_rowActions"><button type="button" class="wnFoaW_iconButton" data-context-menu-trigger aria-label="dsh 的更多操作" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="12.5" cy="8" r="1.4"/></svg></button><button type="button" class="wnFoaW_iconButton" aria-label="在 dsh 中新建会话"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3h10v7H7l-3 3v-3H3z"/><path d="M8 5v3M6.5 6.5h3"/></svg></button></span></div>
             <div role="treeitem" data-row-key="session:demo-1" aria-selected="true">检查令牌刷新</div>
             <div role="treeitem" data-row-key="session:demo-2" aria-selected="false">整理交付说明</div>
             <div role="treeitem" data-row-key="session:demo-3" aria-selected="false">阅读边界用例</div>
             <div role="treeitem" data-row-key="session:demo-4" aria-selected="false">Refactor auth middleware</div>
+            <div class="wnFoaW_projectRow" data-row-key="workspace:stst" role="treeitem" aria-expanded="false"><span class="wnFoaW_slot wnFoaW_folder"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4.5h4l1.2 1.3H14v6.7H2z"/></svg></span><span class="wnFoaW_slot wnFoaW_chevron"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l5 4-5 4z"/></svg></span><span class="wnFoaW_projectText"><span class="wnFoaW_title">stst</span></span><span class="wnFoaW_rowActions"><button type="button" class="wnFoaW_iconButton" data-context-menu-trigger aria-label="stst 的更多操作" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="12.5" cy="8" r="1.4"/></svg></button><button type="button" class="wnFoaW_iconButton" aria-label="在 stst 中新建会话"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3h10v7H7l-3 3v-3H3z"/><path d="M8 5v3M6.5 6.5h3"/></svg></button></span></div>
+            <div class="wnFoaW_projectRow" data-row-key="workspace:atrium" role="treeitem" aria-expanded="false"><span class="wnFoaW_slot wnFoaW_folder"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4.5h4l1.2 1.3H14v6.7H2z"/></svg></span><span class="wnFoaW_slot wnFoaW_chevron"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M6 4l5 4-5 4z"/></svg></span><span class="wnFoaW_projectText"><span class="wnFoaW_title">atrium-renovation-notes</span></span><span class="wnFoaW_rowActions"><button type="button" class="wnFoaW_iconButton" data-context-menu-trigger aria-label="atrium-renovation-notes 的更多操作" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="12.5" cy="8" r="1.4"/></svg></button><button type="button" class="wnFoaW_iconButton" aria-label="在 atrium-renovation-notes 中新建会话"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 3h10v7H7l-3 3v-3H3z"/><path d="M8 5v3M6.5 6.5h3"/></svg></button></span></div>
+            <span class="GAkraW_fade"></span>
           </div>
         </div>
       </div>
       <div class="wtg9ga_footArea">
-        <button type="button" class="wtg9ga_iconButton" aria-label="设置"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4"/></svg></button>
+        <div class="wtg9ga_footerActions"></div>
+        <div class="wtg9ga_settingsArea"><div class="_5Qcc8a_root"><div class="_5Qcc8a_anchor"><button type="button" class="_5Qcc8a_trigger" data-collapsed="false" data-signed-out="true" aria-label="账号菜单" aria-haspopup="menu" aria-expanded="false" id="acct"><svg viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="12.5" cy="8" r="1.4"/></svg><span class="_5Qcc8a_label xx_wide">更多</span></button></div></div></div>
       </div>
     </div>
   </div>
@@ -168,6 +194,7 @@
         setTimeout(() => frame.removeAttribute('data-animating'), 260)
       }
       frame.toggleAttribute('data-sidebar-collapsed', collapsed)
+      document.getElementById('acct')?.setAttribute('data-collapsed', String(collapsed))
       root.classList.toggle('wtg9ga_collapsed', collapsed)
       frame.style.gridTemplateColumns = `${collapsed ? 0 : 280}px minmax(400px, 1fr) minmax(0px, 0px)`
       toggle.setAttribute('aria-label', collapsed ? '打开侧边栏' : '收起侧边栏')
@@ -183,6 +210,23 @@
       const out = document.getElementById('fixture-log')
       out.textContent = `夹具：打开 ${row.textContent}`
       window.__ccLog = (window.__ccLog || []).concat(`open ${row.getAttribute('data-row-key')}`)
+    })
+    /* Account menu stand-in: opens above the trigger like the host's (side: top), toggles aria-expanded. */
+    const acct = document.getElementById('acct')
+    const acctMenu = document.createElement('div')
+    acctMenu.setAttribute('role', 'menu')
+    acctMenu.id = 'fixture-acct-menu'
+    acctMenu.style.cssText = 'position:fixed;z-index:60;display:none;background:#2b2b2b;color:#eee;font:13px/2 sans-serif;padding:4px 14px;min-width:124px'
+    acctMenu.innerHTML = '<div role="menuitem">设置</div><div role="menuitem">联系我们</div>'
+    document.body.appendChild(acctMenu)
+    acct.addEventListener('click', () => {
+      const open = acct.getAttribute('aria-expanded') !== 'true'
+      acct.setAttribute('aria-expanded', String(open))
+      const rect = acct.getBoundingClientRect()
+      acctMenu.style.left = `${rect.left}px`
+      acctMenu.style.bottom = `${innerHeight - rect.top + 6}px`
+      acctMenu.style.display = open ? 'block' : 'none'
+      window.__ccLog = (window.__ccLog || []).concat(`account ${open ? 'open' : 'close'}`)
     })
     window.__ccSetCollapsed = set
     if (new URLSearchParams(location.search).get('collapsed') === '1') {

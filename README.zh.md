@@ -69,6 +69,16 @@ Windows 桌面端顶部那条 40px 的栏不是系统原生的。主窗口无边
 - 文件类型印章只取自看得到的文件名；`widgets.ts` 写入 `data-cc-ext` / `data-cc-kind`，卸载时移除。
 - 本版只在 `preview/widgets.html` 夹具（标明是夹具、仿宿主结构）里核对过，发布前没有在桌面端里实机验证。
 
+## 侧栏细节（0.5.4）
+
+- 左上角的小标（红星徽章、**DSH**、**斩噪**）去掉了。品牌插槽仍然占着（宿主的鱼标不会回来），只是不画任何东西。DEEPSEEK / HARNESS 剪贴字上移填上空位，下面的页签跟着上移。
+- 会话列表底部不再渐隐：宿主列表下方的渐隐条（`span.*_fade`）被移除，最后几行也清楚。
+- **工作区** 标题是一张纸印章加红线；搜索 / 添加按钮是斜切纸票。
+- 项目行（例如 `dsh`、`stst`）保留宿主自己的行布局（文件夹、箭头、名称、操作按钮），做成整宽的黑色标签，白边加红色错位阴影；展开的项目带一道红刃，文件夹图标为红色。之前它们被挤成一个行内小标签。
+- 左下角 **… 更多** 账号按钮（登录后显示账号名）变成贴在底部的票条：纸色刀口里是宿主自己的图标或头像，粗体文字，空心 **MORE** / **ACCOUNT** 字样，背后一张白纸错位。悬停时前冲并出现漂移红四边形；菜单打开时整条变红。它仍是宿主的按钮，菜单照常打开。收起侧栏时仍是收起条上的票签。
+
+限制：渐隐、标题和账号按钮按 CSS 模块本地名（`_fade`、`_sectionHeader`、`_sectionLabel`）和宿主的 `data-signed-out` / `aria-haspopup` 属性匹配。本版在 `preview/desktop.html`（按已安装的侧栏、工作区、账号模块仿写的结构）里核对过，发布前没有在桌面端实机验证。
+
 ## 和已确认的 v9 稿之间的差别
 
 v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去冒充客户端：
@@ -110,7 +120,7 @@ dsh --profile calling-card --from-default-profile web
 停掉这个进程，再安装本包（路径换成 tarball 的实际位置）：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.3.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.4.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -130,7 +140,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.3.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.4.tgz
 ```
 
 ## 本地构建与夹具
