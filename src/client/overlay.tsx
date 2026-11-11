@@ -5,6 +5,7 @@ import { clearHeroType, clearNavLeaves, syncHeroType, syncNavLeaves, syncSideWid
 import { countFlows, burstFor, createBurst } from './sfx.ts'
 import { createEntryTracker } from './motion.ts'
 import { createMorphTracker } from './morph.ts'
+import { createGiant } from './giant.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, REPLAY_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
 
@@ -73,7 +74,7 @@ export function CallingCardOverlay() {
     if (ground && frame) {
       ground.className = 'dsh-cc-ground'
       ground.setAttribute('aria-hidden', 'true')
-      for (const name of ['sky', 'fault', 'stars', 'spine', 'tear']) {
+      for (const name of ['sky', 'fault', 'stars', 'blade', 'spine', 'tear']) {
         const layerNode = document.createElement('div')
         layerNode.className = `dsh-cc-${name}`
         ground.append(layerNode)
@@ -83,6 +84,10 @@ export function CallingCardOverlay() {
     }
     const caption = createCaption(document)
     node.appendChild(caption.root)
+    // Giant cropped section word: in the ground, above the stars, under the brand and the sheet.
+    const giant = createGiant(document)
+    if (ground) ground.insertBefore(giant.root, field && field.parentElement === ground ? field : null)
+    else node.insertBefore(giant.root, node.firstChild)
     const burst = createBurst(document, window)
     node.appendChild(burst.root)
     const entries = createEntryTracker(document, window)
@@ -101,6 +106,7 @@ export function CallingCardOverlay() {
       const next = resolveArchitectureLabel(signals)
       const section = resolveSection(signals)
       caption.update(section)
+      giant.update(section)
       // Selected boxes keep reshaping their outline; re-armed if the host re-rendered them.
       morph.sync()
       kicker = section.kicker
@@ -176,6 +182,7 @@ export function CallingCardOverlay() {
       entries.dispose()
       morph.dispose()
       caption.dispose()
+      giant.dispose()
       layer.dispose()
     }
   }, [])

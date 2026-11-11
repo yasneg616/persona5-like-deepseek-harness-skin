@@ -1540,6 +1540,267 @@ html[data-dsh-calling-card-skin] [data-cc-morph-fit="in"] > .dsh-cc-morph {
   to { --cc-q4x: calc(0.05 * var(--cc-bx)); --cc-q4y: calc(0.85 * var(--cc-by)); }
 }
 
+/* ================================================================
+ * 0.5.0 composition. Bolder outer layout; reading text untouched.
+ * Giant cropped section word, extra cuts in the ground, a slab stack
+ * behind the sheet, colliding menu leaves, a landing with speed lines
+ * and a giant star, and a black P5 composer.
+ * ================================================================ */
+
+/* Giant cropped title: the section word, huge, cropped by the screen and the sheet. */
+html[data-dsh-calling-card-skin] .dsh-cc-giant {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-giant b,
+html[data-dsh-calling-card-skin] .dsh-cc-giant::after {
+  position: absolute;
+  font-family: Anton, var(--dsh-cc-display);
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  transform-origin: left top;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-giant b {
+  left: calc(var(--dsh-cc-deck) - 2vw);
+  top: 1.5vh;
+  font-size: clamp(130px, 25vh, 290px);
+  color: #0c0c0c;
+  -webkit-text-stroke: 0.035em #fff;
+  paint-order: stroke fill;
+  text-shadow: 0.05em 0.045em 0 var(--dsh-cc-red);
+  transform: rotate(-6deg);
+}
+/* Hollow echo at the bottom right, peeking out under the sheet. */
+html[data-dsh-calling-card-skin] .dsh-cc-giant::after {
+  content: attr(data-cc-text);
+  right: -6vw;
+  bottom: -0.16em;
+  font-size: clamp(120px, 24vh, 260px);
+  color: transparent;
+  -webkit-text-stroke: 3px var(--dsh-cc-red);
+  transform: rotate(-8deg);
+  transform-origin: right bottom;
+}
+
+/* Extra cuts in the ground: a black blade through the stars and a red slit beside it. */
+html[data-dsh-calling-card-skin] .dsh-cc-blade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--dsh-cc-red), var(--dsh-cc-red)) 0 0 / 100% 100% no-repeat;
+  clip-path: polygon(0 46%, 100% 1%, 100% 6.6%, 0 53%);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-blade::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #0c0c0c;
+  clip-path: polygon(0 48.6%, 100% 3.1%, 100% 4.6%, 0 50.6%);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-fault {
+  clip-path: polygon(0 74%, 100% 10%, 100% 24%, 18% 100%, 0 100%);
+}
+
+/* Sheet: a tilted red slab and a white slab behind it, plus a hard black drop. */
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) > div:has([data-phase], [data-composer-card], [data-plugin-package])::before {
+  top: calc(max(180px, 24vh) - 26px);
+  right: -18px;
+  bottom: -6px;
+  left: 54px;
+  clip-path: polygon(2% 0, 100% 4%, 97% 100%, 0 96%);
+  transform: rotate(1.8deg);
+  transform-origin: 70% 30%;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) > div:has([data-phase], [data-composer-card], [data-plugin-package])::after {
+  top: calc(max(180px, 24vh) - 48px);
+  right: 30px;
+  bottom: 22px;
+  left: -26px;
+  clip-path: polygon(0 4%, 62% 0, 66% 3%, 100% 2%, 99% 40%, 96% 42%, 98% 100%, 6% 97%, 2% 64%, 0 62%);
+  transform: rotate(-1.4deg);
+  transform-origin: 30% 20%;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) > div:has([data-phase], [data-composer-card], [data-plugin-package]) > * {
+  box-shadow: 16px 16px 0 #000, 16px 16px 0 3px #fff;
+}
+
+/* Colliding menu: bigger leaves, alternating tilts, overlapping, giant hollow numbers. */
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf] {
+  margin-top: 12px;
+  margin-bottom: 2px;
+  font-size: clamp(28px, 3.4vw, 50px);
+  filter:
+    drop-shadow(1px 0 0 #111)
+    drop-shadow(-1px 0 0 #111)
+    drop-shadow(0 1px 0 #111)
+    drop-shadow(0 -1px 0 #111)
+    drop-shadow(10px 9px 0 var(--dsh-cc-red));
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-lines="1"] {
+  font-size: clamp(28px, 3.4vw, 50px);
+  height: 60px;
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf]:is([data-cc-i="0"], [data-cc-i="2"], [data-cc-i="4"], [data-cc-i="6"]) {
+  transform: rotate(-4.5deg);
+  clip-path: polygon(0 14%, 100% 0, 96% 84%, 1% 100%);
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf]:is([data-cc-i="1"], [data-cc-i="3"], [data-cc-i="5"], [data-cc-i="7"]) {
+  transform: rotate(1.6deg);
+  transform-origin: left center;
+  z-index: 1;
+  clip-path: polygon(0 0, 97% 10%, 100% 100%, 3% 88%);
+  margin-left: calc(18px + (var(--cc-i, 0) * 10px));
+}
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-i="0"] {
+  margin-top: clamp(170px, 23vh, 220px);
+}
+html[data-dsh-calling-card-skin] [data-cc-leaf]::before {
+  font-family: Anton, var(--dsh-cc-display);
+  font-size: 1.12em;
+  line-height: 0.8;
+  margin-right: 10px;
+  color: transparent;
+  -webkit-text-stroke: 1.6px var(--dsh-cc-red);
+  letter-spacing: -0.04em;
+}
+html[data-dsh-calling-card-skin] [data-cc-leaf][data-cc-morph]::before {
+  color: transparent;
+  -webkit-text-stroke: 1.6px #0c0c0c;
+}
+/* Selection and hover lunge out of the stack. */
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sidebar-collapsed]) [data-cc-leaf][data-cc-morph] {
+  z-index: 2;
+  translate: 26px -2px;
+  scale: 1.07;
+  filter: none !important;
+}
+html[data-dsh-calling-card-skin] [data-cc-morph="leaf"] {
+  --cc-bx: 22px;
+  --cc-by: 9px;
+}
+
+/* Session rows: torn tickets with alternating tilt; picked or hovered ones jump out. */
+html[data-dsh-calling-card-skin] [data-row-key^="session:"] {
+  margin-right: 22px;
+  filter: drop-shadow(6px 6px 0 #000) drop-shadow(2px 2px 0 var(--dsh-cc-red));
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"]:nth-child(even) {
+  transform: rotate(1.5deg);
+  clip-path: polygon(0 0, 99% 8%, 96% 100%, 2% 90%);
+}
+html[data-dsh-calling-card-skin] [data-row-key^="session:"][data-cc-morph] {
+  translate: 18px 0;
+  scale: 1.04;
+}
+html[data-dsh-calling-card-skin] [data-row-key^="workspace:"] {
+  display: inline-block;
+  width: max-content;
+  margin: 18px 0 6px 10px;
+  padding: 2px 10px 3px;
+  background: #0c0c0c;
+  color: #fff;
+  box-shadow: 4px 4px 0 var(--dsh-cc-red), inset 0 0 0 2px #fff;
+  transform: rotate(-3deg);
+}
+
+/* Landing: speed lines out of the headline, a giant red star behind it, the headline huge. */
+html[data-dsh-calling-card-skin] [data-phase="hero"] {
+  isolation: auto;
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"]::before,
+html[data-dsh-calling-card-skin] [data-phase="hero"]::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"]::before {
+  inset: 0;
+  background:
+    repeating-conic-gradient(from 0deg at 22% 40%, rgba(255, 255, 255, 0.075) 0deg 2.4deg, transparent 2.4deg 7.5deg);
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"]::after {
+  left: -9%;
+  top: -10%;
+  width: min(78vh, 62vw);
+  aspect-ratio: 1;
+  background: var(--dsh-cc-red);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  rotate: -14deg;
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"] [data-cc-hero-group],
+html[data-dsh-calling-card-skin] [data-phase="hero"] [data-cc-hero-title][data-cc-cut] {
+  font-size: clamp(60px, 6.4vw, 104px);
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"] [data-cc-hero-title][data-cc-cut] .dsh-cc-han {
+  font-size: clamp(60px, 6.4vw, 104px);
+  box-shadow: 5px 5px 0 #000;
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"] [data-cc-hero-title][data-cc-cut] {
+  rotate: -5deg;
+  transform-origin: left center;
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"] [data-cc-hero-tag] {
+  font-size: 18px;
+  rotate: 6deg;
+  box-shadow: 4px 4px 0 #000;
+}
+html[data-dsh-calling-card-skin] [data-phase="hero"] [data-composer-seat] {
+  margin-top: 48px !important;
+}
+
+/* P5 composer: black card, white frame, red slash tab, hard red and black drops. */
+html[data-dsh-calling-card-skin] [data-composer-card] {
+  --dsw-specific-input-major: #0c0c0c;
+  --dsw-alias-label-primary: #fff;
+  --dsw-alias-label-secondary: #d0d0d0;
+  --dsw-alias-label-tertiary: #a9a9a9;
+  background:
+    linear-gradient(112deg, var(--dsh-cc-red) 0 170px, #fff 170px 180px, transparent 180px) 0 0 / 100% 11px no-repeat,
+    #0c0c0c;
+  color: #fff;
+  box-shadow: 0 0 0 3px #fff, 12px 12px 0 3px var(--dsh-cc-red), 20px 22px 0 3px #000;
+}
+html[data-dsh-calling-card-skin] [data-composer-input] {
+  color: #fff;
+  caret-color: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [data-composer-input]::placeholder {
+  color: #9d9d9d;
+}
+html[data-dsh-calling-card-skin] [data-composer-card]:focus-within {
+  box-shadow: 0 0 0 3px #fff, 14px 14px 0 3px var(--dsh-cc-red), 22px 24px 0 3px #000;
+}
+html[data-dsh-calling-card-skin] [data-cc-morph="composer"] {
+  background:
+    linear-gradient(112deg, var(--dsh-cc-red) 0 170px, #fff 170px 180px, transparent 180px) 0 0 / 100% 11px no-repeat,
+    #0c0c0c !important;
+  box-shadow: 0 0 0 3px #fff, 22px 24px 0 3px #000 !important;
+}
+
+/* Giant title slams in from the right on section change. */
+html[data-dsh-calling-card-skin] .dsh-cc-giant.is-slam b {
+  animation: dsh-cc-giant-slam 380ms var(--cc-punch, cubic-bezier(0.2, 1.5, 0.4, 1)) both;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-giant.is-slam::after {
+  animation: dsh-cc-giant-echo 460ms var(--cc-punch, cubic-bezier(0.2, 1.5, 0.4, 1)) 60ms both;
+}
+@keyframes dsh-cc-giant-slam {
+  0% { transform: translateX(60vw) rotate(-6deg) skewX(-22deg); }
+  60% { transform: translateX(-2vw) rotate(-6deg) skewX(4deg); }
+  100% { transform: rotate(-6deg); }
+}
+@keyframes dsh-cc-giant-echo {
+  0% { translate: -50vw 0; }
+  100% { translate: 0 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html[data-dsh-calling-card-skin] *,
   html[data-dsh-calling-card-skin] *::before,
