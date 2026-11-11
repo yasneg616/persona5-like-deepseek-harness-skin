@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yasneg616/persona5-like-skin.git"
+    "url": "git+https://github.com/yasneg616/persona5-like-deepseek-harness-skin.git"
   },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

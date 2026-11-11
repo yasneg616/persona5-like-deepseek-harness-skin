@@ -4,7 +4,11 @@ DeepSeek Harness 网页客户端的预告信皮肤。只有一套红、黑、白
 
 兼容性证据见 [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md)。英文安装说明见 [README.md](README.md)。
 
-[下载 1.0.0 插件](https://github.com/yasneg616/persona5-like-skin/releases/tag/v1.0.0)。安装包内含编译好的插件、样式和字体，在兼容的 Harness Web 配置档中以 `dsh-calling-card-skin` 安装。
+![Persona 5 风格皮肤的动效演示](media/persona5-like-skin-demo.gif)
+
+演示使用示例会话，展示斜排导航、切页转场、拼贴信、弹出菜单和侧栏收放。
+
+[下载 1.0.0 插件](https://github.com/yasneg616/persona5-like-deepseek-harness-skin/releases/tag/v1.0.0)。安装包内含编译好的插件、样式和字体，在兼容的 Harness Web 配置档中以 `dsh-calling-card-skin` 安装。
 
 ## 它真正接上的接口
 

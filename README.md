@@ -4,7 +4,11 @@ Calling-card skin for the DeepSeek Harness **web** client. One red / black / whi
 
 中文说明见 [README.zh.md](README.zh.md). Compatibility evidence is in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
-[Download the 1.0.0 plugin](https://github.com/yasneg616/persona5-like-skin/releases/tag/v1.0.0). The tarball includes the compiled plugin, styles, and fonts. Install it as `dsh-calling-card-skin` in a compatible Harness Web profile.
+![Animated preview of the Persona 5-like skin](media/persona5-like-skin-demo.gif)
+
+The demo shows the diagonal navigation, cut-in transitions, collage letters, pop-up menu, and collapsible sidebar with sample sessions.
+
+[Download the 1.0.0 plugin](https://github.com/yasneg616/persona5-like-deepseek-harness-skin/releases/tag/v1.0.0). The tarball includes the compiled plugin, styles, and fonts. Install it as `dsh-calling-card-skin` in a compatible Harness Web profile.
 
 ## What it actually changes
 
