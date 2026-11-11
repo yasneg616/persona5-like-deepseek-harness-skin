@@ -22,6 +22,12 @@ On 0.2.2-rc.1, `document.title` stays `DeepSeek Harness`. While `data-phase="her
 
 Live sessions, Markdown, streaming, the composer, and tool rows stay the host's. This package does not send messages or call a model.
 
+## Conversation type and calling-card letters (0.5.1)
+
+Messages and the composer use a heavy, condensed set that ships with the skin and works offline: Barlow Semi Condensed (SemiBold for body, ExtraBold for prompts and bold) for Latin, Noto Sans SC Bold / Black subsets (`CcHeavy`) for Chinese, and Anton for headings. Fallbacks are Microsoft YaHei UI, Microsoft YaHei, PingFang SC and Noto Sans CJK SC. No brush or calligraphy face is used for reading text.
+
+A **LETTERS 信笺** switch sits under the replay stamp in the upper right: **平文 PLAIN** (default) or **拼贴 COLLAGE**. The choice is stored in `localStorage` under `dsh-cc-message-style` (the only value this skin stores) and survives restarts. In collage mode, settled paragraphs and headings in prompts and replies are shown as cutout letters in mixed faces. The host's own text stays in place underneath (zero size), so streaming, copying and screen readers still use the real text. Code, links, lists, tables, quotes and tool cards stay plain. A paragraph over 220 characters stays plain, each message cuts at most 480 letters, and only the latest 12 messages are cut. The welcome headline is cut in both modes. DSH 0.2.x has no settings API for client plugins, so the switch lives in the overlay.
+
 ## Honest gaps
 
 - There is no supported layout-replacement API that keeps sessions, streaming, and the composer. The center column's content box stays a rectangle. The stepped white frame and the offset red backing are `::before` / `::after` in the margin. They do not clip the transcript, the composer, or the workspace controls.
@@ -48,7 +54,7 @@ dsh --profile calling-card --from-default-profile web
 Stop that process, then:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.0.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.1.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -66,7 +72,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.0.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.1.tgz
 ```
 
 ## Develop

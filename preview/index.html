@@ -57,6 +57,11 @@
         <pre><code># 方案示例 · 尚未执行
 if now &gt;= token.expires_at:
     return refresh_token(token)</code></pre>
+        <h3>Checklist</h3>
+        <p>参考 <a href="https://example.com/rfc6749">RFC 6749</a> 第 5 节；运行 <code>npm test</code> 之后<em>再</em>合并。Clock skew stays under 30s.</p>
+        <ul><li>时钟可注入，测试不睡眠</li><li>边界值包含等号</li></ul>
+        <table><tr><th>情况</th><th>结果</th></tr><tr><td>提前 1 秒</td><td>沿用旧令牌</td></tr><tr><td>恰好到期</td><td>刷新</td></tr></table>
+        <p>这是一段故意写长的说明，用来检查拼贴模式的成本上限：超过两百二十个字的段落不会被逐字剪开，而是保留平文，这样长回复依旧好读，也不会生成成千上万个节点。同一条消息里剪开的字数也有总预算，用完之后后面的段落都走平文。最近十二条消息之外的旧消息同样保持平文。示例正文，没有模型调用，也没有读取任何会话。再补几句，让它确实超过上限：令牌刷新需要考虑时钟漂移、网络重试、并发请求合并以及失败后的退避策略，这些都应该在测试里覆盖到，并且每一个分支都要有可读的断言信息，方便以后排查。</p>
       </article>
       <article data-chat-flow-kind="tool-call">
         <h3>read_file</h3>

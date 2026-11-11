@@ -70,7 +70,9 @@ test('built client registers tokens and removes them on dispose', async () => {
   const clientPath = new URL('../lib/client.js', import.meta.url)
   assert.equal(existsSync(clientPath), true)
   const source = readFileSync(clientPath, 'utf8')
-  assert.equal(source.includes('localStorage'), false)
+  // 0.5.1: the only stored value is the message-letters choice (plain / collage).
+  assert.equal(source.split('localStorage').length - 1, 1)
+  assert.equal(source.includes('dsh-cc-message-style'), true)
   assert.equal(source.includes('setTheme'), false)
   assert.equal(source.includes('dsh-industrial'), false)
   assert.equal(source.includes('CcBrush'), false)
@@ -228,6 +230,21 @@ test('built client registers tokens and removes them on dispose', async () => {
   assert.equal(mount.querySelector('.dsh-cc-sfx')?.getAttribute('data-cc-kind'), 'tool')
   assert.equal(mount.querySelector('.dsh-cc-sfx')?.classList.contains('is-on'), true)
   assert.equal(window.document.title.includes('Plugins'), false)
+
+  // Letters switch: flips the mode, stores it, and never replays the paper cut.
+  const toggle = mount.querySelector('.dsh-cc-letters') as HTMLButtonElement
+  assert.equal(toggle.getAttribute('role'), 'switch')
+  assert.equal(toggle.getAttribute('aria-checked'), 'false')
+  assert.equal(window.document.documentElement.getAttribute('data-cc-letters'), 'plain')
+  const layerNode = mount.querySelector('.dsh-cc-transition') as HTMLElement
+  const navDuration = layerNode.style.getPropertyValue('--dsh-cc-duration')
+  toggle.click()
+  assert.equal(toggle.getAttribute('aria-checked'), 'true')
+  assert.equal(window.document.documentElement.getAttribute('data-cc-letters'), 'collage')
+  assert.equal(window.localStorage.getItem('dsh-cc-message-style'), 'collage')
+  assert.equal(layerNode.style.getPropertyValue('--dsh-cc-duration'), navDuration)
+  toggle.click()
+  assert.equal(window.localStorage.getItem('dsh-cc-message-style'), 'plain')
 
   for (const stop of stops) stop()
   assert.equal(seen.layer, null)

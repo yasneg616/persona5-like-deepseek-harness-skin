@@ -6,6 +6,7 @@ import { countFlows, burstFor, createBurst } from './sfx.ts'
 import { createEntryTracker } from './motion.ts'
 import { createMorphTracker } from './morph.ts'
 import { createGiant } from './giant.ts'
+import { type LetterMode, SETTLE_MS as LETTER_SETTLE_MS, clearMode, hasPending, readMode, syncMessageCollage, writeMode } from './letters.ts'
 import { createCaption, readViewSignals, resolveArchitectureLabel, resolveSection } from './title.ts'
 import { NAV_DURATION_MS, REPLAY_DURATION_MS, createTransitionLayer, prefersReducedMotion } from './transition.ts'
 
@@ -43,6 +44,25 @@ function LetterTiles() {
       <LetterLine word="HARNESS" />
       <i className="dsh-cc-tagline">CUT THE NOISE.</i>
     </div>
+  )
+}
+
+function safeStorage(): Storage | null {
+  try {
+    return window.localStorage
+  } catch {
+    return null
+  }
+}
+
+/** P5 switch for message letters: plain (default) or calling-card collage. */
+function LetterToggle() {
+  return (
+    <button type="button" className="dsh-cc-letters" role="switch" aria-checked="false" aria-label="拼贴信样式 Calling-card letters" data-cc-mode="plain">
+      <span className="dsh-cc-letters-kicker" aria-hidden="true">LETTERS 信笺</span>
+      <span className="dsh-cc-letters-opt" data-opt="plain" aria-hidden="true">平文 PLAIN</span>
+      <span className="dsh-cc-letters-opt" data-opt="collage" aria-hidden="true">拼贴 COLLAGE</span>
+    </button>
   )
 }
 
@@ -92,6 +112,26 @@ export function CallingCardOverlay() {
     node.appendChild(burst.root)
     const entries = createEntryTracker(document, window)
     const morph = createMorphTracker(document, window)
+    const storage = safeStorage()
+    let letters: LetterMode = readMode(storage)
+    const toggle = node.querySelector<HTMLButtonElement>('.dsh-cc-letters')
+    const showMode = () => {
+      toggle?.setAttribute('data-cc-mode', letters)
+      toggle?.setAttribute('aria-checked', letters === 'collage' ? 'true' : 'false')
+    }
+    showMode()
+    let settleLetters = 0
+    const scheduleLetters = () => {
+      window.clearTimeout(settleLetters)
+      settleLetters = window.setTimeout(() => {
+        syncMessageCollage(document, letters)
+        if (hasPending(document)) scheduleLetters()
+      }, LETTER_SETTLE_MS + 60)
+    }
+    const runLetters = () => {
+      syncMessageCollage(document, letters)
+      if (hasPending(document)) scheduleLetters()
+    }
     let current = readLabel().state ?? ''
     let kicker = 'NAV'
     let primed = false
@@ -102,6 +142,7 @@ export function CallingCardOverlay() {
       syncHeroType(document)
       syncSideWidth(document)
       syncCollage(document)
+      runLetters()
       const signals = readViewSignals(document)
       const next = resolveArchitectureLabel(signals)
       const section = resolveSection(signals)
@@ -145,7 +186,7 @@ export function CallingCardOverlay() {
       paint(true)
       const relevant = records.some((record) => {
         const target = record.target instanceof Element ? record.target : record.target.parentElement
-        return target?.closest('[data-chat-flow-kind="assistant-step"], [data-cc-hero-title], [data-cc-hero-tag], [data-conversation-scroll]') != null
+        return target?.closest('[data-chat-flow-kind], [data-cc-hero-title], [data-cc-hero-tag], [data-conversation-scroll]') != null
       })
       if (relevant) scheduleHeadings()
     })
@@ -161,14 +202,40 @@ export function CallingCardOverlay() {
     const handle = frame?.querySelector('[data-side="sidebar"]')
     const handleObserver = new MutationObserver(() => syncSideWidth(document))
     if (handle) handleObserver.observe(handle, { attributes: true, attributeFilter: ['style'] })
-    const replay = node.querySelector('button')
+    const replay = node.querySelector<HTMLButtonElement>('.dsh-cc-replay')
     const onReplay = () => {
       layer.play(current, REPLAY_DURATION_MS, kicker)
       status.textContent = prefersReducedMotion(window) ? '已跳过转场' : '重播转场'
     }
     replay?.addEventListener('click', onReplay)
+    const onToggle = () => {
+      letters = letters === 'collage' ? 'plain' : 'collage'
+      writeMode(storage, letters)
+      showMode()
+      // A deliberate switch cuts settled text at once instead of waiting.
+      syncMessageCollage(document, letters, Date.now())
+      syncMessageCollage(document, letters, Date.now() + LETTER_SETTLE_MS)
+      if (hasPending(document)) scheduleLetters()
+      toggle?.classList.remove('is-flip')
+      void toggle?.offsetWidth
+      toggle?.classList.add('is-flip')
+      status.textContent = letters === 'collage' ? '消息改为拼贴信' : '消息改为平文'
+    }
+    toggle?.addEventListener('click', onToggle)
+    // Another window of the same app flipped the switch.
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== null && event.key !== 'dsh-cc-message-style') return
+      letters = readMode(storage)
+      showMode()
+      runLetters()
+    }
+    window.addEventListener('storage', onStorage)
     return () => {
       replay?.removeEventListener('click', onReplay)
+      toggle?.removeEventListener('click', onToggle)
+      window.removeEventListener('storage', onStorage)
+      window.clearTimeout(settleLetters)
+      clearMode(document)
       window.clearTimeout(settleHeadings)
       observer.disconnect()
       handleObserver.disconnect()
@@ -192,6 +259,7 @@ export function CallingCardOverlay() {
       <div className="dsh-cc-field">
         <LetterTiles />
       </div>
+      <LetterToggle />
       <button type="button" className="dsh-cc-replay">
         重播转场 <span aria-hidden="true">↗</span>
       </button>

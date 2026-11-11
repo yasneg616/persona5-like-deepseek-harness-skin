@@ -1,4 +1,32 @@
 @font-face {
+  font-family: CcHeavy;
+  src: url("../../assets/fonts/CcHeavyBold-SC.woff2") format("woff2");
+  font-weight: 500 799;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: CcHeavy;
+  src: url("../../assets/fonts/CcHeavyBlack-SC.woff2") format("woff2");
+  font-weight: 800 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: CcLatin;
+  src: url("../../assets/fonts/BarlowSemiCondensed-SemiBold.woff2") format("woff2");
+  font-weight: 500 699;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: CcLatin;
+  src: url("../../assets/fonts/BarlowSemiCondensed-ExtraBold.woff2") format("woff2");
+  font-weight: 700 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: Anton;
   src: url("../../assets/fonts/Anton-Regular.ttf") format("truetype");
   font-weight: 400;
@@ -52,6 +80,8 @@ html[data-dsh-calling-card-skin] {
   --dsh-cc-display: Anton, Impact, "Arial Narrow", sans-serif;
   --dsh-cc-blackface: ArchivoBlack, "Arial Black", "PingFang SC", "Microsoft YaHei", sans-serif;
   --dsh-cc-serif: AbrilFatface, "Songti SC", "Noto Serif SC", serif;
+  --dsh-cc-chat: CcLatin, CcHeavy, "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+  --dsh-cc-chat-head: Anton, CcHeavy, "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Impact, sans-serif;
   --dsh-cc-body: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
   background: #000;
   color-scheme: dark;
@@ -1799,6 +1829,248 @@ html[data-dsh-calling-card-skin] .dsh-cc-giant.is-slam::after {
 @keyframes dsh-cc-giant-echo {
   0% { translate: -50vw 0; }
   100% { translate: 0 0; }
+}
+
+/* ===== 0.5.1 conversation type: heavy condensed Latin, heavy CJK, clear steps ===== */
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] {
+  font-synthesis: none;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] :is(p, li, td, th, blockquote),
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="tool-call"] :is(p, li, td, th) {
+  font-family: var(--dsh-cc-chat);
+  font-weight: 600;
+  font-size: max(17px, calc(var(--dsh-content-font-size, 16px) + 1px));
+  line-height: 1.72;
+  letter-spacing: 0.01em;
+  color: #141414;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] :is(strong, b) {
+  font-weight: 900;
+  background: linear-gradient(transparent 62%, rgba(230, 0, 18, 0.32) 62% 92%, transparent 92%);
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] :is(em, i) {
+  font-style: normal;
+  font-weight: 800;
+  color: var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] :is(h1, h2, h3, h4),
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="tool-call"] :is(h1, h2, h3, h4) {
+  font-family: var(--dsh-cc-chat-head);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 5px 12px 6px;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] h1 { font-size: max(30px, calc(var(--dsh-content-font-size, 16px) + 14px)); }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] h2 { font-size: max(24px, calc(var(--dsh-content-font-size, 16px) + 8px)); }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] :is(h3, h4) { font-size: max(20px, calc(var(--dsh-content-font-size, 16px) + 4px)); }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] h1 {
+  box-shadow: 5px 5px 0 var(--dsh-cc-red);
+  outline: 3px solid #111;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="assistant-step"] h2 {
+  box-shadow: 4px 4px 0 var(--dsh-cc-red);
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"] :is(p, li),
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] :is(p, li) {
+  font-family: var(--dsh-cc-chat);
+  font-weight: 800;
+  font-size: max(18px, calc(var(--dsh-content-font-size, 16px) + 2px));
+  line-height: 1.6;
+  letter-spacing: 0.015em;
+  color: #fff;
+}
+html[data-dsh-calling-card-skin] [data-composer-input] {
+  font-family: var(--dsh-cc-chat) !important;
+  font-weight: 700;
+  font-size: max(17px, calc(var(--dsh-content-font-size, 16px) + 1px));
+  letter-spacing: 0.01em;
+}
+
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] table {
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] :is(th, td) {
+  padding: 4px 12px;
+  border-bottom: 2px solid #111;
+  text-align: left;
+}
+html[data-dsh-calling-card-skin] [data-chat-flow-kind] th {
+  background: #111;
+  color: #fff;
+  font-weight: 900;
+}
+
+/* ===== 0.5.1 calling-card letters (opt-in). Code, lists, tables, quotes and tools stay plain. ===== */
+html[data-dsh-calling-card-skin] [data-cc-collage] {
+  user-select: none;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  max-width: none !important;
+}
+html[data-dsh-calling-card-skin] [data-cc-collage] > :not(.dsh-cc-collage),
+html[data-dsh-calling-card-skin] [data-cc-collage] > :not(.dsh-cc-collage) * {
+  font-size: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+html[data-dsh-calling-card-skin] :is(h1, h2, h3, h4)[data-cc-collage] {
+  display: block !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  transform: none !important;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-collage {
+  --cc-msg: max(18px, calc(var(--dsh-content-font-size, 16px) + 2px));
+  display: block;
+  max-width: 44em;
+  font-size: var(--cc-msg);
+  line-height: 2;
+  letter-spacing: 0;
+  word-spacing: 0.3em;
+  user-select: text;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-transform: none;
+  color: #111;
+}
+html[data-dsh-calling-card-skin] h1 > .dsh-cc-collage { --cc-msg: max(34px, calc(var(--dsh-content-font-size, 16px) + 18px)); line-height: 1.55; }
+html[data-dsh-calling-card-skin] h2 > .dsh-cc-collage { --cc-msg: max(28px, calc(var(--dsh-content-font-size, 16px) + 12px)); line-height: 1.6; }
+html[data-dsh-calling-card-skin] :is(h3, h4) > .dsh-cc-collage { --cc-msg: max(23px, calc(var(--dsh-content-font-size, 16px) + 7px)); line-height: 1.7; }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"] .dsh-cc-collage,
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] .dsh-cc-collage {
+  --cc-msg: max(19px, calc(var(--dsh-content-font-size, 16px) + 3px));
+}
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han {
+  display: inline-block;
+  min-width: 0;
+  margin: 0 0.05em;
+  padding: 0.05em 0.1em 0.07em;
+  font-size: calc(1em + var(--cc-r, 0) * 0.13em);
+  line-height: 1.05;
+  vertical-align: middle;
+  background: #fff;
+  color: #111;
+  box-shadow: 2px 2px 0 #111;
+  transform: rotate(calc(var(--cc-r, 0) * 4.5deg)) translateY(calc(var(--cc-r, 0) * 0.07em));
+  animation: dsh-cc-tile-in 240ms cubic-bezier(0.2, 1.5, 0.4, 1) backwards;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-han="1"] { background: #111; color: #fff; box-shadow: 2px 2px 0 var(--dsh-cc-red); }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-han="2"] { background: #e9e2d0; color: #111; box-shadow: 2px 2px 0 var(--dsh-cc-red); }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-han="3"] { background: var(--dsh-cc-red); color: #fff; box-shadow: 2px 2px 0 #111; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-han="4"] { background: transparent; color: #111; box-shadow: none; padding-inline: 0.03em; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-punct] { margin: 0 0.12em 0 -0.02em; padding-inline: 0; transform: none; font-family: CcHeavy, var(--dsh-cc-chat); font-weight: 900; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-face="CcHeavy"] { font-family: CcHeavy, var(--dsh-cc-chat); font-weight: 900; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-face="CcLatin"] { font-family: CcLatin, var(--dsh-cc-chat); font-weight: 800; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-han[data-cc-face="Anton"] { font-size: calc(1.08em + var(--cc-r, 0) * 0.09em); }
+html[data-dsh-calling-card-skin] .dsh-cc-collage [data-cc-strong] .dsh-cc-han { font-size: calc(1.12em + var(--cc-r, 0) * 0.09em); box-shadow: 3px 3px 0 var(--dsh-cc-red); }
+html[data-dsh-calling-card-skin] .dsh-cc-collage [data-cc-strong] .dsh-cc-han[data-cc-han="3"] { box-shadow: 3px 3px 0 #111; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage [data-cc-em] .dsh-cc-han { color: var(--dsh-cc-red); }
+html[data-dsh-calling-card-skin] .dsh-cc-collage [data-cc-em] .dsh-cc-han:is([data-cc-han="1"], [data-cc-han="3"]) { color: #fff; }
+html[data-dsh-calling-card-skin] .dsh-cc-collage .dsh-cc-kept {
+  font-size: 0.86em !important;
+  vertical-align: middle;
+  margin: 0 0.2em;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-collage a.dsh-cc-kept {
+  font-family: var(--dsh-cc-chat);
+  font-weight: 700;
+  color: var(--dsh-cc-red);
+  text-decoration: underline 2px;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+/* Prompt slips are black: letters keep a white edge. */
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"] .dsh-cc-collage .dsh-cc-han,
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] .dsh-cc-collage .dsh-cc-han { box-shadow: 2px 2px 0 var(--dsh-cc-red); }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"] .dsh-cc-collage .dsh-cc-han[data-cc-han="1"],
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] .dsh-cc-collage .dsh-cc-han[data-cc-han="1"] { outline: 2px solid #fff; outline-offset: -1px; }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"] .dsh-cc-collage .dsh-cc-han[data-cc-han="4"],
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] .dsh-cc-collage .dsh-cc-han[data-cc-han="4"] { color: #fff; box-shadow: none; }
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="user"] .dsh-cc-collage .dsh-cc-han[data-cc-han="3"],
+html[data-dsh-calling-card-skin] [data-chat-flow-kind="steering"] .dsh-cc-collage .dsh-cc-han[data-cc-han="3"] { box-shadow: 2px 2px 0 #fff; }
+@keyframes dsh-cc-tile-in {
+  from { scale: 1.9; translate: 0 -0.4em; }
+  to { scale: 1; translate: 0 0; }
+}
+
+/* ===== 0.5.1 letters switch: a torn P5 tab under the replay stamp ===== */
+html[data-dsh-calling-card-skin] .dsh-cc-letters {
+  position: absolute;
+  top: 58px;
+  right: 14px;
+  z-index: 5;
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 4px 6px;
+  border: 0;
+  padding: 9px 14px 12px;
+  background: #0c0c0c;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--dsh-cc-blackface);
+  font-size: 15px;
+  line-height: 1;
+  clip-path: polygon(0 6%, 100% 0, 97% 100%, 3% 92%);
+  transform: rotate(2.5deg);
+  filter: drop-shadow(5px 5px 0 var(--dsh-cc-red));
+  transition: transform 160ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-letters-kicker {
+  grid-column: 1 / -1;
+  justify-self: start;
+  padding: 2px 6px;
+  background: var(--dsh-cc-red);
+  color: #fff;
+  font-family: Anton, var(--dsh-cc-blackface);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  transform: rotate(-3deg);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-letters-opt {
+  padding: 6px 10px 7px;
+  background: #9a9a9a;
+  color: #1a1a1a;
+  transition: background 120ms, color 120ms, translate 160ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+html[data-dsh-calling-card-skin] .dsh-cc-letters[data-cc-mode="plain"] .dsh-cc-letters-opt[data-opt="plain"],
+html[data-dsh-calling-card-skin] .dsh-cc-letters[data-cc-mode="collage"] .dsh-cc-letters-opt[data-opt="collage"] {
+  background: var(--dsh-cc-red);
+  color: #fff;
+  translate: 0 -2px;
+  box-shadow: 3px 3px 0 #fff;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-letters[data-cc-mode="collage"] .dsh-cc-letters-opt[data-opt="collage"] {
+  font-family: Anton, var(--dsh-cc-blackface);
+  letter-spacing: 0.04em;
+  rotate: -3deg;
+}
+@media (hover: hover) {
+  html[data-dsh-calling-card-skin] .dsh-cc-letters:hover { transform: rotate(-1.5deg) scale(1.06); }
+}
+html[data-dsh-calling-card-skin] .dsh-cc-letters:focus-visible {
+  outline: 3px dashed #fff;
+  outline-offset: 3px;
+}
+html[data-dsh-calling-card-skin] .dsh-cc-letters.is-flip {
+  animation: dsh-cc-letters-flip 300ms cubic-bezier(0.2, 1.5, 0.4, 1);
+}
+@keyframes dsh-cc-letters-flip {
+  0% { transform: rotate(2.5deg) scale(1); }
+  35% { transform: rotate(-8deg) scale(1.18); }
+  100% { transform: rotate(2.5deg) scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {

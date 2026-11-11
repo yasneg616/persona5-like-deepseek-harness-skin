@@ -17,6 +17,12 @@ DeepSeek Harness 网页客户端的预告信皮肤。只有一套红、黑、白
 
 会话、Markdown、流式输出、输入框、工具行仍然是宿主的组件。本包不发送消息，也不发起模型请求。
 
+## 对话字体与拼贴信开关（0.5.1）
+
+消息和输入框换成随皮肤打包、离线可用的粗体窄体：拉丁字母用 Barlow Semi Condensed（正文 SemiBold，提问和加粗用 ExtraBold），中文用 Noto Sans SC 的 Bold / Black 子集（`CcHeavy`），标题用 Anton。缺字时依次回退到 Microsoft YaHei UI、Microsoft YaHei、PingFang SC、Noto Sans CJK SC。正文不用毛笔或书法字体。
+
+右上角「重播转场」下面有一个 **LETTERS 信笺** 开关：**平文 PLAIN**（默认）或 **拼贴 COLLAGE**。选择存进 `localStorage` 的 `dsh-cc-message-style`（这是本皮肤唯一存的值），重启后仍然有效。拼贴模式下，提问和回复里已经稳定的段落和标题会变成混合字体的剪贴字；宿主原来的文字仍留在下面（字号为 0），所以流式输出、复制和读屏仍然用真实文字。代码、链接、列表、表格、引用和工具卡保持平文。超过 220 字的段落保持平文，每条消息最多剪 480 个字，只剪最近 12 条消息。欢迎标题无论哪种模式都是拼贴。DSH 0.2.x 没有给客户端插件的设置接口，所以开关放在浮层里。
+
 ## 和已确认的 v9 稿之间的差别
 
 v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去冒充客户端：
@@ -58,7 +64,7 @@ dsh --profile calling-card --from-default-profile web
 停掉这个进程，再安装本包（路径换成 tarball 的实际位置）：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.0.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-0.5.1.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -78,7 +84,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.0.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-0.5.1.tgz
 ```
 
 ## 本地构建与夹具

@@ -1,6 +1,11 @@
 /* Test fixture runner. Not the Harness client. Mounts the built plugin on a labeled DOM. */
 const captured = []
 window.__ModuleLoader__ = { load(reg) { captured.push(reg) } }
+/* ?letters=collage|plain presets the message-letters switch (stored like the real choice). */
+{
+  const letters = new URLSearchParams(location.search).get('letters')
+  try { if (letters === 'reset') localStorage.removeItem('dsh-cc-message-style'); else if (letters) localStorage.setItem('dsh-cc-message-style', letters) } catch {}
+}
 
 function boot() {
   const reg = captured[0]
@@ -75,6 +80,7 @@ function boot() {
     if (props.role) el.setAttribute('role', props.role)
     if (props['aria-label']) el.setAttribute('aria-label', props['aria-label'])
     if (props['aria-hidden']) el.setAttribute('aria-hidden', props['aria-hidden'])
+    for (const [key, value] of Object.entries(props)) if (/^(data|aria)-/.test(key) && value != null) el.setAttribute(key, String(value))
     if (props.type) el.setAttribute('type', props.type)
     if (props.width) el.setAttribute('width', props.width)
     if (props.height) el.setAttribute('height', props.height)
