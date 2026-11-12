@@ -3274,7 +3274,7 @@ html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]):not([data-sideb
 }
 
 /* No bottom fade over the session list: rows stay crisp to the last one. */
-html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) span[class$="_fade"] {
+html[data-dsh-calling-card-skin] div:has(> [data-shell-overlay]) span:is([class$="_fade"], [class$="_scrollFade"]) {
   display: none !important;
 }
 

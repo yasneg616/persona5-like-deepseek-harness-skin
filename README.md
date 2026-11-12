@@ -126,7 +126,7 @@ Compact navigation cards share a 2° tilt and step 10px to the right per card. T
 
 ## Install
 
-Use the `dsh` that belongs to the installed app. `dsh --version` must print a version inside `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1`. The old checkout at `0.1.3-alpha.2` is outside that range.
+For builds from `main`, use the `dsh` that belongs to the installed app. `dsh --version` must print a version inside `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2`. The old checkout at `0.1.3-alpha.2` is outside that range.
 
 Use a **separate Web profile** for this skin. In Windows PowerShell, from the folder containing the release tarball, initialize `calling-card` on first install only. `--from-default-profile` replaces the named profile, so skip this step when upgrading it.
 

@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import { JSDOM } from 'jsdom'
 import { ACCOUNT, createRail, markRail, railRoot, readSessions } from '../src/client/rail.ts'
 
-const css = readFileSync(new URL('../src/client/skin.css', import.meta.url), 'utf8')
+const css = readFileSync(new URL('../src/client/skin.css', import.meta.url), 'utf8').replaceAll('\r\n', '\n')
 const start = css.indexOf('/* ===== 0.5.5 popups')
 const reduce = css.lastIndexOf('@media (prefers-reduced-motion: reduce)')
 const block = css.slice(start, reduce)

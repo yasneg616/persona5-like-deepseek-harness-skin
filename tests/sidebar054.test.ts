@@ -37,8 +37,8 @@ test('the account "更多" control and the empty brand button never become paper
 
 test('0.5.4 CSS: no bottom fade, crisp project rows, account ticket strip, all before reduced motion', () => {
   assert.ok(start > 0 && start < reduce)
-  // The host's session-list fade span is removed (not just recolored).
-  assert.match(block, /span\[class\$="_fade"\] \{\s*display: none !important;/)
+  // The fade is hidden on both the workspace list and the new shared sidebar scroller.
+  assert.match(block, /span:is\(\[class\$="_fade"\], \[class\$="_scrollFade"\]\) \{\s*display: none !important;/)
   // Project rows keep the host flex layout instead of the old inline-block tag.
   assert.match(block, /\[data-row-key\^="workspace:"\] \{\s*display: flex !important;[^}]*width: auto !important;/)
   assert.match(block, /\[data-row-key\^="workspace:"\]\[aria-expanded="true"\]/)
