@@ -8,7 +8,7 @@ DeepSeek Harness 网页客户端的预告信皮肤。只有一套红、黑、白
 
 演示使用示例会话，展示斜排导航、切页转场、拼贴信、弹出菜单和侧栏收放。
 
-[下载 1.0.0 插件](https://github.com/yasneg616/persona5-like-deepseek-harness-skin/releases/tag/v1.0.0)。安装包内含编译好的插件、样式和字体，在兼容的 Harness Web 配置档中以 `dsh-calling-card-skin` 安装。
+[下载 1.0.1 插件](https://github.com/yasneg616/persona5-like-deepseek-harness-skin/releases/tag/v1.0.1)。安装包内含编译好的插件、样式和字体，在兼容的 Harness Web 配置档中以 `dsh-calling-card-skin` 安装。
 
 ## 它真正接上的接口
 
@@ -140,7 +140,7 @@ v9 是静态原型。下面这些没有做成假页面，也没有用 iframe 去
 dsh --version
 ```
 
-从 `main` 构建时，输出必须落在 `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2`。
+输出必须落在 `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2`。
 
 建议为皮肤使用单独的 Web 配置档。仅首次安装时初始化 `calling-card`。`--from-default-profile` 会替换同名配置档，升级时跳过这一步。
 
@@ -151,7 +151,7 @@ dsh --profile calling-card --from-default-profile web --dump-config
 退出目标配置档后，安装下载的包，再启动配置档：
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-1.0.0.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-1.0.1.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -173,7 +173,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 校验压缩包：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-1.0.0.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-1.0.1.tgz
 ```
 
 ## 本地构建与夹具

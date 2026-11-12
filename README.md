@@ -8,7 +8,7 @@ Calling-card skin for the DeepSeek Harness **web** client. One red / black / whi
 
 The demo shows the diagonal navigation, cut-in transitions, collage letters, pop-up menu, and collapsible sidebar with sample sessions.
 
-[Download the 1.0.0 plugin](https://github.com/yasneg616/persona5-like-deepseek-harness-skin/releases/tag/v1.0.0). The tarball includes the compiled plugin, styles, and fonts. Install it as `dsh-calling-card-skin` in a compatible Harness Web profile.
+[Download the 1.0.1 plugin](https://github.com/yasneg616/persona5-like-deepseek-harness-skin/releases/tag/v1.0.1). The tarball includes the compiled plugin, styles, and fonts. Install it as `dsh-calling-card-skin` in a compatible Harness Web profile.
 
 ## What it actually changes
 
@@ -126,7 +126,7 @@ Compact navigation cards share a 2° tilt and step 10px to the right per card. T
 
 ## Install
 
-For builds from `main`, use the `dsh` that belongs to the installed app. `dsh --version` must print a version inside `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2`. The old checkout at `0.1.3-alpha.2` is outside that range.
+Use the `dsh` that belongs to the installed app. `dsh --version` must print a version inside `>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2`. The old checkout at `0.1.3-alpha.2` is outside that range.
 
 Use a **separate Web profile** for this skin. In Windows PowerShell, from the folder containing the release tarball, initialize `calling-card` on first install only. `--from-default-profile` replaces the named profile, so skip this step when upgrading it.
 
@@ -138,7 +138,7 @@ dsh --profile calling-card --from-default-profile web --dump-config
 With the target profile stopped, install the package and start the profile:
 
 ```powershell
-dsh plugin --profile calling-card add .\dsh-calling-card-skin-1.0.0.tgz
+dsh plugin --profile calling-card add .\dsh-calling-card-skin-1.0.1.tgz
 dsh --profile calling-card --dump-config
 dsh --profile calling-card
 ```
@@ -158,7 +158,7 @@ dsh plugin --profile calling-card remove dsh-calling-card-skin
 Stop the DSH process first. The command drops this dependency and its line in `dsh.profile.bundles`. It does not edit the industrial package, the audio package, or `$env:USERPROFILE\.dsh\cordis.patch.yml`. Start DSH again. The web client then has no calling-card style, root attribute, or architectural word. Settings → Plugins can deselect the bundle without deleting the files; that selection is saved immediately and the client drops it on the next process start, not on a page reload. Launch the previous profile to leave `calling-card` unused. Do not grant `allow-version` unless you accept an untested host.
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-1.0.0.tgz
+Get-FileHash -Algorithm SHA256 .\dsh-calling-card-skin-1.0.1.tgz
 ```
 
 ## Develop
