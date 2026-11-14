@@ -9,7 +9,7 @@ import { CALLING_CARD_TOKENS, assertUnifiedTokens } from '../src/client/tokens.t
 import { escapeBelongsToHost } from '../src/client/escape.ts'
 
 const require = createRequire(import.meta.url)
-const RANGE = '>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2'
+const RANGE = '>=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2 || 0.2.2-rc.3'
 
 test('calling-card tokens are one palette and use override pairs', () => {
   assertUnifiedTokens(CALLING_CARD_TOKENS)
@@ -40,7 +40,7 @@ test('published theme bundles accept every overridden name', () => {
 })
 
 test('engines range matches the installed host and rejects the neighbouring cuts', () => {
-  const admit = ['0.2.0-rc.2', '0.2.1-alpha.1', '0.2.1-rc.5', '0.2.2-rc.1', '0.2.2-rc.2']
+  const admit = ['0.2.0-rc.2', '0.2.1-alpha.1', '0.2.1-rc.5', '0.2.2-rc.1', '0.2.2-rc.2', '0.2.2-rc.3']
   const reject = ['0.1.3-alpha.2', '0.2.0-rc.1', '0.2.2-alpha.2', '0.2.2-alpha.3', '0.3.0']
   for (const version of admit) {
     assert.equal(semver.satisfies(version, RANGE, { includePrerelease: true }), true, version)

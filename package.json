@@ -1,6 +1,6 @@
 {
   "name": "dsh-calling-card-skin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Calling-card skin for the DeepSeek Harness web client. Red, black, and white paper geometry over live sessions, messages, and the composer.",
   "type": "module",
@@ -56,10 +56,10 @@
   },
   "engines": {
     "node": ">=22",
-    "dsh": ">=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2"
+    "dsh": ">=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2 || 0.2.2-rc.3"
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh": ">=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2",
+    "@deepseek-ai/dsh": ">=0.2.0-rc.2 <0.2.2-0 || 0.2.2-rc.1 || 0.2.2-rc.2 || 0.2.2-rc.3",
     "@deepseek-ai/cordis": ">=4.0.4 <5"
   },
   "peerDependenciesMeta": {
